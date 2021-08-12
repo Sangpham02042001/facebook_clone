@@ -102,7 +102,7 @@ export default function Signup() {
               name="password"
               rules={[
                 { required: true, message: 'Please input your password!' },
-                { min: 6, message: 'Username must be minimum 5 characters.' }]}
+                { min: 6, message: 'Password must be minimum 5 characters.' }]}
             >
               <Input.Password autoComplete="off" />
             </Form.Item>

@@ -22,7 +22,17 @@ const UserSchema = new mongoose.Schema({
   created: {
     type: Date,
     default: Date.now
-  }
+  },
+  bio: {
+    type: String
+  },
+  avatar: {
+    data: Buffer,
+    contentType: String
+  },
+  friends: [
+    { type: mongoose.Types.ObjectId, ref: 'User' }
+  ]
 })
 
 UserSchema

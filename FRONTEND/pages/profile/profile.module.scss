@@ -1,0 +1,13 @@
+.myCol {
+  background-color: green;
+  min-width: 768px;
+  justify-content: center;
+  display: flex;
+}
+
+@media (min-width: 768px) {
+  .myCol {
+    min-width: none;
+    width: 100%;
+  }
+}

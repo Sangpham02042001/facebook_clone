@@ -1,30 +1,29 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
 import Router from 'next/router'
+import { useDispatch, useSelector } from 'react-redux'
+import { signin } from '../../reducers/user.reducer'
 import { Row, Col, Form, Input, Button } from 'antd'
 import { showError, showSuccess } from '../../utils/utils'
-import { axiosInstance } from '../../utils/axios.util'
 
 export default function Signin() {
-  const onFinish = async ({ email, password }) => {
-    try {
-      const response = await axiosInstance.post('/api/auth/signin', {
-        email, password
-      });
-      if (response.status === 200) {
-        console.log(response.data)
-        showSuccess('Sign in successfully')
-        Router.push('/')
-      }
-    } catch (error) {
-      let { data } = error.response
-      if (data && data.error) {
-        showError(data.error)
-      }
-    }
+  const dispatch = useDispatch()
+  const user = useSelector(state => state.userReducer)
+
+  const onFinish = ({ email, password }) => {
+    dispatch(signin({ email, password }))
   };
+
+  useEffect(() => {
+    if (user.authenticated) {
+      showSuccess('Sign in successfully')
+      Router.push('/')
+    } else if (user.error) {
+      showError(user.error)
+    }
+  }, [user.authenticated, user.error])
 
   const onFinishFailed = () => {
     console.log('Failed:');

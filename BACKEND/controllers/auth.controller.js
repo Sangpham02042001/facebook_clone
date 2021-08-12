@@ -25,11 +25,10 @@ const signin = async (req, res) => {
 
     res.status(200).json({
       token,
-      user: {
-        _id: user._id,
-        name: user.name,
-        email: user.email
-      }
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      bio: user.bio
     })
 
   } catch (err) {
