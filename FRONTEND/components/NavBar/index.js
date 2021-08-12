@@ -1,20 +1,12 @@
-import React, { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-// import { isAuthenticated } from '../../actions'
-import { isAuthenticated } from '../../reducers/user.reducer'
+import React from 'react'
+import { useSelector } from 'react-redux'
 import Link from 'next/link'
 import Image from 'next/image'
 import styles from './header.module.scss'
 
 export default function Header() {
-  const dispatch = useDispatch()
   const user = useSelector(state => state.userReducer)
   console.log('header render')
-  useEffect(() => {
-    if (!user.authenticated) {
-      dispatch(isAuthenticated())
-    }
-  }, [user.authenticated])
   return (
     <div className={styles['main-header']}>
       <Link href="/">

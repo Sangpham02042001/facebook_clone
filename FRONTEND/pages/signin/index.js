@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import Router from 'next/router'
 import { useDispatch, useSelector } from 'react-redux'
-import { signin } from '../../reducers/user.reducer'
+import { signin } from '../../store/reducers/user.reducer'
 import { Row, Col, Form, Input, Button } from 'antd'
 import { showError, showSuccess } from '../../utils/utils'
 

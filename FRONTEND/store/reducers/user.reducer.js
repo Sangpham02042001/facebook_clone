@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, } from '@reduxjs/toolkit'
-import { axiosInstance } from '../utils/axios.util'
+import { axiosInstance } from '../../utils/axios.util'
 
 const initialState = {
   user: {},
@@ -36,6 +36,7 @@ export const userSlice = createSlice({
       const user = localStorage.getItem('user')
       if (user) {
         state.user = JSON.parse(user)
+        state.authenticated = true;
       }
     }
   },

@@ -1,6 +1,6 @@
 import React from 'react'
 import Head from 'next/head'
-import Header from '../header'
+import NavBar from '../NavBar'
 
 export default function Layout(props) {
   return (
@@ -8,7 +8,7 @@ export default function Layout(props) {
       <Head>
         <link rel="icon" href="/images/facebook.ico" />
       </Head>
-      <Header />
+      <NavBar />
       <div style={{ marginTop: '66px' }}>
         {props.children}
       </div>
