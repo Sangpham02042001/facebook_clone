@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import Router from 'next/router'
 import { useDispatch, useSelector } from 'react-redux'
-import { signin } from '../../store/reducers/user.reducer'
+import { signin, isAuthenticated } from '../../store/reducers/user.reducer'
 import { Row, Col, Form, Input, Button } from 'antd'
 import { showError, showSuccess } from '../../utils/utils'
 
@@ -17,11 +17,16 @@ export default function Signin() {
   };
 
   useEffect(() => {
+    console.log('sign in page')
     if (user.authenticated) {
       showSuccess('Sign in successfully')
       Router.push('/')
     } else if (user.error) {
       showError(user.error)
+    } else {
+      if (!user.authenticated) {
+        dispatch(isAuthenticated())
+      }
     }
   }, [user.authenticated, user.error])
 

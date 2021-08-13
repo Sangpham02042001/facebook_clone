@@ -30,6 +30,10 @@ const UserSchema = new mongoose.Schema({
     data: Buffer,
     contentType: String
   },
+  coverPhoto: {
+    data: Buffer,
+    contentType: String
+  },
   friends: [
     { type: mongoose.Types.ObjectId, ref: 'User' }
   ]

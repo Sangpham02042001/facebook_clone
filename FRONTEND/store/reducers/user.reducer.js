@@ -38,6 +38,11 @@ export const userSlice = createSlice({
         state.user = JSON.parse(user)
         state.authenticated = true;
       }
+    },
+    signout: (state) => {
+      state.user = {}
+      state.authenticated = false
+      localStorage.removeItem('user')
     }
   },
   extraReducers: {
@@ -57,6 +62,6 @@ export const userSlice = createSlice({
   }
 })
 
-export const { isAuthenticated } = userSlice.actions
+export const { isAuthenticated, signout } = userSlice.actions
 
 export default userSlice.reducer
