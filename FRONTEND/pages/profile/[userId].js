@@ -8,7 +8,7 @@ import {
 } from 'antd'
 import UploadImage from '../../components/UploadImage'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCamera } from '@fortawesome/free-solid-svg-icons'
+import { faCamera, faPencilAlt } from '@fortawesome/free-solid-svg-icons'
 import { showError } from '../../utils/utils'
 import { baseURL } from '../../utils/axios.util'
 import Layout from '../../components/layout'
@@ -20,6 +20,7 @@ export default function Profile() {
   const dispatch = useDispatch()
   const userReducer = useSelector(state => state.userReducer)
   const userList = useSelector(state => state.userListReducer.userList)
+  const [currentTab, setCurrentTab] = useState('post')
   const [profile, setProfile] = useState('')
   const [reloadAvatar, setReloadAvatar] = useState('')
   const [newAvatar, setNewAvatar] = useState('')
@@ -36,6 +37,7 @@ export default function Profile() {
 
   useEffect(() => {
     if (userLoginId !== userId) {
+      console.log(userReducer.user.token)
       const fetchProfile = async () => {
         const response = await axios.get(`${baseURL}/api/users/${userId}`, {
           headers: {
@@ -126,6 +128,13 @@ export default function Profile() {
     setReloadCoverPhoto(Date.now())
   }
 
+  const changeCurrentTab = tab => event => {
+    event.preventDefault()
+    if (tab !== currentTab) {
+      setCurrentTab(tab)
+    }
+  }
+
   return (
     <>
       <Head>
@@ -174,16 +183,33 @@ export default function Profile() {
                 <Button disabled={bio === userReducer.user.bio} onClick={saveBioChanged}>Save</Button>
               </div>
             </div>}
-            <Divider style={{ marginBottom: 0 }} />
+            <Divider style={{ marginBottom: 0, borderColor: 'rgb(190, 190, 190)' }} />
           </Col>
         </Row>
         <Row style={{ display: 'flex', justifyContent: 'center' }}>
-          <Col className={styles.shortIntro} lg={14} md={16}>
-            <p>HIHI</p>
+          <Col lg={14} md={16} className={styles.profileSelectionContainer}>
+            <ul className={styles.profileSeletionList}>
+              <li value='post' onClick={changeCurrentTab('post')}
+                className={currentTab === 'post' ? (styles.currentTab) : ''}>Post
+              </li>
+              <li value='about' onClick={changeCurrentTab('about')}
+                className={currentTab === 'about' ? (styles.currentTab) : ''}>About
+              </li>
+              <li value='friends' onClick={changeCurrentTab('friends')}
+                className={currentTab === 'friends' ? (styles.currentTab) : ''}>
+                Friends {profile.friends && profile.friends.length}
+              </li>
+            </ul>
+            <span className={styles.editProfileBtn}>
+              <FontAwesomeIcon icon={faPencilAlt} style={{ marginRight: '10px' }} />
+              Edit Profile
+            </span>
           </Col>
         </Row>
+        <Divider style={{ margin: 0, borderColor: 'rgb(190, 190, 190)' }} />
       </Layout>
-      {profileModalVisible &&
+      {
+        profileModalVisible &&
         <Modal title="Update your profile image" visible={profileModalVisible}
           onCancel={() => {
             setProfileModalVisible(false)
@@ -192,9 +218,11 @@ export default function Profile() {
           onOk={updateAvatar}>
           <UploadImage multiple={false} name="ProfileImage"
             onUploadSuccess={onUploadAvatarSuccess} />
-        </Modal>}
+        </Modal>
+      }
 
-      {coverPhotoModalVisible &&
+      {
+        coverPhotoModalVisible &&
         <Modal title="Update your cover image" visible={coverPhotoModalVisible}
           onCancel={() => {
             setCoverPhotoModalVisible(false)
@@ -203,7 +231,8 @@ export default function Profile() {
           onOk={uploadCoverPhoto}>
           <UploadImage multiple={false} name="CoverPhoto"
             onUploadSuccess={onUploadCoverPhotoSuccess} />
-        </Modal>}
+        </Modal>
+      }
     </>
   )
 }
