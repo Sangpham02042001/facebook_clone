@@ -2,12 +2,13 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const postSchema = new Schema({
-    status: {
+    article: {
         type: String,
         require: true
     },
     image: {
-        type: String,
+        data: String,
+        contentType: String
     },
     userId: {
         type: mongoose.Types.ObjectId

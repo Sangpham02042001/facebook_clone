@@ -1,14 +1,14 @@
-.myCol {
-  background-color: green;
-  min-width: 768px;
-  justify-content: center;
-  display: flex;
-}
-
 .imageContainer {
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-bottom: 0;
+  height: 320px;
+}
+
+.coverImage {
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
 }
 
 .avatar {
@@ -20,6 +20,18 @@
   position: relative;
 }
 
+.editCoverPhoto {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  padding: 10px;
+  background-color: #fff;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
 .cameraContainer {
   position: absolute;
   padding: 6px 12px;
@@ -28,10 +40,50 @@
   top: 60%;
   right: 0%;
   transform: translateX(6px);
+  cursor: pointer;
+}
+
+.cameraContainer:hover,
+.editCoverPhoto:hover {
+  background-color: rgb(214, 212, 212);
+  transition: background-color 0.5s ease;
 }
 
 .camera {
   transform: scale(1.4);
+}
+
+.shortIntro {
+  min-width: 768px;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.shortIntro h1 {
+  font-size: 2rem;
+  margin-bottom: 0;
+}
+
+.editBioContainer {
+  width: 30%;
+  margin: auto;
+}
+
+.editBioContainer > textarea {
+  background-color: rgb(224, 220, 220);
+  resize: none;
+  text-align: center;
+  border-radius: 10px;
+}
+
+.editBioBtn {
+  text-align: right;
+}
+
+.editBioBtn > button {
+  margin: 0 5px;
+  border-radius: 10px;
 }
 
 @media (min-width: 768px) {

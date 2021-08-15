@@ -7,19 +7,22 @@ export const getPosts = createAsyncThunk('posts/getPosts', async () => {
     return response.data;
 })
 
-export const addStatus = createAsyncThunk('posts/addStatus', async ({title, userId}) => {
-    const newStatus = {
-        _id: nanoid(),
-        status: title,
-        userId
-    }
+export const addPost = createAsyncThunk('posts/addPost', async ({ title, userId, image }) => {
+    const formData = new FormData();
+    formData.append("image-post", image);
 
-    await axiosInstance.post('/posts', newStatus);
+    const response = await axiosInstance.post('/posts', formData, {
+        params: {
+            metaData: {
+                _id: nanoid(),
+                article: title,
+                userId,
+            }
+        }
+    });
 
-    return newStatus;
+    return response.data;
 })
-
-
 
 
 const posts = createSlice({
@@ -41,20 +44,22 @@ const posts = createSlice({
         [getPosts.rejected]: (state, action) => {
             console.log('Failed to get data');
         },
-        [addStatus.fulfilled]: (state, action) => {
+        [addPost.fulfilled]: (state, action) => {
             console.log('Data added');
             state.posts.unshift(action.payload);
         },
-        [addStatus.rejected]: (state, action) => {
+        [addPost.rejected]: (state, action) => {
+            console.log(action)
             console.log('Failed to post data');
         },
+
     }
 
 })
 
 
 
-export const postsSelector = state => state.postsReducer.posts;
+// export const postSelector = state => state.postsReducer.posts;
 // export const {} = posts.actions;
 
 export default posts.reducer;

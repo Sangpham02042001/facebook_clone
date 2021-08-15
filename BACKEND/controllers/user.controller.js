@@ -1,5 +1,17 @@
 const User = require('../models/user.model')
 const fs = require('fs')
+const formidable = require('formidable')
+const extend = require('lodash/extend')
+
+const listUser = async (req, res) => {
+  try {
+    let users = await User.find({}).select('_id')
+    users = users.map(user => user._id)
+    return res.status(200).json({ userList: users })
+  } catch (error) {
+    return res.status(400).json({ error })
+  }
+}
 
 const signup = async (req, res) => {
   const user = new User(req.body)
@@ -40,6 +52,57 @@ const getDefaultCoverPhoto = async (req, res) => {
   readStream.pipe(res)
 }
 
+const updateProfile = (req, res) => {
+  console.log('inside update profile')
+  const form = formidable.IncomingForm()
+  form.keepExtensions = true
+  console.log(form)
+  form.parse(req, async (err, fields, files) => {
+    console.log(fields, files)
+    if (err) {
+      return res.status(400).json({
+        error: 'Something wrong'
+      })
+    }
+    let userId = req.auth._id
+    try {
+      let user = await User.findById(userId)
+      user = extend(user, fields)
+      if (files.avatar) {
+        user.avatar.data = fs.readFileSync(files.avatar.path)
+        user.avatar.contentType = files.avatar.type
+      }
+      if (files.coverPhoto) {
+        user.coverPhoto.data = fs.readFileSync(files.coverPhoto.path)
+        user.coverPhoto.contentType = files.coverPhoto.type
+      }
+      await user.save()
+      user.hashed_password = undefined
+      user.salt = undefined
+      user.avatar = undefined
+      user.coverPhoto = undefined
+      return res.status(200).json(user)
+    } catch (error) {
+      console.log(error)
+    }
+  })
+}
+
+const userProfile = async (req, res) => {
+  console.log(req.params.userId)
+  try {
+    let user = await User.findById(req.params.userId)
+    return res.status(200).json({
+      user
+    })
+  } catch (error) {
+    console.log(error)
+    return res.status('400').json({
+      error: 'Something wrong when get user'
+    })
+  }
+}
+
 const userByID = async (req, res, next, id) => {
   try {
     let user = await User.findById(id)
@@ -64,5 +127,8 @@ module.exports = {
   getDefaultAvatar,
   getCoverPhoto,
   getDefaultCoverPhoto,
-  userByID
+  userByID,
+  listUser,
+  updateProfile,
+  userProfile
 }

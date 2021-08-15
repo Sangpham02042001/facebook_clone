@@ -1,5 +1,5 @@
-
 const Posts = require('../models/post.model')
+const fs = require('fs');
 
 const getPosts = (req, res, next) => {
     Posts.find({}).sort("-created")
@@ -11,12 +11,18 @@ const getPosts = (req, res, next) => {
         })
 }
 
+
 const addPost = (req, res, next) => {
-    if (req.body.status && req.body.status != "") {
-        Posts.create({ status: req.body.status, userId: req.body.userId })
+    // console.log(req.file);
+    let fileImage = req.file;
+    let imageType = fileImage && fileImage.mimetype;
+    let imageBase64 = fileImage && fileImage.buffer.toString('base64');
+    let data = JSON.parse(req.query.metaData);
+
+    if (data.article || imageBase64) {
+        Posts.create({ article: data.article, userId: data.userId, image: { data: imageBase64, contentType: imageType } })
             .then((post) => {
-                console.log(req.body);
-                console.log('post: ', post);
+                // console.log('post: ', post);
                 res.statusCode = 200;
                 res.setHeader('Content-Type', 'application/json');
                 res.json(post);
@@ -28,5 +34,6 @@ const addPost = (req, res, next) => {
     }
 
 }
+
 
 module.exports = { getPosts, addPost }

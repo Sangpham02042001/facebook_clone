@@ -1,47 +1,33 @@
-import { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { getPosts } from '../../store/reducers/posts.reducer';
+import { Button } from 'antd';
+import { useSelector } from 'react-redux';
+import styles from './post.module.scss';
 
 
+const PostComponent = (params) => {
+    const user = useSelector(state => state.userReducer)
+    let base64URL = params.post.image && "data:" + params.post.image.contentType
+        + ";base64, " + params.post.image.data;
+    let numberOfLike = 10;
 
-const PostChild = (params) => {
+    const handleLike = () => {
 
-    const postStyle = {
-        color: "black",
-        backgroundColor: "#fff6ff",
-        display: "center",
-        width: "60%",
-        margin: "20px auto",
-        padding: "10px",
-        fontFamily: "Arial"
-      };
-    return (
-        <div className="child-post" style={postStyle}>
-            <h1>{params.post.status}</h1>
-        </div>
-    );
-}
-
-const PostComponent = () => {
-    const dispatch = useDispatch();
-
-    const posts = useSelector(state => state.postsReducer.posts);
-
-
-    const allPosts = posts.map(post => {
-        if (post._id) return <PostChild key={post._id} post={post} />
-
-        return null;
-    })
-
-    useEffect(() => {
-        dispatch(getPosts());
-
-    }, [dispatch]);
+    }
 
     return (
-        <div className="post-component">
-            <div>{allPosts}</div>
+        <div className={styles["post-component"]} >
+            <div className="post-header">
+                <div style={{ fontSize: "20px", fontWeight: "bold" }}>{user.user.name}</div>
+            </div>
+            <div className="post-main">
+                <div style={{ fontSize: "30px" }}>{params.post.article}</div>
+                <img src={base64URL} />
+            </div>
+            <div className="post-footer">
+                <div>Like {numberOfLike}</div>
+                <Button onClick={handleLike}>Like</Button>
+                <Button>Comment</Button>
+                <Button>Share</Button>
+            </div>
         </div>
     );
 }

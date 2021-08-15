@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
+import { useRouter } from 'next/router'
 import Link from 'next/link'
 import Image from 'next/image'
 import { signout } from '../../store/reducers/user.reducer'
@@ -10,6 +11,7 @@ import { faCaretDown } from '@fortawesome/free-solid-svg-icons'
 import styles from './navbar.module.scss'
 
 const NavbarDropdownMenu = ({ user }) => {
+  const router = useRouter()
   const dispatch = useDispatch()
   return <Menu>
     <Menu.Item key="0" style={{ height: "40px" }}>
@@ -22,7 +24,10 @@ const NavbarDropdownMenu = ({ user }) => {
     </Menu.Item>
     <Menu.Divider />
     <Menu.Item key="1">
-      <p onClick={() => dispatch(signout())} ><b>Logout</b></p>
+      <p onClick={() => {
+        dispatch(signout())
+        router.push('/')
+      }} ><b>Logout</b></p>
     </Menu.Item>
   </Menu>
 }
@@ -44,7 +49,7 @@ export default function Navbar() {
             <a>
               <Avatar
                 style={{ marginRight: '5px', marginBottom: '5px' }}
-                src={`${baseURL}/api/user/photo/${user.user._id}`} />
+                src={`${baseURL}/api/user/avatar/${user.user._id}`} />
               <b>{user.user.name.split(' ')[0]}</b>
             </a>
           </Link>

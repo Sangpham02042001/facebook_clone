@@ -1,5 +1,7 @@
 import { createAsyncThunk, createSlice, } from '@reduxjs/toolkit'
-import { axiosInstance } from '../../utils/axios.util'
+import { axiosInstance, baseURL } from '../../utils/axios.util'
+import axios from 'axios'
+import extend from 'lodash/extend'
 
 const initialState = {
   user: {},
@@ -28,6 +30,30 @@ export const signin = createAsyncThunk('user/signin', async ({ email, password }
   }
 })
 
+export const update = createAsyncThunk('user/udpate', async (data, { rejectWithValue }) => {
+  let user = JSON.parse(localStorage.getItem('user'))
+  let keys = Object.keys(data)
+  let userData = new FormData()
+  for (const key of keys) {
+    userData.append(key, data[key])
+  }
+  console.log(user, data)
+  try {
+    const response = await axios.put(`${baseURL}/api/users/${user._id}`, userData, {
+      headers: {
+        'Authorization': 'Bearer ' + user.token
+      },
+    })
+    console.log(response.data)
+    return { user: response.data }
+  } catch (error) {
+    let { data } = error.response
+    if (data && data.error) {
+      return rejectWithValue(data)
+    }
+  }
+})
+
 export const userSlice = createSlice({
   name: 'user',
   initialState,
@@ -37,6 +63,7 @@ export const userSlice = createSlice({
       if (user) {
         state.user = JSON.parse(user)
         state.authenticated = true;
+        state.loading = false
       }
     },
     signout: (state) => {
@@ -56,6 +83,21 @@ export const userSlice = createSlice({
     },
     [signin.rejected]: (state, action) => {
       console.log(action)
+      state.error = action.payload.error
+      state.loading = false
+    },
+    [update.pending]: (state, action) => {
+      console.log('update profile pending')
+      state.loading = true
+    },
+    [update.fulfilled]: (state, action) => {
+      state.user = action.payload.user
+      let currentUser = JSON.parse(localStorage.getItem('user'))
+      currentUser = extend(currentUser, action.payload.user)
+      localStorage.setItem('user', JSON.stringify(currentUser))
+      state.loading = false
+    },
+    [update.rejected]: (state, action) => {
       state.error = action.payload.error
       state.loading = false
     }

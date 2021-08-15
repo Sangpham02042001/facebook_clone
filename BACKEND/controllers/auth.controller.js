@@ -40,6 +40,30 @@ const signin = async (req, res) => {
   }
 }
 
+const requireSignin = (req, res, next) => {
+  if (req.headers.authorization) {
+    const token = req.headers.authorization.split(' ')[1]
+    const user = jwt.verify(token, process.env.JWT_SECRET_KEY)
+    if (user) {
+      req.auth = user
+      console.log('require sign in', user)
+      next()
+    }
+  }
+}
+
+const hasAuthorization = (req, res, next) => {
+  console.log(req.user)
+  const authorized = req.user && req.auth && req.user._id == req.auth._id
+  if (!authorized) {
+    return res.status(403).json({
+      error: "User is not authorized"
+    })
+  }
+  next()
+}
+
 module.exports = {
-  signin
+  signin, requireSignin,
+  hasAuthorization
 }
