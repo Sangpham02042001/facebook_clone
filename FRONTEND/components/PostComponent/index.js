@@ -1,7 +1,8 @@
 import { Button, Avatar } from 'antd';
 import Link from 'next/link';
 import styles from './post.module.scss';
-import { baseURL } from '../../utils/axios.util'
+import { baseURL } from '../../utils/axios.util';
+
 
 const PostComponent = (props) => {
     let base64URL = props.post.image && "data:" + props.post.image.contentType
@@ -16,19 +17,20 @@ const PostComponent = (props) => {
         <div className={styles["post-component"]} >
             <div className="post-header">
                 {
-                    props.post.userId && <Link href={`/profile/${props.post.userId._id}`}>
+                    props.post.userId && 
+                    <Link href={`/profile/${props.post.userId._id}`}>
                         <a>
                             <Avatar
                                 style={{ marginRight: '5px', marginBottom: '5px' }}
                                 src={`${baseURL}/api/user/avatar/${props.post.userId._id}`} />
-                            <div style={{ fontSize: "20px", fontWeight: "bold" }}>{props.post.userId.name}</div>
+                            <span style={{ fontSize: "20px", fontWeight: "bold" }}>{props.post.userId.name}</span>
                         </a>
                     </Link>
                 }
             </div>
             <div className="post-main">
                 <div style={{ fontSize: "30px" }}>{props.post.article}</div>
-                <img src={base64URL} />
+                <img src={base64URL} style={{display: "inline-block", }}/>
             </div>
             <div className="post-footer">
                 <div>Like {numberOfLike}</div>

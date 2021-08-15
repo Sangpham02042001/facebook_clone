@@ -24,7 +24,7 @@ app.use(express.urlencoded({ extended: true }))
 
 app.use('/', userRoutes);
 app.use('/', authRoutes);
-app.use('/posts', postRoutes);
+app.use('/posts/', postRoutes);
 
 
 app.listen(PORT, HOST, () => {

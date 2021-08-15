@@ -1,10 +1,23 @@
-.input-form {
-  margin: 100px auto;
-  justify-content: center;
+.input-component {
+  color: black;
+  background-color: #fff;
+  display: center;
+  width: 50%;
+  margin: 50px auto;
+  padding: 10px;
+  border: 1px solid gray;
+  border-radius: 10px;
   text-align: center;
+  justify-content: center;
+  word-break: break-all;
+  font-family: Segoe UI Historic, Segoe UI, Helvetica, Arial, sans-serif;
+  display: block;
 }
 
 .btn-inputForm {
-  width: 20%;
-  white-space: nowrap;
+  width: 80%;
+}
+
+.icon-image {
+  color: green;
 }
