@@ -2,7 +2,9 @@ const Posts = require('../models/post.model')
 const fs = require('fs');
 
 const getPosts = (req, res, next) => {
-    Posts.find({}).sort("-created")
+    Posts.find({})
+        .populate('userId', 'name _id')
+        .sort("-created")
         .then(posts => {
             res.statusCode = 200;
             res.json(posts);

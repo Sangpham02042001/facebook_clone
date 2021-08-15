@@ -1,12 +1,11 @@
-import { Button } from 'antd';
-import { useSelector } from 'react-redux';
+import { Button, Avatar } from 'antd';
+import Link from 'next/link';
 import styles from './post.module.scss';
+import { baseURL } from '../../utils/axios.util'
 
-
-const PostComponent = (params) => {
-    const user = useSelector(state => state.userReducer)
-    let base64URL = params.post.image && "data:" + params.post.image.contentType
-        + ";base64, " + params.post.image.data;
+const PostComponent = (props) => {
+    let base64URL = props.post.image && "data:" + props.post.image.contentType
+        + ";base64, " + props.post.image.data;
     let numberOfLike = 10;
 
     const handleLike = () => {
@@ -16,10 +15,19 @@ const PostComponent = (params) => {
     return (
         <div className={styles["post-component"]} >
             <div className="post-header">
-                <div style={{ fontSize: "20px", fontWeight: "bold" }}>{user.user.name}</div>
+                {
+                    props.post.userId && <Link href={`/profile/${props.post.userId._id}`}>
+                        <a>
+                            <Avatar
+                                style={{ marginRight: '5px', marginBottom: '5px' }}
+                                src={`${baseURL}/api/user/avatar/${props.post.userId._id}`} />
+                            <div style={{ fontSize: "20px", fontWeight: "bold" }}>{props.post.userId.name}</div>
+                        </a>
+                    </Link>
+                }
             </div>
             <div className="post-main">
-                <div style={{ fontSize: "30px" }}>{params.post.article}</div>
+                <div style={{ fontSize: "30px" }}>{props.post.article}</div>
                 <img src={base64URL} />
             </div>
             <div className="post-footer">
