@@ -103,6 +103,35 @@ const userProfile = async (req, res) => {
   }
 }
 
+const addFriend = async (req, res) => {
+  console.log('add friend', req.params.userId)
+  console.log('add friend', req.body)
+  try {
+    let user = req.user
+    console.log(user)
+    let userAddedId = req.body.userIdAdded
+    user.followings.push(userAddedId)
+    let userAdded = await User.findById(userAddedId)
+    if (userAdded) {
+      userAdded.followers.push(user._id)
+    }
+    await user.save()
+    await userAdded.save()
+    return res.status(200).json({
+      message: "Add friend success"
+    })
+  } catch (error) {
+    console.log(error)
+    return res.status(400).json({
+      error: 'Something wrong, try again'
+    })
+  }
+}
+
+const comfirmFriendRequest = async (req, res) => {
+
+}
+
 const userByID = async (req, res, next, id) => {
   try {
     let user = await User.findById(id)
@@ -130,5 +159,7 @@ module.exports = {
   userByID,
   listUser,
   updateProfile,
-  userProfile
+  userProfile,
+  addFriend,
+  comfirmFriendRequest
 }

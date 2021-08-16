@@ -1,6 +1,7 @@
 import 'antd/dist/antd.css'
 import '../components/scss/main.scss'
 import React, { useState } from 'react'
+import Head from 'next/head'
 import Router from 'next/router'
 import { Provider } from 'react-redux'
 import store from '../store'
@@ -19,6 +20,9 @@ function MyApp({ Component, pageProps }) {
 
   return (
     <Provider store={store}>
+      <Head>
+        <link rel="icon" href="/images/facebook.ico" />
+      </Head>
       {loading && <Loading />}
       <Component {...pageProps} />
     </Provider>

@@ -23,14 +23,15 @@ const signin = async (req, res) => {
       name: user.name
     }, process.env.JWT_SECRET_KEY)
 
-    console.log(user)
-
     res.status(200).json({
       token,
       _id: user._id,
       name: user.name,
       email: user.email,
-      bio: user.bio
+      bio: user.bio,
+      friends: user.friends,
+      followings: user.followings,
+      followers: user.followers
     })
 
   } catch (err) {

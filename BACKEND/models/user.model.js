@@ -37,7 +37,10 @@ const UserSchema = new mongoose.Schema({
   friends: [
     { type: mongoose.Types.ObjectId, ref: 'User' }
   ],
-  following: [
+  followings: [
+    { type: mongoose.Types.ObjectId, ref: 'User' }
+  ],
+  followers: [
     { type: mongoose.Types.ObjectId, ref: 'User' }
   ]
 })

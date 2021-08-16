@@ -8,18 +8,27 @@ import {
 } from 'antd'
 import UploadImage from '../../components/UploadImage'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCamera, faPencilAlt } from '@fortawesome/free-solid-svg-icons'
-import { showError } from '../../utils/utils'
-import { baseURL } from '../../utils/axios.util'
+import {
+  faCamera, faPencilAlt, faTimes,
+  faUserPlus, faCheckCircle
+} from '@fortawesome/free-solid-svg-icons'
+import { baseURL, showError } from '../../utils'
+import eventManager from '../../utils/eventemiter'
 import Layout from '../../components/layout'
-import { update } from '../../store/reducers/user.reducer'
+import PostComponent from '../../components/PostComponent'
+import { update, addFriend } from '../../store/reducers/user.reducer'
 import axios from 'axios'
 import styles from './profile.module.scss'
 
 export default function Profile() {
   const dispatch = useDispatch()
+  const router = useRouter()
+  const avatarRef = useRef()
+  const { userId } = router.query
   const userReducer = useSelector(state => state.userReducer)
   const userList = useSelector(state => state.userListReducer.userList)
+  const profilePosts = useSelector(state => state.postReducer.posts
+    .filter(post => post.userId._id === userId))
   const [currentTab, setCurrentTab] = useState('post')
   const [profile, setProfile] = useState('')
   const [reloadAvatar, setReloadAvatar] = useState('')
@@ -30,9 +39,7 @@ export default function Profile() {
   const [bio, setBio] = useState(userReducer.user.bio)
   const [profileModalVisible, setProfileModalVisible] = useState(false)
   const [coverPhotoModalVisible, setCoverPhotoModalVisible] = useState(false)
-  const router = useRouter()
-  const avatarRef = useRef()
-  const { userId } = router.query
+  const [editProfileModalVisible, setEditProfileModalVisible] = useState(false)
   let userLoginId = userReducer.user._id
 
   useEffect(() => {
@@ -41,7 +48,8 @@ export default function Profile() {
       const fetchProfile = async () => {
         const response = await axios.get(`${baseURL}/api/users/${userId}`, {
           headers: {
-            Authorization: 'Bearer ' + userReducer.user.token
+            Authorization: 'Bearer ' + (userReducer.user.token ||
+              JSON.parse(localStorage.getItem('user')).token)
           }
         })
         setProfile(response.data.user)
@@ -50,7 +58,7 @@ export default function Profile() {
     } else {
       setProfile(userReducer.user)
     }
-  }, [])
+  }, [userId])
 
   useEffect(() => {
     setBio(userReducer.user.bio)
@@ -74,11 +82,13 @@ export default function Profile() {
     console.log(name)
     switch (name) {
       case 'profile':
-        console.log('profileee')
         setProfileModalVisible(true)
         break;
       case 'coverphoto':
         setCoverPhotoModalVisible(true)
+        break;
+      case "editProfile":
+        setEditProfileModalVisible(true)
         break;
     }
   }
@@ -108,7 +118,10 @@ export default function Profile() {
       avatar: newAvatar
     }))
     setProfileModalVisible(false)
-    setReloadAvatar(Date.now())
+    setTimeout(() => {
+      setReloadAvatar(Date.now())
+      eventManager.emit('avatarUpdated', Date.now())
+    }, 3000)
   }
 
   const onUploadCoverPhotoSuccess = (file) => {
@@ -125,7 +138,15 @@ export default function Profile() {
       coverPhoto: newCoverPhoto
     }))
     setCoverPhotoModalVisible(false)
-    setReloadCoverPhoto(Date.now())
+    setTimeout(() => {
+      setReloadCoverPhoto(Date.now())
+    }, 3000)
+  }
+
+  const handleAddFriend = () => {
+    dispatch(addFriend({
+      userIdAdded: userId
+    }))
   }
 
   const changeCurrentTab = tab => event => {
@@ -146,6 +167,7 @@ export default function Profile() {
             {userId && userList.indexOf(userId) &&
               <Image src={`${baseURL}/api/user/coverphoto/${userId}?reload=${reloadCoverPhoto}`}
                 className={styles.coverImage} preview={false}
+                key={reloadCoverPhoto}
                 width={'100%'} height={320} alt="Cover Photo" />}
             {
               userId === userLoginId && <span className={styles.editCoverPhoto} onClick={showModal('coverphoto')}>
@@ -155,7 +177,8 @@ export default function Profile() {
             }
             <span className={styles.avatar}>
               {userId && userList.indexOf(userId) &&
-                <Avatar size={156} src={`${baseURL}/api/user/avatar/${userId}?reaload=${reloadAvatar}`} />}
+                <Avatar size={156} key={reloadAvatar}
+                  src={`${baseURL}/api/user/avatar/${userId}?reaload=${reloadAvatar}`} />}
               {userId === userLoginId &&
                 <span onClick={showModal('profile')} className={styles.cameraContainer}>
                   <FontAwesomeIcon className={styles.camera} icon={faCamera} />
@@ -200,20 +223,55 @@ export default function Profile() {
                 Friends {profile.friends && profile.friends.length}
               </li>
             </ul>
-            <span className={styles.editProfileBtn}>
-              <FontAwesomeIcon icon={faPencilAlt} style={{ marginRight: '10px' }} />
-              Edit Profile
-            </span>
+            {
+              userId === userLoginId ? <span onClick={showModal('editProfile')} className={styles.editProfileBtn}>
+                <FontAwesomeIcon icon={faPencilAlt} style={{ marginRight: '10px' }} />
+                Edit Profile
+              </span> : (
+                userReducer.user.followings.indexOf(userId) < 0 ?
+                  <span className={styles.addFriendBtn} onClick={handleAddFriend}>
+                    <FontAwesomeIcon icon={faUserPlus} style={{ marginRight: '10px' }} />
+                    Add friend
+                  </span> : <div>
+                    <span className={styles.addFriendBtn} style={{ marginRight: '10px' }}>
+                      <FontAwesomeIcon icon={faCheckCircle} style={{ marginRight: '10px' }} />
+                      Confirm Request
+                    </span>
+                    <span className={styles.editProfileBtn}>
+                      <FontAwesomeIcon icon={faTimes} style={{ marginRight: '10px' }} />
+                      Delete Request
+                    </span>
+                  </div>
+              )
+            }
           </Col>
         </Row>
         <Divider style={{ margin: 0, borderColor: 'rgb(190, 190, 190)' }} />
+        <Row className={styles.profileContainerPage}>
+          <Col span={16}>
+            {
+              currentTab === 'post' && profilePosts && profilePosts.map(post => (
+                <PostComponent key={post._id} post={post} />
+              ))
+            }
+            {
+              currentTab === 'about' && <h2>About</h2>
+            }
+            {
+              currentTab === 'friends' && (
+                profile && !profile.friends.length ? <h1>{profile.name} doesn't have any friends </h1>
+                  : (JSON.stringify(profile.friends))
+              )
+            }
+          </Col>
+        </Row>
       </Layout>
       {
         profileModalVisible &&
         <Modal title="Update your profile image" visible={profileModalVisible}
           onCancel={() => {
             setProfileModalVisible(false)
-            setNewAvatar('')
+            newAvatar && setNewAvatar('')
           }}
           onOk={updateAvatar}>
           <UploadImage multiple={false} name="ProfileImage"
@@ -226,11 +284,61 @@ export default function Profile() {
         <Modal title="Update your cover image" visible={coverPhotoModalVisible}
           onCancel={() => {
             setCoverPhotoModalVisible(false)
-            setNewCoverPhoto('')
+            newCoverPhoto && setNewCoverPhoto('')
           }}
           onOk={uploadCoverPhoto}>
           <UploadImage multiple={false} name="CoverPhoto"
             onUploadSuccess={onUploadCoverPhotoSuccess} />
+        </Modal>
+      }
+
+      {
+        editProfileModalVisible &&
+        <Modal title="Edit Profile" visible={editProfileModalVisible}
+          width="720px"
+          onCancel={() => {
+            setEditProfileModalVisible(false)
+            newAvatar && setNewAvatar('')
+            newCoverPhoto && setNewCoverPhoto('')
+          }}
+          onOk={event => {
+            event.preventDefault()
+            setEditProfileModalVisible(false)
+          }}>
+          <div className={styles.rowEditModal}>
+            <div>
+              <h2>Profile Picture</h2>
+              <span onClick={showModal('profile')}>Edit</span>
+            </div>
+            <Avatar size={156} key={reloadAvatar}
+              src={`${baseURL}/api/user/avatar/${userId}?reaload=${reloadAvatar}`} />
+          </div>
+          <div className={styles.rowEditModal}>
+            <div>
+              <h2>Cover Photo</h2>
+              <span onClick={showModal('coverphoto')}>Edit</span>
+            </div>
+            <Image src={`${baseURL}/api/user/coverphoto/${userId}?reload=${reloadCoverPhoto}`}
+              preview={false} key={reloadCoverPhoto}
+              width={'100%'} height={320} alt="Cover Photo" />
+          </div>
+          <div className={styles.rowEditModal}>
+            <div>
+              <h2>Bio</h2>
+              <span onClick={() => setEditing(true)}>Edit</span>
+            </div>
+            {!editing && <p>{bio}</p>}
+            {editing && <div className={styles.editBioContainer}>
+              <Input.TextArea rows={3} value={bio} onChange={handleBioChange} />
+              {
+                bio && <p style={{ color: 'gray', textAlign: 'right' }}>{100 - bio.length} characters remaining</p>
+              }
+              <div className={styles.editBioBtn}>
+                <Button onClick={cancelEditBio}>Cancel</Button>
+                <Button disabled={bio === userReducer.user.bio} onClick={saveBioChanged}>Save</Button>
+              </div>
+            </div>}
+          </div>
         </Modal>
       }
     </>

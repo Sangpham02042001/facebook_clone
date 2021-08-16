@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import Head from 'next/head'
 import NavBar from '../NavBar'
 import { getUserList } from '../../store/reducers/userList.reducer'
 
@@ -17,9 +16,6 @@ export default function Layout(props) {
 
   return (
     <div>
-      <Head>
-        <link rel="icon" href="/images/facebook.ico" />
-      </Head>
       <NavBar />
       <div style={{ marginTop: '66px' }}>
         {props.children}

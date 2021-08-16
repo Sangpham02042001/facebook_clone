@@ -1,10 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import Image from 'next/image'
 import { signout } from '../../store/reducers/user.reducer'
 import { baseURL } from '../../utils/axios.util'
+import eventManager from '../../utils/eventemiter'
 import { Menu, Dropdown, Avatar } from 'antd'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretDown } from '@fortawesome/free-solid-svg-icons'
@@ -32,8 +33,17 @@ const NavbarDropdownMenu = ({ user }) => {
   </Menu>
 }
 
-export default function Navbar() {
+const NavBar = React.memo(function NavBar(props) {
   const user = useSelector(state => state.userReducer)
+  const [avatarUpdated, setAvatarUpdated] = useState('')
+
+  useEffect(() => {
+    eventManager.on('avatarUpdated', (time) => {
+      console.log('navbar', time)
+      avatarUpdated !== time && setAvatarUpdated(time)
+    })
+  })
+
   console.log('header render')
   return (
     <div className={styles['main-header']}>
@@ -48,6 +58,7 @@ export default function Navbar() {
           <Link href={`/profile/${user.user._id}`}>
             <a>
               <Avatar
+                key={avatarUpdated}
                 style={{ marginRight: '5px', marginBottom: '5px' }}
                 src={`${baseURL}/api/user/avatar/${user.user._id}`} />
               <b>{user.user.name.split(' ')[0]}</b>
@@ -62,4 +73,6 @@ export default function Navbar() {
       </div>}
     </div>
   )
-}
+})
+
+export default NavBar

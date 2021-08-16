@@ -54,6 +54,29 @@ export const update = createAsyncThunk('user/udpate', async (data, { rejectWithV
   }
 })
 
+export const addFriend = createAsyncThunk('user/addfriend', async (data, { getState, rejectWithValue }) => {
+  const state = getState().userReducer
+  console.log('addfriend', state)
+  let userId = state.user._id
+  console.log(data)
+  try {
+    const response = await axios.post(`${baseURL}/api/users/addfriend/${userId}`, data, {
+      headers: {
+        Authorization: 'Bearer ' + state.user.token
+      }
+    })
+    console.log(response.data)
+    return {
+      userIdAdded: data.userIdAdded
+    }
+  } catch (error) {
+    let { data } = error.response
+    if (data && data.error) {
+      return rejectWithValue(data)
+    }
+  }
+})
+
 export const userSlice = createSlice({
   name: 'user',
   initialState,
@@ -98,6 +121,20 @@ export const userSlice = createSlice({
       state.loading = false
     },
     [update.rejected]: (state, action) => {
+      state.error = action.payload.error
+      state.loading = false
+    },
+    [addFriend.pending]: (state, action) => {
+      state.loading = true
+    },
+    [addFriend.fulfilled]: (state, action) => {
+      state.user.followings.push(action.payload.userIdAdded)
+      let currentUser = JSON.parse(localStorage.getItem('user'))
+      currentUser = extend(currentUser, state.user)
+      localStorage.setItem('user', JSON.stringify(currentUser))
+      state.loading = false
+    },
+    [addFriend.rejected]: (state, action) => {
       state.error = action.payload.error
       state.loading = false
     }
