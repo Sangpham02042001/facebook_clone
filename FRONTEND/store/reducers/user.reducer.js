@@ -7,7 +7,7 @@ const initialState = {
   user: {},
   error: null,
   authenticated: false,
-  loading: true
+  loading: false
 }
 
 export const signin = createAsyncThunk('user/signin', async ({ email, password }, { rejectWithValue }) => {
@@ -67,7 +67,28 @@ export const addFriend = createAsyncThunk('user/addfriend', async (data, { getSt
     })
     console.log(response.data)
     return {
-      userIdAdded: data.userIdAdded
+      userIdAdded: data.userIdAdded,
+      name: response.data.name
+    }
+  } catch (error) {
+    let { data } = error.response
+    if (data && data.error) {
+      return rejectWithValue(data)
+    }
+  }
+})
+
+export const cancelFriendRequest = createAsyncThunk('/user/cancelFrRequest', async (data, { getState, rejectWithValue }) => {
+  const state = getState().userReducer
+  try {
+    let response = await axios.post(`${baseURL}/api/users/cancelrequest/${data.followerId}`, data, {
+      headers: {
+        Authorization: 'Bearer ' + state.user.token
+      }
+    })
+    console.log(response.data)
+    return {
+      followingId: response.data.followingId
     }
   } catch (error) {
     let { data } = error.response
@@ -111,32 +132,46 @@ export const userSlice = createSlice({
     },
     [update.pending]: (state, action) => {
       console.log('update profile pending')
-      state.loading = true
+      // state.loading = true
     },
     [update.fulfilled]: (state, action) => {
       state.user = action.payload.user
       let currentUser = JSON.parse(localStorage.getItem('user'))
       currentUser = extend(currentUser, action.payload.user)
       localStorage.setItem('user', JSON.stringify(currentUser))
-      state.loading = false
+      // state.loading = false
     },
     [update.rejected]: (state, action) => {
       state.error = action.payload.error
-      state.loading = false
+      // state.loading = false
     },
     [addFriend.pending]: (state, action) => {
-      state.loading = true
+      // state.loading = true
     },
     [addFriend.fulfilled]: (state, action) => {
-      state.user.followings.push(action.payload.userIdAdded)
+      state.user.followings.push({
+        _id: action.payload.userIdAdded,
+        name: action.payload.name
+      })
       let currentUser = JSON.parse(localStorage.getItem('user'))
       currentUser = extend(currentUser, state.user)
       localStorage.setItem('user', JSON.stringify(currentUser))
-      state.loading = false
+      // state.loading = false
     },
     [addFriend.rejected]: (state, action) => {
       state.error = action.payload.error
-      state.loading = false
+      // state.loading = false
+    },
+    [cancelFriendRequest.pending]: (state, action) => {
+      console.log("cancel fr req pending")
+    },
+    [cancelFriendRequest.fulfilled]: (state, action) => {
+      let followingId = action.payload.followingId
+      let idx = state.user.followings.map(user => user._id).indexOf(followingId)
+      state.user.followings.splice(idx, 1)
+    },
+    [cancelFriendRequest.rejected]: (state, action) => {
+      state.error = action.payload.error
     }
   }
 })

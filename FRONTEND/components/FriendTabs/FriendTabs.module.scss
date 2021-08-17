@@ -1,0 +1,103 @@
+.friendTabsContainer {
+  background-color: #fff;
+  border-radius: 15px;
+  min-height: 150px;
+  margin: 10px auto;
+  box-shadow: 0px 1px 2px rgb(209, 208, 208);
+  padding: 15px;
+}
+
+.friendTabHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.friendTabHeader > h2 {
+  font-weight: 700;
+}
+
+.searchInput {
+  max-width: 150px;
+  border-radius: 15px;
+  font-size: 20px;
+}
+
+.friendTabSelection {
+  display: flex;
+  flex-direction: row;
+  list-style-type: none;
+  padding-left: 0;
+  margin-bottom: 0;
+}
+
+.friendTabSelection > li {
+  padding: 10px 20px;
+  font-weight: 500;
+  color: gray;
+  cursor: pointer;
+  border-radius: 10px;
+}
+
+.friendTabSelection > li:hover {
+  background-color: rgb(223, 221, 221);
+  transition: background-color 0.3s ease;
+}
+
+li.currentTab {
+  font-weight: 600;
+  color: #3578e5;
+  position: relative;
+}
+
+li.currentTab::after {
+  position: absolute;
+  content: "";
+  height: 3px;
+  width: 100%;
+  bottom: -5px;
+  left: 0;
+  background-color: #3578e5;
+}
+
+li.currentTab:hover {
+  background-color: #fff;
+}
+
+.userListContainer {
+  padding: 15px 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  row-gap: 10px;
+  gap: 10px;
+}
+
+.userItem {
+  border: 1px solid rgb(219, 215, 215);
+  padding: 5px;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.userItem > a {
+  width: 50%;
+  display: flex;
+  align-items: center;
+}
+
+.userItem > .cancelBtn {
+  font-weight: 600;
+  background-color: rgb(221, 221, 221);
+  border-radius: 10px;
+  display: flex;
+  text-align: center;
+  font-size: 16px;
+}
+
+.userAvatarSquare {
+  width: 80px;
+  height: 80px;
+  border-radius: 10px;
+}

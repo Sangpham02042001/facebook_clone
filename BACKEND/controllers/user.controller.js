@@ -84,6 +84,9 @@ const updateProfile = (req, res) => {
       return res.status(200).json(user)
     } catch (error) {
       console.log(error)
+      return res.status('400').json({
+        error: 'Something wrong when update user'
+      })
     }
   })
 }
@@ -92,6 +95,11 @@ const userProfile = async (req, res) => {
   console.log(req.params.userId)
   try {
     let user = await User.findById(req.params.userId)
+      .populate('followings', '_id name')
+      .populate('followers', '_id name')
+      .populate('friends', '_id name')
+    user.salt = undefined
+    user.hashed_password = undefined
     return res.status(200).json({
       user
     })
@@ -118,12 +126,33 @@ const addFriend = async (req, res) => {
     await user.save()
     await userAdded.save()
     return res.status(200).json({
-      message: "Add friend success"
+      message: "Add friend success",
+      name: userAdded.name
     })
   } catch (error) {
     console.log(error)
     return res.status(400).json({
       error: 'Something wrong, try again'
+    })
+  }
+}
+
+const cancelRequest = async (req, res) => {
+  const { userId, followerId } = req.body
+  try {
+    let user = await User.findById(userId)
+    let follower = await User.findById(followerId)
+    user.followers.splice(user.followers.indexOf(followerId), 1)
+    follower.followings.splice(follower.followings.indexOf(userId), 1)
+    await user.save()
+    await follower.save()
+    return res.status(200).json({
+      followingId: userId
+    })
+  } catch (error) {
+    console.log(error)
+    return res.status('400').json({
+      error: 'Something wrong when cancel request'
     })
   }
 }
@@ -161,5 +190,6 @@ module.exports = {
   updateProfile,
   userProfile,
   addFriend,
-  comfirmFriendRequest
+  comfirmFriendRequest,
+  cancelRequest
 }

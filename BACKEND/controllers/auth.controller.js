@@ -18,6 +18,11 @@ const signin = async (req, res) => {
       })
     }
 
+    user = await User.findById(user._id)
+      .populate('followings', '_id name')
+      .populate('followers', '_id name')
+      .populate('friends', '_id name')
+
     const token = jwt.sign({
       _id: user._id,
       name: user.name

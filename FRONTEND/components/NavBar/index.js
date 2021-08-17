@@ -16,9 +16,9 @@ const NavbarDropdownMenu = ({ user }) => {
   const dispatch = useDispatch()
   return <Menu>
     <Menu.Item key="0" style={{ height: "40px" }}>
-      <Link href="/profile">
+      <Link href={`/profile/${user._id}`}>
         <a>
-          <h2 style={{ margin: 0 }}>{user.user.name}</h2>
+          <h2 style={{ margin: 0 }}>{user.name}</h2>
           <p>See you profile</p>
         </a>
       </Link>
@@ -32,6 +32,11 @@ const NavbarDropdownMenu = ({ user }) => {
     </Menu.Item>
   </Menu>
 }
+
+// const NavbarDropdownMenu = ({ user }) => {
+//   const router = useRouter()
+//   const dispatch = useDispatch()
+// }
 
 const NavBar = React.memo(function NavBar(props) {
   const user = useSelector(state => state.userReducer)
@@ -66,7 +71,7 @@ const NavBar = React.memo(function NavBar(props) {
           </Link>
         </span>
         <span className={styles['navbar-dropdown']}>
-          <Dropdown overlay={<NavbarDropdownMenu user={user} />} trigger={['click']}>
+          <Dropdown overlay={<NavbarDropdownMenu user={user.user} />} trigger={['click']}>
             <FontAwesomeIcon className={styles['navbar-dropdown-icon']} icon={faCaretDown} />
           </Dropdown>
         </span>

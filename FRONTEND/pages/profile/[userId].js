@@ -16,7 +16,10 @@ import { baseURL, showError } from '../../utils'
 import eventManager from '../../utils/eventemiter'
 import Layout from '../../components/layout'
 import PostComponent from '../../components/PostComponent'
-import { update, addFriend } from '../../store/reducers/user.reducer'
+import FriendTabs from '../../components/FriendTabs'
+import Loading from '../../components/Loading'
+import { update, addFriend, cancelFriendRequest } from '../../store/reducers/user.reducer'
+import profileReducer, { setProfileAsync, setProfileSync } from '../../store/reducers/profile.reducer'
 import axios from 'axios'
 import styles from './profile.module.scss'
 
@@ -30,7 +33,8 @@ export default function Profile() {
   const profilePosts = useSelector(state => state.postReducer.posts
     .filter(post => post.userId._id === userId))
   const [currentTab, setCurrentTab] = useState('post')
-  const [profile, setProfile] = useState('')
+  const profileReducer = useSelector(state => state.profileReducer)
+  const profile = profileReducer.profile
   const [reloadAvatar, setReloadAvatar] = useState('')
   const [newAvatar, setNewAvatar] = useState('')
   const [newCoverPhoto, setNewCoverPhoto] = useState('')
@@ -45,19 +49,15 @@ export default function Profile() {
   useEffect(() => {
     if (userLoginId !== userId) {
       console.log(userReducer.user.token)
-      const fetchProfile = async () => {
-        const response = await axios.get(`${baseURL}/api/users/${userId}`, {
-          headers: {
-            Authorization: 'Bearer ' + (userReducer.user.token ||
-              JSON.parse(localStorage.getItem('user')).token)
-          }
-        })
-        setProfile(response.data.user)
-      }
-      fetchProfile()
+      dispatch(setProfileAsync({
+        userId
+      }))
     } else {
-      setProfile(userReducer.user)
+      dispatch(setProfileSync({
+        user: userReducer.user
+      }))
     }
+    setCurrentTab('post')
   }, [userId])
 
   useEffect(() => {
@@ -149,6 +149,13 @@ export default function Profile() {
     }))
   }
 
+  const handleCancelRequest = () => {
+    dispatch(cancelFriendRequest({
+      followerId: userLoginId,
+      userId: profile._id
+    }))
+  }
+
   const changeCurrentTab = tab => event => {
     event.preventDefault()
     if (tab !== currentTab) {
@@ -162,109 +169,118 @@ export default function Profile() {
         <title>Profile</title>
       </Head>
       <Layout>
-        <Row style={{ justifyContent: 'center', height: '350px' }}>
-          <Col span={14} className={styles.imageContainer}>
-            {userId && userList.indexOf(userId) &&
-              <Image src={`${baseURL}/api/user/coverphoto/${userId}?reload=${reloadCoverPhoto}`}
-                className={styles.coverImage} preview={false}
-                key={reloadCoverPhoto}
-                width={'100%'} height={320} alt="Cover Photo" />}
-            {
-              userId === userLoginId && <span className={styles.editCoverPhoto} onClick={showModal('coverphoto')}>
-                <FontAwesomeIcon className={styles.camera} icon={faCamera} />
-                <b style={{ marginLeft: '10px' }}>Edit Cover Photo</b>
-              </span>
-            }
-            <span className={styles.avatar}>
-              {userId && userList.indexOf(userId) &&
-                <Avatar size={156} key={reloadAvatar}
-                  src={`${baseURL}/api/user/avatar/${userId}?reaload=${reloadAvatar}`} />}
-              {userId === userLoginId &&
-                <span onClick={showModal('profile')} className={styles.cameraContainer}>
-                  <FontAwesomeIcon className={styles.camera} icon={faCamera} />
-                </span>}
-            </span>
-          </Col>
-        </Row>
-        <Row style={{ display: 'flex', justifyContent: 'center' }}>
-          <Col className={styles.shortIntro} lg={14} md={16} >
-            {userLoginId === userId ? <h1>{userReducer.user.name}</h1>
-              : <h1>{profile.name}</h1>}
-            {!editing && userLoginId === userId && (
-              !userReducer.loading ? <>
-                {userReducer.user.bio && <p>{userReducer.user.bio}</p>}
-                <p style={{ color: '#00bbf0', cursor: 'pointer', marginBottom: 0 }}
-                  onClick={() => setEditing(true)}>
-                  Edit</p>
-              </> : <Image width={40} height={40} src="/images/spinner-loading.gif" alt="Updating..." />
-            )}
-            {editing && userLoginId === userId && <div className={styles.editBioContainer}>
-              <Input.TextArea rows={3} value={bio} onChange={handleBioChange} />
-              <p style={{ color: 'gray', textAlign: 'right' }}>{100 - bio.length} characters remaining</p>
-              <div className={styles.editBioBtn}>
-                <Button onClick={cancelEditBio}>Cancel</Button>
-                <Button disabled={bio === userReducer.user.bio} onClick={saveBioChanged}>Save</Button>
-              </div>
-            </div>}
-            <Divider style={{ marginBottom: 0, borderColor: 'rgb(190, 190, 190)' }} />
-          </Col>
-        </Row>
-        <Row style={{ display: 'flex', justifyContent: 'center' }}>
-          <Col lg={14} md={16} className={styles.profileSelectionContainer}>
-            <ul className={styles.profileSeletionList}>
-              <li value='post' onClick={changeCurrentTab('post')}
-                className={currentTab === 'post' ? (styles.currentTab) : ''}>Post
-              </li>
-              <li value='about' onClick={changeCurrentTab('about')}
-                className={currentTab === 'about' ? (styles.currentTab) : ''}>About
-              </li>
-              <li value='friends' onClick={changeCurrentTab('friends')}
-                className={currentTab === 'friends' ? (styles.currentTab) : ''}>
-                Friends {profile.friends && profile.friends.length}
-              </li>
-            </ul>
-            {
-              userId === userLoginId ? <span onClick={showModal('editProfile')} className={styles.editProfileBtn}>
-                <FontAwesomeIcon icon={faPencilAlt} style={{ marginRight: '10px' }} />
-                Edit Profile
-              </span> : (
-                userReducer.user.followings.indexOf(userId) < 0 ?
-                  <span className={styles.addFriendBtn} onClick={handleAddFriend}>
-                    <FontAwesomeIcon icon={faUserPlus} style={{ marginRight: '10px' }} />
-                    Add friend
-                  </span> : <div>
-                    <span className={styles.addFriendBtn} style={{ marginRight: '10px' }}>
-                      <FontAwesomeIcon icon={faCheckCircle} style={{ marginRight: '10px' }} />
-                      Confirm Request
-                    </span>
-                    <span className={styles.editProfileBtn}>
-                      <FontAwesomeIcon icon={faTimes} style={{ marginRight: '10px' }} />
-                      Delete Request
-                    </span>
+        {(!userReducer.loading && !profileReducer.loading)
+          ? <>
+            <Row style={{ justifyContent: 'center', height: '350px' }}>
+              <Col span={14} className={styles.imageContainer}>
+                {userId && userList.indexOf(userId) &&
+                  <Image src={`${baseURL}/api/user/coverphoto/${userId}?reload=${reloadCoverPhoto}`}
+                    className={styles.coverImage} preview={false}
+                    key={reloadCoverPhoto}
+                    width={'100%'} height={320} alt="Cover Photo" />}
+                {
+                  userId === userLoginId && <span className={styles.editCoverPhoto} onClick={showModal('coverphoto')}>
+                    <FontAwesomeIcon className={styles.camera} icon={faCamera} />
+                    <b style={{ marginLeft: '10px' }}>Edit Cover Photo</b>
+                  </span>
+                }
+                <span className={styles.avatar}>
+                  {userId && userList.indexOf(userId) &&
+                    <Avatar size={156} key={reloadAvatar}
+                      src={`${baseURL}/api/user/avatar/${userId}?reaload=${reloadAvatar}`} />}
+                  {userId === userLoginId &&
+                    <span onClick={showModal('profile')} className={styles.cameraContainer}>
+                      <FontAwesomeIcon className={styles.camera} icon={faCamera} />
+                    </span>}
+                </span>
+              </Col>
+            </Row>
+            <Row style={{ display: 'flex', justifyContent: 'center' }}>
+              <Col className={styles.shortIntro} lg={14} md={16} >
+                {userLoginId === userId ? <h1>{userReducer.user.name}</h1>
+                  : <h1>{profile.name}</h1>}
+                {!editing && userLoginId === userId && (
+                  !userReducer.loading ? <>
+                    {userReducer.user.bio && <p>{userReducer.user.bio}</p>}
+                    <p style={{ color: '#00bbf0', cursor: 'pointer', marginBottom: 0 }}
+                      onClick={() => setEditing(true)}>
+                      Edit</p>
+                  </> : <Image width={40} height={40} src="/images/spinner-loading.gif" alt="Updating..." />
+                )}
+                {editing && userLoginId === userId && <div className={styles.editBioContainer}>
+                  <Input.TextArea rows={3} value={bio} onChange={handleBioChange} />
+                  <p style={{ color: 'gray', textAlign: 'right' }}>{100 - bio.length} characters remaining</p>
+                  <div className={styles.editBioBtn}>
+                    <Button onClick={cancelEditBio}>Cancel</Button>
+                    <Button disabled={bio === userReducer.user.bio} onClick={saveBioChanged}>Save</Button>
                   </div>
-              )
-            }
-          </Col>
-        </Row>
-        <Divider style={{ margin: 0, borderColor: 'rgb(190, 190, 190)' }} />
-        <Row className={styles.profileContainerPage}>
-          <Col span={16}>
-            {
-              currentTab === 'post' && profilePosts && profilePosts.map(post => (
-                <PostComponent key={post._id} post={post} />
-              ))
-            }
-            {
-              currentTab === 'about' && <h2>About</h2>
-            }
-            {
-              currentTab === 'friends' && (
-                profile && !profile.friends.length ? <h1>{profile.name} doesn't have any friends </h1>
-                  : (JSON.stringify(profile.friends))
-              )
-            }
-          </Col>
-        </Row>
+                </div>}
+                <Divider style={{ marginBottom: 0, borderColor: 'rgb(190, 190, 190)' }} />
+              </Col>
+            </Row>
+            <Row style={{ display: 'flex', justifyContent: 'center' }}>
+              <Col lg={14} md={16} className={styles.profileSelectionContainer}>
+                <ul className={styles.profileSeletionList}>
+                  <li onClick={changeCurrentTab('post')}
+                    className={currentTab === 'post' ? (styles.currentTab) : ''}>Post
+                  </li>
+                  <li onClick={changeCurrentTab('about')}
+                    className={currentTab === 'about' ? (styles.currentTab) : ''}>About
+                  </li>
+                  <li onClick={changeCurrentTab('friends')}
+                    className={currentTab === 'friends' ? (styles.currentTab) : ''}>
+                    Friends {profile.friends && profile.friends.length}
+                  </li>
+                </ul>
+                {
+                  userId === userLoginId ? <span onClick={showModal('editProfile')} className={styles.editProfileBtn}>
+                    <FontAwesomeIcon icon={faPencilAlt} style={{ marginRight: '10px' }} />
+                    Edit Profile
+                  </span> : (
+                    userReducer.user.followings
+                      && userReducer.user.followings.map(user => user._id).indexOf(userId) < 0 ?
+                      <span className={styles.addFriendBtn} onClick={handleAddFriend}>
+                        <FontAwesomeIcon icon={faUserPlus} style={{ marginRight: '10px' }} />
+                        Add friend
+                      </span> : <div>
+                        <span className={styles.editProfileBtn} onClick={handleCancelRequest}>
+                          <FontAwesomeIcon icon={faTimes} style={{ marginRight: '10px' }} />
+                          Cancel Request
+                        </span>
+                      </div>
+                  )
+                }
+                {/* <div>
+                        <span className={styles.addFriendBtn} style={{ marginRight: '10px' }}>
+                          <FontAwesomeIcon icon={faCheckCircle} style={{ marginRight: '10px' }} />
+                          Confirm Request
+                        </span>
+                        <span className={styles.editProfileBtn}>
+                          <FontAwesomeIcon icon={faTimes} style={{ marginRight: '10px' }} />
+                          Delete Request
+                        </span>
+                      </div> */}
+              </Col>
+            </Row>
+            <Divider style={{ margin: 0, borderColor: 'rgb(190, 190, 190)' }} />
+            <Row className={styles.profileContainerPage}>
+              <Col span={16}>
+                {
+                  currentTab === 'post' && profilePosts && profilePosts.map(post => (
+                    <PostComponent key={post._id} post={post} />
+                  ))
+                }
+                {
+                  currentTab === 'about' && <h2>About</h2>
+                }
+                {
+                  currentTab === 'friends' && (
+                    profile && <FriendTabs profile={profile} ownProfile={userLoginId === userId} />)
+                }
+              </Col>
+            </Row>
+          </>
+          : <Loading />}
       </Layout>
       {
         profileModalVisible &&

@@ -162,6 +162,8 @@ li.currentTab:hover {
 .profileContainerPage {
   background-color: #f0f2f5;
   min-height: 300px;
+  display: flex;
+  justify-content: center;
 }
 
 .rowEditModal {
