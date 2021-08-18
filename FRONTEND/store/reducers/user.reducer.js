@@ -98,6 +98,47 @@ export const cancelFriendRequest = createAsyncThunk('/user/cancelFrRequest', asy
   }
 })
 
+export const confirmFriendRequest = createAsyncThunk('/user/confirmFrRequest', async (data, { getState, rejectWithValue }) => {
+  const state = getState().userReducer
+  try {
+    let response = await axios.post(`${baseURL}/api/users/confirmfriend/${data.followingId}`, data, {
+      headers: {
+        Authorization: 'Bearer ' + state.user.token
+      }
+    })
+    console.log(response.data)
+    return {
+      newFriend: response.data.newFriend,
+      followerId: data.userId
+    }
+  } catch (error) {
+    let { data } = error.response
+    if (data && data.error) {
+      return rejectWithValue(data)
+    }
+  }
+})
+
+export const unfriend = createAsyncThunk('/user/unfriend', async (data, { getState, rejectWithValue }) => {
+  const state = getState().userReducer
+  try {
+    let response = await axios.post(`${baseURL}/api/users/unfriend/${data.userId}`, data, {
+      headers: {
+        Authorization: 'Bearer ' + state.user.token
+      }
+    })
+    console.log(response.data)
+    return {
+      friendId: data.friendId
+    }
+  } catch (error) {
+    let { data } = error.response
+    if (data && data.error) {
+      return rejectWithValue(data)
+    }
+  }
+})
+
 export const userSlice = createSlice({
   name: 'user',
   initialState,
@@ -171,6 +212,31 @@ export const userSlice = createSlice({
       state.user.followings.splice(idx, 1)
     },
     [cancelFriendRequest.rejected]: (state, action) => {
+      state.error = action.payload.error
+    },
+    [confirmFriendRequest.pending]: (state, action) => {
+      console.log("confirm fr request peding")
+    },
+    [confirmFriendRequest.fulfilled]: (state, action) => {
+      let newFriend = action.payload.newFriend
+      let followerIdx = state.user.followers.indexOf(action.payload.followerId)
+      state.user.followers.splice(followerIdx, 1)
+      state.user.friends.push(newFriend)
+    },
+    [confirmFriendRequest.rejected]: (state, action) => {
+      state.error = action.payload.error
+    },
+    [unfriend.pending]: (state, action) => {
+      console.log('unfriend pending')
+    },
+    [unfriend.fulfilled]: (state, action) => {
+      let friendId = action.payload.friendId
+      let friendIdx = state.user.friends.map(user => user._id).indexOf(friendId)
+      if (friendIdx > -1) {
+        state.user.friends.splice(friendIdx, 1)
+      }
+    },
+    [unfriend.rejected]: (state, action) => {
       state.error = action.payload.error
     }
   }

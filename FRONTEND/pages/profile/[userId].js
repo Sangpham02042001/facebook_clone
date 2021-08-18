@@ -1,16 +1,16 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState } from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useSelector, useDispatch } from 'react-redux'
 import {
   Row, Col, Avatar, Image,
-  Input, Button, Modal, Divider
+  Input, Button, Modal, Divider, Dropdown, Menu
 } from 'antd'
 import UploadImage from '../../components/UploadImage'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faCamera, faPencilAlt, faTimes,
-  faUserPlus, faCheckCircle
+  faUserPlus, faCheckCircle, faCheck
 } from '@fortawesome/free-solid-svg-icons'
 import { baseURL, showError } from '../../utils'
 import eventManager from '../../utils/eventemiter'
@@ -18,15 +18,14 @@ import Layout from '../../components/layout'
 import PostComponent from '../../components/PostComponent'
 import FriendTabs from '../../components/FriendTabs'
 import Loading from '../../components/Loading'
-import { update, addFriend, cancelFriendRequest } from '../../store/reducers/user.reducer'
-import profileReducer, { setProfileAsync, setProfileSync } from '../../store/reducers/profile.reducer'
-import axios from 'axios'
+import RespondDropdown from '../../components/RespondDropdown'
+import { update, addFriend, cancelFriendRequest, unfriend } from '../../store/reducers/user.reducer'
+import { setProfileAsync, setProfileSync, addFollower, cancelFollowing, removeFriend } from '../../store/reducers/profile.reducer'
 import styles from './profile.module.scss'
 
 export default function Profile() {
   const dispatch = useDispatch()
   const router = useRouter()
-  const avatarRef = useRef()
   const { userId } = router.query
   const userReducer = useSelector(state => state.userReducer)
   const userList = useSelector(state => state.userListReducer.userList)
@@ -147,6 +146,10 @@ export default function Profile() {
     dispatch(addFriend({
       userIdAdded: userId
     }))
+    dispatch(addFollower({
+      followerId: userLoginId,
+      name: userReducer.user.name
+    }))
   }
 
   const handleCancelRequest = () => {
@@ -154,6 +157,22 @@ export default function Profile() {
       followerId: userLoginId,
       userId: profile._id
     }))
+    dispatch(cancelFollowing({
+      followingId: userLoginId
+    }))
+  }
+
+  const handleUnfriend = () => {
+    let confirm = window.confirm('Unfriend this user ??')
+    if (confirm) {
+      dispatch(unfriend({
+        userId: userLoginId,
+        friendId: userId
+      }))
+      dispatch(removeFriend({
+        userId: userLoginId
+      }))
+    }
   }
 
   const changeCurrentTab = tab => event => {
@@ -239,10 +258,34 @@ export default function Profile() {
                   </span> : (
                     userReducer.user.followings
                       && userReducer.user.followings.map(user => user._id).indexOf(userId) < 0 ?
-                      <span className={styles.addFriendBtn} onClick={handleAddFriend}>
-                        <FontAwesomeIcon icon={faUserPlus} style={{ marginRight: '10px' }} />
-                        Add friend
-                      </span> : <div>
+                      (
+                        userReducer.user.followers.map(user => user._id).indexOf(userId) >= 0
+                          ? <span className={styles.addFriendBtn}>
+                            <Dropdown overlay={<RespondDropdown userLoginId={userLoginId} userId={userId} />}
+                              trigger={['click']}>
+                              <span>Respond</span>
+                            </Dropdown>
+                          </span>
+                          : (
+                            userReducer.user.friends.map(user => user._id).indexOf(userId) >= 0
+                              ? <span className={styles.addFriendBtn}>
+                                <Dropdown
+                                  overlay={<Menu>
+                                    <Menu.Item key="0" onClick={handleUnfriend}>
+                                      Unfriend
+                                    </Menu.Item>
+                                  </Menu>} trigger={['click']}>
+                                  <span>
+                                    <FontAwesomeIcon icon={faCheck} style={{ marginRight: '10px' }} />
+                                    Friend</span>
+                                </Dropdown>
+                              </span>
+                              : <span className={styles.addFriendBtn} onClick={handleAddFriend}>
+                                <FontAwesomeIcon icon={faUserPlus} style={{ marginRight: '10px' }} />
+                                Add friend
+                              </span>
+                          )
+                      ) : <div>
                         <span className={styles.editProfileBtn} onClick={handleCancelRequest}>
                           <FontAwesomeIcon icon={faTimes} style={{ marginRight: '10px' }} />
                           Cancel Request

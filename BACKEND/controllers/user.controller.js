@@ -67,6 +67,9 @@ const updateProfile = (req, res) => {
     let userId = req.auth._id
     try {
       let user = await User.findById(userId)
+        .populate('followings', '_id name')
+        .populate('followers', '_id name')
+        .populate('friends', '_id name')
       user = extend(user, fields)
       if (files.avatar) {
         user.avatar.data = fs.readFileSync(files.avatar.path)
@@ -100,6 +103,8 @@ const userProfile = async (req, res) => {
       .populate('friends', '_id name')
     user.salt = undefined
     user.hashed_password = undefined
+    user.avatar = undefined
+    user.coverPhoto = undefined
     return res.status(200).json({
       user
     })
@@ -137,6 +142,26 @@ const addFriend = async (req, res) => {
   }
 }
 
+const unfriend = async (req, res) => {
+  let { userId, friendId } = req.body
+  try {
+    let user = await User.findById(userId)
+    let friend = await User.findById(friendId)
+    user.friends.splice(user.friends.indexOf(friendId), 1)
+    friend.friends.splice(friend.friends.indexOf(userId), 1)
+    await user.save()
+    await friend.save()
+    return res.status(200).json({
+      message: 'Unfriend Successfully'
+    })
+  } catch (error) {
+    console.log(error)
+    return res.status(400).json({
+      error: 'Something wrong, try again'
+    })
+  }
+}
+
 const cancelRequest = async (req, res) => {
   const { userId, followerId } = req.body
   try {
@@ -158,7 +183,30 @@ const cancelRequest = async (req, res) => {
 }
 
 const comfirmFriendRequest = async (req, res) => {
-
+  const { followingId, userId } = req.body
+  try {
+    let followedUser = await User.findById(followingId)
+    let user = await User.findById(userId)
+    let followingIdx = user.followings.indexOf(followingId)
+    user.followings.splice(followingIdx, 1)
+    user.friends.push(followingId)
+    let followerIdx = followedUser.followers.indexOf(userId)
+    followedUser.followers.splice(followerIdx, 1)
+    followedUser.friends.push(userId)
+    await user.save()
+    await followedUser.save()
+    return res.status(200).json({
+      newFriend: {
+        _id: userId,
+        name: user.name
+      }
+    })
+  } catch (error) {
+    console.log(error)
+    return res.status('400').json({
+      error: 'Something wrong when confirm friend request'
+    })
+  }
 }
 
 const userByID = async (req, res, next, id) => {
@@ -191,5 +239,6 @@ module.exports = {
   userProfile,
   addFriend,
   comfirmFriendRequest,
-  cancelRequest
+  cancelRequest,
+  unfriend
 }
