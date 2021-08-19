@@ -17,6 +17,7 @@ import eventManager from '../../utils/eventemiter'
 import Layout from '../../components/layout'
 import PostComponent from '../../components/PostComponent'
 import FriendTabs from '../../components/FriendTabs'
+import AboutTab from '../../components/AboutTab'
 import Loading from '../../components/Loading'
 import RespondDropdown from '../../components/RespondDropdown'
 import { update, addFriend, cancelFriendRequest, unfriend } from '../../store/reducers/user.reducer'
@@ -29,8 +30,8 @@ export default function Profile() {
   const { userId } = router.query
   const userReducer = useSelector(state => state.userReducer)
   const userList = useSelector(state => state.userListReducer.userList)
-  const profilePosts = useSelector(state => state.postReducer.posts
-    .filter(post => post.userId._id === userId))
+  // const profilePosts = useSelector(state => state.postReducer.posts
+  //   .filter(post => post.userId._id === userId))
   const [currentTab, setCurrentTab] = useState('post')
   const profileReducer = useSelector(state => state.profileReducer)
   const profile = profileReducer.profile
@@ -308,13 +309,13 @@ export default function Profile() {
             <Divider style={{ margin: 0, borderColor: 'rgb(190, 190, 190)' }} />
             <Row className={styles.profileContainerPage}>
               <Col span={16}>
-                {
+                {/* {
                   currentTab === 'post' && profilePosts && profilePosts.map(post => (
                     <PostComponent key={post._id} post={post} />
                   ))
-                }
+                } */}
                 {
-                  currentTab === 'about' && <h2>About</h2>
+                  currentTab === 'about' && <AboutTab user={userReducer.user} />
                 }
                 {
                   currentTab === 'friends' && (

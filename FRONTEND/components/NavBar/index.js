@@ -47,7 +47,7 @@ const NavBar = React.memo(function NavBar(props) {
       console.log('navbar', time)
       avatarUpdated !== time && setAvatarUpdated(time)
     })
-  })
+  }, [])
 
   console.log('header render')
   return (

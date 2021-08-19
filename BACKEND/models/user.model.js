@@ -34,6 +34,24 @@ const UserSchema = new mongoose.Schema({
     data: Buffer,
     contentType: String
   },
+  relationshipStatus: {
+    type: String
+  },
+  workplace: [
+    {
+      name: String,
+      _id: String,
+    }
+  ],
+  college: [
+    {
+      name: String,
+      _id: String,
+    }
+  ],
+  highSchool: {
+    type: String
+  },
   friends: [
     { type: mongoose.Types.ObjectId, ref: 'User' }
   ],

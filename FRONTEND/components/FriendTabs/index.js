@@ -72,7 +72,7 @@ const UserItem = ({ user, currentTab, ownProfile, userLoginId }) => {
       currentTab === 'followers' && (
         (userLoginId === user._id && !ownProfile) ? <Button onClick={handleCancelRequest} className={styles.cancelBtn}>Cancel Request</Button>
           : (ownProfile && <Button>
-            <Dropdown overlay={<RespondDropdown userLoginId={userLoginId} userId={user._id} />}
+            <Dropdown overlay={<RespondDropdown userLoginId={userLoginId} user={user} />}
               trigger={['click']}>
               <span>Respond</span>
             </Dropdown>
@@ -83,7 +83,7 @@ const UserItem = ({ user, currentTab, ownProfile, userLoginId }) => {
       currentTab === 'followings' && (
         (userLoginId !== user._id && ownProfile) ? <Button onClick={handleCancelRequest} className={styles.cancelBtn}>Cancel Request</Button>
           : <Button>
-            <Dropdown overlay={<RespondDropdown userLoginId={userLoginId} userId={user._id} />}
+            <Dropdown overlay={<RespondDropdown userLoginId={userLoginId} user={user} />}
               trigger={['click']}>
               <span>Respond</span>
             </Dropdown>

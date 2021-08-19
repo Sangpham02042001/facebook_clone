@@ -56,6 +56,22 @@ export const profileSlice = createSlice({
       if (userIdx > -1) {
         state.profile.friends.splice(userIdx, 1)
       }
+    },
+    profileAddFriend: (state, action) => {
+      let { userId, name } = action.payload
+      let checkIndex = state.profile.friends.map(user => user._id).indexOf(userId)
+      if (checkIndex < 0) {
+        state.profile.friends.push({
+          _id: userId,
+          name: name
+        })
+      }
+      checkIndex = state.profile.followers.map(user => user._id).indexOf(userId)
+      state.profile.followers.splice(checkIndex, 1)
+    },
+    updateProfile: (state, action) => {
+      let data = action.payload
+      state.profile = extend(state.profile, data)
     }
   },
   extraReducers: {
@@ -75,6 +91,6 @@ export const profileSlice = createSlice({
 })
 
 export const { setProfileSync, addFollower,
-  cancelFollowing, removeFriend } = profileSlice.actions
+  cancelFollowing, removeFriend, profileAddFriend, updateProfile } = profileSlice.actions
 
 export default profileSlice.reducer

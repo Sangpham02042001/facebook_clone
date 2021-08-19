@@ -37,7 +37,7 @@ export const update = createAsyncThunk('user/udpate', async (data, { rejectWithV
   for (const key of keys) {
     userData.append(key, data[key])
   }
-  console.log(user, data)
+  console.log(data)
   try {
     const response = await axios.put(`${baseURL}/api/users/${user._id}`, userData, {
       headers: {

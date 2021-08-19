@@ -36,7 +36,11 @@ const signin = async (req, res) => {
       bio: user.bio,
       friends: user.friends,
       followings: user.followings,
-      followers: user.followers
+      followers: user.followers,
+      relationshipStatus: user.relationshipStatus,
+      workplace: user.workplace,
+      highSchool: user.highSchool,
+      college: user.college
     })
 
   } catch (err) {
