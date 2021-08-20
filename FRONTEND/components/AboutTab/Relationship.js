@@ -2,20 +2,19 @@ import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { update } from '../../store/reducers/user.reducer'
 import { updateProfile } from '../../store/reducers/profile.reducer'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faHeart, faEllipsisH, faPlusCircle } from '@fortawesome/free-solid-svg-icons'
-import { Select, Button } from 'antd'
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+// import { faHeart, faEllipsisH, faPlusCircle } from '@fortawesome/free-solid-svg-icons'
+import { Select, Button, Dropdown, Menu } from 'antd'
 import styles from './AboutTab.module.scss'
 
 const { Option } = Select
 
-export default function Relationship({ relationshipStatus }) {
+export default function Relationship({ relationshipStatus, ownProfile }) {
   const [editting, setEditing] = useState(false)
   const [status, setStatus] = useState(relationshipStatus || 'Status')
   const dispacth = useDispatch()
 
-  const toggleEditting = event => {
-    event.preventDefault()
+  const toggleEditting = () => {
     setEditing(!editting)
   }
 
@@ -40,6 +39,19 @@ export default function Relationship({ relationshipStatus }) {
       }))
       setEditing(false)
     }
+  }
+
+  const handleDelete = () => {
+    let confirm = window.confirm('Remove the relationship from profile ???')
+    if (!confirm) {
+      return;
+    }
+    dispacth(update({
+      relationshipStatus: undefined
+    }))
+    dispacth(updateProfile({
+      relationshipStatus: undefined
+    }))
   }
 
   return (
@@ -76,16 +88,31 @@ export default function Relationship({ relationshipStatus }) {
       </div>
         :
         (!relationshipStatus
-          ? <div onClick={toggleEditting} className={styles.addInfo}>
-            <FontAwesomeIcon icon={faPlusCircle} className={styles.addInfoIcon} />
+          ? (ownProfile && <div onClick={toggleEditting} className={styles.addInfo}>
+            {/* <FontAwesomeIcon icon={faPlusCircle} className={styles.addInfoIcon} /> */}
+            <i className={`fas fa-plus-circle ${styles.addInfoIcon}`}></i>
             Add a relationship status
-          </div>
+          </div>)
           : <div className={styles.relationShipStatusLine}>
             <span>
-              <FontAwesomeIcon icon={faHeart} style={{ marginRight: '10px' }} />
+              {/* <FontAwesomeIcon icon={faHeart} style={{ marginRight: '10px' }} /> */}
+              <i className="fas fa-heart" style={{ marginRight: '10px' }}></i>
               {relationshipStatus}
             </span>
-            <FontAwesomeIcon onClick={toggleEditting} icon={faEllipsisH} />
+            {/* <FontAwesomeIcon onClick={toggleEditting} icon={faEllipsisH} /> */}
+            {ownProfile && <Dropdown
+              overlay={<Menu>
+                <Menu.Item key="0" onClick={toggleEditting}>
+                  Edit
+                </Menu.Item>
+                <Menu.Item key="1" onClick={handleDelete}>
+                  Delete
+                </Menu.Item>
+                <Menu.Divider />
+              </Menu>}
+              trigger={['click']}>
+              <i className="fas fa-ellipsis-h" style={{ cursor: 'pointer' }}></i>
+            </Dropdown>}
           </div>)}
     </div>
   )

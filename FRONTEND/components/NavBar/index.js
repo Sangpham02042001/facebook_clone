@@ -72,7 +72,8 @@ const NavBar = React.memo(function NavBar(props) {
         </span>
         <span className={styles['navbar-dropdown']}>
           <Dropdown overlay={<NavbarDropdownMenu user={user.user} />} trigger={['click']}>
-            <FontAwesomeIcon className={styles['navbar-dropdown-icon']} icon={faCaretDown} />
+            {/* <FontAwesomeIcon className={styles['navbar-dropdown-icon']} icon={faCaretDown} /> */}
+            <i className={`fas fa-caret-down ${styles['navbar-dropdown-icon']}`}></i>
           </Dropdown>
         </span>
       </div>}

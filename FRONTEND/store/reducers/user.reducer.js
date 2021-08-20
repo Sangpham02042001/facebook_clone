@@ -37,11 +37,12 @@ export const update = createAsyncThunk('user/udpate', async (data, { rejectWithV
   for (const key of keys) {
     userData.append(key, data[key])
   }
-  console.log(data)
+  console.log(userData)
   try {
     const response = await axios.put(`${baseURL}/api/users/${user._id}`, userData, {
       headers: {
-        'Authorization': 'Bearer ' + user.token
+        'Authorization': 'Bearer ' + user.token,
+        'Content-Type': 'application/json'
       },
     })
     console.log(response.data)
@@ -176,7 +177,14 @@ export const userSlice = createSlice({
       // state.loading = true
     },
     [update.fulfilled]: (state, action) => {
-      state.user = action.payload.user
+      let user = action.payload.user
+      for (const key of Object.keys(user)) {
+        if (user[key] === 'undefined') {
+          state.user[key] = undefined
+          user[key] = undefined
+        }
+      }
+      state.user = extend(state.user, user)
       let currentUser = JSON.parse(localStorage.getItem('user'))
       currentUser = extend(currentUser, action.payload.user)
       localStorage.setItem('user', JSON.stringify(currentUser))

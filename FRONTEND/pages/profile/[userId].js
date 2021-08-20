@@ -20,7 +20,7 @@ import FriendTabs from '../../components/FriendTabs'
 import AboutTab from '../../components/AboutTab'
 import Loading from '../../components/Loading'
 import RespondDropdown from '../../components/RespondDropdown'
-import { update, addFriend, cancelFriendRequest, unfriend } from '../../store/reducers/user.reducer'
+import { update, addFriend, cancelFriendRequest, unfriend, isAuthenticated } from '../../store/reducers/user.reducer'
 import { setProfileAsync, setProfileSync, addFollower, cancelFollowing, removeFriend } from '../../store/reducers/profile.reducer'
 import styles from './profile.module.scss'
 
@@ -47,6 +47,10 @@ export default function Profile() {
   let userLoginId = userReducer.user._id
 
   useEffect(() => {
+    // if (userList.length > 0 && userList.indexOf(userId) < 0) {
+    //   router.push('/404')
+    //   return;
+    // }
     if (userLoginId !== userId) {
       console.log(userReducer.user.token)
       dispatch(setProfileAsync({
@@ -65,13 +69,16 @@ export default function Profile() {
   }, [userReducer.user.bio])
 
   useEffect(() => {
-    if (userList.indexOf(userId) < 0) {
+    if (!userReducer.authenticated) {
+      dispatch(isAuthenticated())
+    }
+    if (userList.length > 0 && userList.indexOf(userId) < 0) {
       router.push('/404')
       return;
     }
-    if (!userReducer.authenticated) {
-      router.push('/')
-    }
+    // if (!userReducer.authenticated) {
+    //   router.push('/')
+    // }
   }, [userReducer.authenticated])
 
   const handleBioChange = e => {
@@ -200,7 +207,8 @@ export default function Profile() {
                     width={'100%'} height={320} alt="Cover Photo" />}
                 {
                   userId === userLoginId && <span className={styles.editCoverPhoto} onClick={showModal('coverphoto')}>
-                    <FontAwesomeIcon className={styles.camera} icon={faCamera} />
+                    {/* <FontAwesomeIcon className={styles.camera} icon={faCamera} /> */}
+                    <i className={`fas fa-camera ${styles.camera}`}></i>
                     <b style={{ marginLeft: '10px' }}>Edit Cover Photo</b>
                   </span>
                 }
@@ -210,7 +218,8 @@ export default function Profile() {
                       src={`${baseURL}/api/user/avatar/${userId}?reaload=${reloadAvatar}`} />}
                   {userId === userLoginId &&
                     <span onClick={showModal('profile')} className={styles.cameraContainer}>
-                      <FontAwesomeIcon className={styles.camera} icon={faCamera} />
+                      {/* <FontAwesomeIcon className={styles.camera} icon={faCamera} /> */}
+                      <i className={`fas fa-camera ${styles.camera}`}></i>
                     </span>}
                 </span>
               </Col>
@@ -254,7 +263,8 @@ export default function Profile() {
                 </ul>
                 {
                   userId === userLoginId ? <span onClick={showModal('editProfile')} className={styles.editProfileBtn}>
-                    <FontAwesomeIcon icon={faPencilAlt} style={{ marginRight: '10px' }} />
+                    {/* <FontAwesomeIcon icon={faPencilAlt} style={{ marginRight: '10px' }} /> */}
+                    <i className="fas fa-pencil-alt" style={{ marginRight: '10px' }}></i>
                     Edit Profile
                   </span> : (
                     userReducer.user.followings
@@ -277,18 +287,21 @@ export default function Profile() {
                                     </Menu.Item>
                                   </Menu>} trigger={['click']}>
                                   <span>
-                                    <FontAwesomeIcon icon={faCheck} style={{ marginRight: '10px' }} />
+                                    {/* <FontAwesomeIcon icon={faCheck} style={{ marginRight: '10px' }} /> */}
+                                    <i className="fas fa-check" style={{ marginRight: '10px' }}></i>
                                     Friend</span>
                                 </Dropdown>
                               </span>
                               : <span className={styles.addFriendBtn} onClick={handleAddFriend}>
-                                <FontAwesomeIcon icon={faUserPlus} style={{ marginRight: '10px' }} />
+                                {/* <FontAwesomeIcon icon={faUserPlus} style={{ marginRight: '10px' }} /> */}
+                                <i className="fas fa-user-plus" style={{ marginRight: '10px' }}></i>
                                 Add friend
                               </span>
                           )
                       ) : <div>
                         <span className={styles.editProfileBtn} onClick={handleCancelRequest}>
-                          <FontAwesomeIcon icon={faTimes} style={{ marginRight: '10px' }} />
+                          {/* <FontAwesomeIcon icon={faTimes} style={{ marginRight: '10px' }} /> */}
+                          <i className="fas fa-times" style={{ marginRight: '10px' }}></i>
                           Cancel Request
                         </span>
                       </div>
@@ -315,7 +328,7 @@ export default function Profile() {
                   ))
                 } */}
                 {
-                  currentTab === 'about' && <AboutTab user={userReducer.user} />
+                  currentTab === 'about' && <AboutTab user={profileReducer.profile} ownProfile={userLoginId === userId} />
                 }
                 {
                   currentTab === 'friends' && (

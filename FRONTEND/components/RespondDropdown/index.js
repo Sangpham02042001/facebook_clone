@@ -30,11 +30,13 @@ const RespondDropdown = ({ userLoginId, user }) => {
   return (
     <Menu>
       <Menu.Item key="0" onClick={handleConfirm} className={styles.dropdownItem}>
-        <FontAwesomeIcon icon={faCheck} style={{ marginRight: '10px' }} />
+        {/* <FontAwesomeIcon icon={faCheck} style={{ marginRight: '10px' }} /> */}
+        <i className="fas fa-check" style={{ marginRight: '10px' }}></i>
         Confirm Request
       </Menu.Item>
       <Menu.Item key="1" className={styles.dropdownItem}>
-        <FontAwesomeIcon icon={faTimes} style={{ marginRight: '10px' }} />
+        {/* <FontAwesomeIcon icon={faTimes} style={{ marginRight: '10px' }} /> */}
+        <i className="fas fa-times" style={{ marginRight: '10px' }}></i>
         Refuse
       </Menu.Item>
       <Menu.Divider />

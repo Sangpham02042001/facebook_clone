@@ -37,20 +37,26 @@ const UserSchema = new mongoose.Schema({
   relationshipStatus: {
     type: String
   },
-  workplace: [
+  workplaces: [
     {
       name: String,
       _id: String,
+      startDate: String,
+      endDate: String
     }
   ],
-  college: [
+  colleges: [
     {
       name: String,
       _id: String,
+      startDate: String,
+      endDate: String
     }
   ],
   highSchool: {
-    type: String
+    type: String,
+    startDate: String,
+    endDate: String
   },
   friends: [
     { type: mongoose.Types.ObjectId, ref: 'User' }

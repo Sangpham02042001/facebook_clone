@@ -56,7 +56,7 @@ const updateProfile = (req, res) => {
   console.log('inside update profile')
   const form = formidable.IncomingForm()
   form.keepExtensions = true
-  console.log(form)
+  // console.log(form)
   form.parse(req, async (err, fields, files) => {
     console.log(fields, files)
     if (err) {
@@ -65,12 +65,66 @@ const updateProfile = (req, res) => {
       })
     }
     let userId = req.auth._id
+    let user
     try {
-      let user = await User.findById(userId)
-        .populate('followings', '_id name')
-        .populate('followers', '_id name')
-        .populate('friends', '_id name')
-      user = extend(user, fields)
+      if (fields.typeInfo) {
+        let type
+        switch (fields.typeInfo) {
+          case "workplace":
+            type = "workplaces"
+            break;
+          case "college":
+            type = "colleges"
+            break;
+        }
+        const newInfo = {
+          _id: fields._id,
+          name: fields.name,
+          startDate: fields.startDate,
+          endDate: fields.endDate
+        }
+        switch (fields.tag) {
+          case 'new':
+            console.log('inside new')
+            user = await User.findByIdAndUpdate(userId, {
+              $push: {
+                [type]: newInfo
+              }
+            }, { new: true })
+              .populate('followings', '_id name')
+              .populate('followers', '_id name')
+              .populate('friends', '_id name')
+            break;
+          case "delete":
+            console.log('inside delete')
+            user = await User.findByIdAndUpdate(userId, {
+              $pull: {
+                [type]: {
+                  _id: fields.infoId
+                }
+              }
+            }, { new: true })
+              .populate('followings', '_id name')
+              .populate('followers', '_id name')
+              .populate('friends', '_id name')
+            break;
+          case "update":
+            console.log('inside update')
+            user = await User.findById(userId)
+              .populate('followings', '_id name')
+              .populate('followers', '_id name')
+              .populate('friends', '_id name')
+            let idx = user[type].map(info => info._id).indexOf(fields._id)
+            user[type].splice(idx, 1, newInfo)
+            break;
+        }
+      } else {
+        user = await User.findById(userId)
+          .populate('followings', '_id name')
+          .populate('followers', '_id name')
+          .populate('friends', '_id name')
+        user = extend(user, fields)
+      }
       if (files.avatar) {
         user.avatar.data = fs.readFileSync(files.avatar.path)
         user.avatar.contentType = files.avatar.type

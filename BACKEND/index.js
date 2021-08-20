@@ -12,7 +12,10 @@ const app = express()
 const HOST = process.env.HOST || 'http://localhost'
 const PORT = process.env.PORT || 3001
 
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true })
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true, useCreateIndex: true,
+  useUnifiedTopology: true, useFindAndModify: true
+})
 mongoose.connection.on('error', () => {
   throw new Error(`unable to connect to database: ${config.mongoUri}`)
 })

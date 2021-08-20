@@ -32,6 +32,6 @@ export default function Home() {
           <Link href='/signin'>Sign in</Link> or <Link href="/signup">Sign up</Link>
         </p>
       </div>
-    </div> : <Layout><HomeComponent/> </Layout>}
+    </div> : <Layout><HomeComponent /> </Layout>}
   </>
 }

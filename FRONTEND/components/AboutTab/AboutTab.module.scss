@@ -94,3 +94,27 @@ li.currentTab:hover {
 .relationShipStatusLine > svg {
   cursor: pointer;
 }
+
+.dateInputContainer {
+  display: flex;
+  margin-top: 10px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.infoLine > p {
+  margin-bottom: 0;
+  font-size: 16px;
+}
+
+.infoLine > p:last-child {
+  color: gray;
+  padding-left: 30px;
+}
+
+.subInfoLine {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
