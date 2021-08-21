@@ -88,10 +88,13 @@ export default function Relationship({ relationshipStatus, ownProfile }) {
       </div>
         :
         (!relationshipStatus
-          ? (ownProfile && <div onClick={toggleEditting} className={styles.addInfo}>
+          ? (ownProfile ? <div onClick={toggleEditting} className={styles.addInfo}>
             {/* <FontAwesomeIcon icon={faPlusCircle} className={styles.addInfoIcon} /> */}
             <i className={`fas fa-plus-circle ${styles.addInfoIcon}`}></i>
             Add a relationship status
+          </div> : <div>
+            <i className="fas fa-heart" style={{ marginRight: '10px' }}></i>
+            No relationship info to show
           </div>)
           : <div className={styles.relationShipStatusLine}>
             <span>

@@ -133,6 +133,11 @@ const updateProfile = (req, res) => {
         user.coverPhoto.data = fs.readFileSync(files.coverPhoto.path)
         user.coverPhoto.contentType = files.coverPhoto.type
       }
+      for (const key of Object.keys(user)) {
+        if (user[key] === 'undefined' || typeof (user[key]) == 'undefined') {
+          user[key] = undefined
+        }
+      }
       await user.save()
       user.hashed_password = undefined
       user.salt = undefined

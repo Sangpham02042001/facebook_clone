@@ -8,9 +8,9 @@ import { Button, Input, Dropdown, Menu } from 'antd'
 import { v4 } from 'uuid'
 import styles from './AboutTab.module.scss'
 
-const EditMenu = ({ typeInfo, infoId, onDelete, idx, onEdit }) => {
+const EditMenu = ({ infoId, onDelete, idx, onEdit }) => {
   const handleDelete = () => {
-    onDelete(typeInfo, infoId)
+    onDelete(infoId)
   }
 
   const handleEdit = () => {
@@ -30,7 +30,8 @@ const EditMenu = ({ typeInfo, infoId, onDelete, idx, onEdit }) => {
   )
 }
 
-export default function MultipleInfo({ title, typeInfo, listInfo, ownProfile }) {
+export default function MultipleInfo({ title, typeInfo, listInfo,
+  ownProfile, iconClassName }) {
   const [addInfo, setAddInfo] = useState(false)
   const [newName, setNewName] = useState('')
   const [editingArray, setEditingArray] = useState([])
@@ -96,7 +97,7 @@ export default function MultipleInfo({ title, typeInfo, listInfo, ownProfile }) 
     }))
   }
 
-  const handleDelete = (typeInfo, infoId) => {
+  const handleDelete = (infoId) => {
     console.log('in side multiple', typeInfo, infoId)
     let idx = listInfo.map(info => info._id).indexOf(infoId)
     let newListInfo = [...listInfo]
@@ -151,7 +152,7 @@ export default function MultipleInfo({ title, typeInfo, listInfo, ownProfile }) 
   }
 
   return (
-    <div style={{ marginTop: '10px' }}>
+    <div>
       {title && <h2>{title}</h2>}
       {!addInfo
         ? (ownProfile && <div className={styles.addInfo} onClick={toggleAddInfo}>
@@ -194,13 +195,11 @@ export default function MultipleInfo({ title, typeInfo, listInfo, ownProfile }) 
         !editingArray[idx] ? <div key={item._id} className={styles.infoLine}>
           <p className={styles.subInfoLine}>
             <span>
-              <i className={
-                typeInfo === 'workplace' ? "fas fa-building" : "fas fa-graduation-cap"
-              } style={{ marginRight: '10px' }}></i>
+              <i className={iconClassName} style={{ marginRight: '10px' }}></i>
               {item.name}
             </span>
             {ownProfile && <Dropdown
-              overlay={<EditMenu typeInfo={typeInfo}
+              overlay={<EditMenu
                 infoId={item._id} idx={idx}
                 onEdit={toggleEditing}
                 onDelete={handleDelete} />}

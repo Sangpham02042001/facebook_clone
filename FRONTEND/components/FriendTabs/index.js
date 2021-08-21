@@ -106,7 +106,7 @@ export default function FriendTabs({ profile, ownProfile }) {
 
   return (
     <Row>
-      <Col className={styles.friendTabsContainer} span={22}>
+      <Col className={styles.friendTabsContainer} span={24}>
         <div className={styles.friendTabHeader}>
           <h2>Friends</h2>
           <Input

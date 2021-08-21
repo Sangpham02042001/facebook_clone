@@ -192,6 +192,14 @@ li.currentTab:hover {
   font-size: 20px;
 }
 
+.profileSubContainer {
+  margin-top: 20px;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 2px rgb(197, 195, 195);
+  background-color: #fff;
+}
+
 @media (min-width: 768px) {
   .myCol {
     min-width: none;

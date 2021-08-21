@@ -20,8 +20,16 @@ import FriendTabs from '../../components/FriendTabs'
 import AboutTab from '../../components/AboutTab'
 import Loading from '../../components/Loading'
 import RespondDropdown from '../../components/RespondDropdown'
-import { update, addFriend, cancelFriendRequest, unfriend, isAuthenticated } from '../../store/reducers/user.reducer'
-import { setProfileAsync, setProfileSync, addFollower, cancelFollowing, removeFriend } from '../../store/reducers/profile.reducer'
+import IntroProfile from '../../components/IntroProfile'
+import FriendsProfile from '../../components/FriendsProfile'
+import {
+  update, addFriend, cancelFriendRequest,
+  unfriend, isAuthenticated
+} from '../../store/reducers/user.reducer'
+import {
+  setProfileAsync, setProfileSync,
+  addFollower, cancelFollowing, removeFriend
+} from '../../store/reducers/profile.reducer'
 import styles from './profile.module.scss'
 
 export default function Profile() {
@@ -72,14 +80,14 @@ export default function Profile() {
     if (!userReducer.authenticated) {
       dispatch(isAuthenticated())
     }
+  }, [userReducer.authenticated])
+
+  useEffect(() => {
     if (userList.length > 0 && userList.indexOf(userId) < 0) {
       router.push('/404')
       return;
     }
-    // if (!userReducer.authenticated) {
-    //   router.push('/')
-    // }
-  }, [userReducer.authenticated])
+  }, [userList.length])
 
   const handleBioChange = e => {
     setBio(e.target.value)
@@ -321,14 +329,24 @@ export default function Profile() {
             </Row>
             <Divider style={{ margin: 0, borderColor: 'rgb(190, 190, 190)' }} />
             <Row className={styles.profileContainerPage}>
-              <Col span={16}>
-                {/* {
-                  currentTab === 'post' && profilePosts && profilePosts.map(post => (
-                    <PostComponent key={post._id} post={post} />
-                  ))
-                } */}
+              <Col span={14}>
                 {
-                  currentTab === 'about' && <AboutTab user={profileReducer.profile} ownProfile={userLoginId === userId} />
+                  currentTab === 'post' && <Row>
+                    <Col className={styles.mainLeftPage} span={10}>
+                      <div className={styles.profileSubContainer}>
+                        <IntroProfile profile={profile} />
+
+                      </div>
+                      <div className={styles.profileSubContainer}>
+                        {profile.friends && <FriendsProfile
+                          friends={profile.friends}
+                          setFriendTabs={() => setCurrentTab('friends')} />}
+                      </div>
+                    </Col>
+                  </Row>
+                }
+                {
+                  currentTab === 'about' && <AboutTab user={profile} ownProfile={userLoginId === userId} />
                 }
                 {
                   currentTab === 'friends' && (

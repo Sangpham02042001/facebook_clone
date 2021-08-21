@@ -17,7 +17,6 @@ export const signin = createAsyncThunk('user/signin', async ({ email, password }
     });
     if (response.status === 200) {
       console.log(response.data)
-      window.localStorage.setItem('user', JSON.stringify(response.data))
       return {
         user: response.data
       }
@@ -163,9 +162,17 @@ export const userSlice = createSlice({
       state.loading = true
     },
     [signin.fulfilled]: (state, action) => {
+      let user = action.payload.user
       state.loading = false
       state.authenticated = true
-      state.user = action.payload.user
+      for (const key of Object.keys(user)) {
+        if (user[key] === 'undefined') {
+          state.user[key] = undefined
+          user[key] = undefined
+        }
+      }
+      window.localStorage.setItem('user', JSON.stringify(user))
+      state.user = extend(state.user, user)
     },
     [signin.rejected]: (state, action) => {
       console.log(action)

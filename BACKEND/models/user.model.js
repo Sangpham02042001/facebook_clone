@@ -58,6 +58,8 @@ const UserSchema = new mongoose.Schema({
     startDate: String,
     endDate: String
   },
+  from: String,
+  currentCity: String,
   friends: [
     { type: mongoose.Types.ObjectId, ref: 'User' }
   ],

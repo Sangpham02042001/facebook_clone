@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Row, Col, Divider } from 'antd'
 import MultipleInfo from './MultipleInfo'
+import SingleInfo from './SingleInfo'
 import Relationship from './Relationship'
 import styles from './AboutTab.module.scss'
 
@@ -16,7 +17,7 @@ export default function AboutTab({ user, ownProfile }) {
 
   return (
     <Row>
-      <Col className={styles.aboutTabContainer} span={22}>
+      <Col className={styles.aboutTabContainer} span={24}>
         <div className={styles.leftAboutTab}>
           <h2>About</h2>
           <ul className={styles.selectionList}>
@@ -32,6 +33,10 @@ export default function AboutTab({ user, ownProfile }) {
               className={currentTab === 'work_and_education' ? (styles.currentTab) : ''}>
               Work and Education
             </li>
+            <li onClick={handleChangeTab('places_lived')}
+              className={currentTab === 'places_lived' ? (styles.currentTab) : ''}>
+              Places Lived
+            </li>
           </ul>
         </div>
         <Divider type="vertical"
@@ -40,9 +45,11 @@ export default function AboutTab({ user, ownProfile }) {
           {currentTab === 'overview' && <div>
             <Relationship relationshipStatus={user.relationshipStatus} ownProfile={ownProfile} />
             <MultipleInfo ownProfile={ownProfile}
+              iconClassName="fas fa-building"
               typeInfo="workplace"
               listInfo={user.workplaces} />
             <MultipleInfo ownProfile={ownProfile}
+              iconClassName="fas fa-graduation-cap"
               typeInfo="college"
               listInfo={user.colleges} />
           </div>}
@@ -50,11 +57,19 @@ export default function AboutTab({ user, ownProfile }) {
             <Relationship relationshipStatus={user.relationshipStatus} ownProfile={ownProfile} />}
           {currentTab === 'work_and_education' && <div>
             <MultipleInfo ownProfile={ownProfile} title="Work"
-              typeInfo="workplace"
+              typeInfo="workplace" iconClassName="fas fa-building"
               listInfo={user.workplaces} />
             <MultipleInfo ownProfile={ownProfile} title="College"
-              typeInfo="college"
+              typeInfo="college" iconClassName="fas fa-graduation-cap"
               listInfo={user.colleges} />
+          </div>}
+          {currentTab === 'places_lived' && <div>
+            <SingleInfo ownProfile={ownProfile} title='Current City'
+              typeInfo='current city' iconClassName="fas fa-map-marker"
+              info={user.currentCity} />
+            <SingleInfo ownProfile={ownProfile} title='Come from'
+              typeInfo='come from' iconClassName="fas fa-home"
+              info={user.from} />
           </div>}
         </div>
       </Col>

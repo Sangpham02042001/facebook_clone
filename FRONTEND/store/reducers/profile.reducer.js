@@ -79,7 +79,14 @@ export const profileSlice = createSlice({
       state.loading = true
     },
     [setProfileAsync.fulfilled]: (state, action) => {
-      state.profile = action.payload.profile
+      let profile = action.payload.profile
+      for (const key of Object.keys(profile)) {
+        if (profile[key] === 'undefined'
+          || typeof (profile[key]) == 'undefined') {
+          profile.key = undefined
+        }
+      }
+      state.profile = profile
       state.loading = false
     },
     [setProfileAsync.rejected]: (state, action) => {

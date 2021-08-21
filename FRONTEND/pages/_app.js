@@ -5,17 +5,21 @@ import Head from 'next/head'
 import Router from 'next/router'
 import { Provider } from 'react-redux'
 import store from '../store'
+import useScrollBlock from '../hooks/useScrollBlock'
 import Loading from '../components/Loading'
 
 function MyApp({ Component, pageProps }) {
   const [loading, setLoading] = useState(false)
+  const [blockScroll, allowScroll] = useScrollBlock()
 
   Router.events.on('routeChangeStart', (url) => {
     setLoading(true)
+    blockScroll()
   })
 
   Router.events.on('routeChangeComplete', (url) => {
     setLoading(false)
+    allowScroll()
   })
 
   return (
