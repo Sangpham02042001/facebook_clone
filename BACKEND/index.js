@@ -15,7 +15,18 @@ const PORT = process.env.PORT || 3001
 
 //socket 
 const http = require('http').createServer(app)
-const io = require('socket.io')(http)
+const io = require('socket.io')(http, {
+  cors: '*'
+})
+
+io.use((socket, next) => {
+  const userID = socket.handshake.auth.userId;
+  if (!userID) {
+    return next(new Error("invalid userId"));
+  }
+  socket.userID = userID;
+  next();
+})
 
 io.on('connection', socket => {
   SocketServer(socket)

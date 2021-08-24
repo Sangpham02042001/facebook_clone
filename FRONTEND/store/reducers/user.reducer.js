@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice, } from '@reduxjs/toolkit'
 import { axiosInstance, baseURL } from '../../utils/axios.util'
 import axios from 'axios'
 import extend from 'lodash/extend'
+import socket from '../../socketClient'
 
 const initialState = {
   user: {},
@@ -152,12 +153,30 @@ export const userSlice = createSlice({
         state.user = user
         state.authenticated = true;
         state.loading = false
+        state.user.activityStatus = 'online'
+        socket.auth = { userId: user._id };
+        socket.connect()
       }
     },
     signout: (state) => {
       state.user = {}
       state.authenticated = false
       localStorage.removeItem('user')
+    },
+    onFriendOnline: (state, action) => {
+      let onlineUserList = action.payload.onlineUserList
+      for (let user of state.user.friends) {
+        if (onlineUserList.indexOf(user._id) >= 0) {
+          user.activityStatus = 'online'
+        }
+      }
+    },
+    onFriendOffline: (state, action) => {
+      let userID = action.payload.userID
+      let idx = state.user.friends.map(user => user._id).indexOf(userID)
+      if (idx > -1) {
+        state.user.friends[idx].activityStatus = 'offline'
+      }
     }
   },
   extraReducers: {
@@ -179,6 +198,9 @@ export const userSlice = createSlice({
         friend.activityStatus = 'offline'
       }
       state.user = extend(state.user, user)
+      state.user.activityStatus = 'online'
+      socket.auth = { userId: user._id };
+      socket.connect()
     },
     [signin.rejected]: (state, action) => {
       console.log(action)
@@ -266,6 +288,7 @@ export const userSlice = createSlice({
   }
 })
 
-export const { isAuthenticated, signout } = userSlice.actions
+export const { isAuthenticated, signout,
+  onFriendOnline, onFriendOffline } = userSlice.actions
 
 export default userSlice.reducer
