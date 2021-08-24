@@ -3,6 +3,8 @@ import { useSelector, useDispatch } from 'react-redux'
 import AvatarProfile from '../AvatarProfile'
 import socket from '../../socketClient'
 import { onFriendOnline, onFriendOffline } from '../../store/reducers/user.reducer'
+import styles from './home.module.scss';
+import { Row, Col, Button } from 'antd'
 
 export default function FriendStatusList() {
   const dispatch = useDispatch()
@@ -17,7 +19,6 @@ export default function FriendStatusList() {
 
     socket.on("online-users", ({ onlineUserList, receiverId }) => {
       if (user._id === receiverId) {
-        // let idx = onlineUserList.indexOf(receiverId)
         console.log('online user list', onlineUserList)
         dispatch(onFriendOnline({
           onlineUserList: onlineUserList
@@ -43,12 +44,16 @@ export default function FriendStatusList() {
   }, [])
 
   return (
-    <div>
+    <div className={styles["friend-list"]}>
+      <h2>Contacts</h2>
       {user.friends && user.friends.map(user => (
-        <div key={user._id}>
-          <AvatarProfile showName={true} user={user} />
-          <span>{user.activityStatus}</span>
-        </div>
+        <Row className={styles["friend-style"]} key={user._id} >
+          <Col span={24}>
+            <AvatarProfile showName={true} user={user} />
+            <span>{user.activityStatus}</span>
+          </Col>
+        </Row>
+
       ))}
     </div>
   )

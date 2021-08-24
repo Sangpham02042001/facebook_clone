@@ -1,13 +1,29 @@
 .home-component {
-    background-color: #f0f2f5;
-    padding-top: 100px;
-    width: 100%;
-    height: 100%;
-    position: relative;
+  background-color: #f0f2f5;
+  padding-top: 100px;
+  width: 100%;
+  height: 100%;
+  position: relative;
 }
 
 .home-middle {
-    // width: 40%;
-    // position: relative;
-    // margin: 0 auto;
+  // width: 40%;
+  // position: relative;
+  // margin: 0 auto;
+}
+
+.friend-list {
+  position: fixed;
+  left: 85%;
+  top: 100px;
+}
+
+.friend-style {
+    width: 100%;
+    padding: 15px;
+}
+
+.post-list {
+    width: 40%;
+    margin: 40px auto
 }

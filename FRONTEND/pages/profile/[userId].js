@@ -31,6 +31,7 @@ import {
   addFollower, cancelFollowing, removeFriend
 } from '../../store/reducers/profile.reducer'
 import styles from './profile.module.scss'
+import InputForm from '../../components/InputForm'
 
 export default function Profile() {
   const dispatch = useDispatch()
@@ -38,6 +39,8 @@ export default function Profile() {
   const { userId } = router.query
   const userReducer = useSelector(state => state.userReducer)
   const userList = useSelector(state => state.userListReducer.userList)
+  const posts = useSelector(state => state.postReducer.posts);
+  const user = useSelector(state => state.userReducer.user);
   // const profilePosts = useSelector(state => state.postReducer.posts
   //   .filter(post => post.userId._id === userId))
   const [currentTab, setCurrentTab] = useState('post')
@@ -52,6 +55,7 @@ export default function Profile() {
   const [profileModalVisible, setProfileModalVisible] = useState(false)
   const [coverPhotoModalVisible, setCoverPhotoModalVisible] = useState(false)
   const [editProfileModalVisible, setEditProfileModalVisible] = useState(false)
+ 
   let userLoginId = userReducer.user._id
 
   useEffect(() => {
@@ -328,8 +332,8 @@ export default function Profile() {
               </Col>
             </Row>
             <Divider style={{ margin: 0, borderColor: 'rgb(190, 190, 190)' }} />
-            <Row className={styles.profileContainerPage}>
-              <Col span={14}>
+            <Row className={styles.profileContainerPage} >
+              <Col span={14} >
                 {
                   currentTab === 'post' && <Row>
                     <Col className={styles.mainLeftPage} span={10}>
@@ -342,6 +346,15 @@ export default function Profile() {
                           friends={profile.friends}
                           setFriendTabs={() => setCurrentTab('friends')} />}
                       </div>
+                    </Col>
+                    <Col flex="auto">
+                      <InputForm />
+                      {posts.map(post => {
+                        if (post.user._id === userId)
+                          return <PostComponent key={post._id} post={post} user={user} />
+
+                        return null;
+                      })}
                     </Col>
                   </Row>
                 }
@@ -432,6 +445,7 @@ export default function Profile() {
           </div>
         </Modal>
       }
+
     </>
   )
 }
