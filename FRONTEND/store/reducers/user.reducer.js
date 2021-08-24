@@ -144,9 +144,12 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     isAuthenticated: (state) => {
-      const user = localStorage.getItem('user')
+      const user = JSON.parse(localStorage.getItem('user'))
       if (user) {
-        state.user = JSON.parse(user)
+        for (const friend of user.friends) {
+          friend.activityStatus = 'offline'
+        }
+        state.user = user
         state.authenticated = true;
         state.loading = false
       }
@@ -172,6 +175,9 @@ export const userSlice = createSlice({
         }
       }
       window.localStorage.setItem('user', JSON.stringify(user))
+      for (const friend of user.friends) {
+        friend.activityStatus = 'offline'
+      }
       state.user = extend(state.user, user)
     },
     [signin.rejected]: (state, action) => {
@@ -193,7 +199,10 @@ export const userSlice = createSlice({
       }
       state.user = extend(state.user, user)
       let currentUser = JSON.parse(localStorage.getItem('user'))
-      currentUser = extend(currentUser, action.payload.user)
+      for (const friend of user.friends) {
+        friend.activityStatus = undefined
+      }
+      currentUser = extend(currentUser, user)
       localStorage.setItem('user', JSON.stringify(currentUser))
       // state.loading = false
     },

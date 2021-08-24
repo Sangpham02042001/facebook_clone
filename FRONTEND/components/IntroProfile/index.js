@@ -28,6 +28,10 @@ export default function IntroProfile({ profile }) {
           <i className="fas fa-building"></i>
           <span>Work  at <b>{profile.workplaces[0].name}</b></span>
         </div>}
+      {profile.relationshipStatus && <div className={styles.infoLine}>
+        <i className="fas fa-heart"></i>
+        <span><b>{profile.relationshipStatus}</b></span>
+      </div>}
     </>
   )
 }

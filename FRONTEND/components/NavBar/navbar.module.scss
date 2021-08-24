@@ -36,11 +36,23 @@
   border-radius: 50%;
   padding: 7px 14px;
   background-color: rgb(228, 228, 228);
+  cursor: pointer;
 }
 
 .navbar-dropdown-icon {
-  transform: scale(1.5);
+  transform: scale(2);
   max-height: 20px;
   max-width: 20px;
+}
+
+.messenger {
+  margin-left: 10px;
+  border-radius: 50%;
+  padding: 8px 12px;
+  background-color: rgb(228, 228, 228);
   cursor: pointer;
+}
+
+.messengerIcon {
+  transform: scale(1.3);
 }

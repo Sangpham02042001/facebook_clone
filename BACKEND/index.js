@@ -1,6 +1,7 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors')
+const SocketServer = require('./socketServer')
 require('dotenv').config()
 
 //routes
@@ -11,6 +12,14 @@ const postRoutes = require('./routes/post.routes')
 const app = express()
 const HOST = process.env.HOST || 'http://localhost'
 const PORT = process.env.PORT || 3001
+
+//socket 
+const http = require('http').createServer(app)
+const io = require('socket.io')(http)
+
+io.on('connection', socket => {
+  SocketServer(socket)
+})
 
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true, useCreateIndex: true,
@@ -30,6 +39,6 @@ app.use('/', authRoutes);
 app.use('/posts/', postRoutes);
 
 
-app.listen(PORT, HOST, () => {
+http.listen(PORT, HOST, () => {
   console.log(`Server is running at ${HOST}:${PORT}`)
 })
