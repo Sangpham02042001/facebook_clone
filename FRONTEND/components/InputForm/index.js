@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Input, Button, Upload, message, Modal, Row, Col, Avatar } from 'antd';
 import { addPost } from '../../store/reducers/post.reducer';
 import { useDispatch, useSelector } from 'react-redux';
@@ -6,21 +6,20 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faImages } from '@fortawesome/free-solid-svg-icons';
 import styles from './InputForm.module.scss';
 import ImgCrop from 'antd-img-crop';
-import { baseURL } from '../../utils/axios.util';
-import Link from 'next/link';
-
+import AvatarProfile from '../AvatarProfile';
+import { VideoCameraFilled, FileImageFilled } from '@ant-design/icons'
 
 const InputForm = () => {
-  const { TextArea } = Input;
+
   const dispatch = useDispatch();
-  const placeholderDefault = "What do u think?"
+  const placeholderDefault = "What do u think?";
   const [placeHolder, setPlaceHolder] = useState(placeholderDefault);
   const [title, setTitle] = useState('');
   const [bt_disable, setBt_disable] = useState(true);
   const user = useSelector(state => state.userReducer.user);
-  const userId = user._id;
   const [fileList, setFileList] = useState([]);
   const [image, setImage] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const onChange = ({ fileList: newFileList }) => {
 
@@ -31,7 +30,11 @@ const InputForm = () => {
       }
     }
 
-    if (!newFileList.length) setBt_disable(true);
+
+    if (!newFileList.length) {
+      setImage(null);
+      setBt_disable(true);
+    }
 
     setFileList(newFileList);
   };
@@ -56,9 +59,9 @@ const InputForm = () => {
     if (!isJpgOrPng) {
       message.error('You can only upload JPG/PNG file!');
     }
-    const isLt2M = file.size / 1024 / 1024 < 2;
+    const isLt2M = file.size / 1024 / 1024 < 4;
     if (!isLt2M) {
-      message.error('Image must smaller than 2MB!');
+      message.error('Image must smaller than 4MB!');
     }
     return isJpgOrPng && isLt2M;
   }
@@ -77,6 +80,7 @@ const InputForm = () => {
   }
 
   const handleSubmit = (event) => {
+    let userId = user._id;
     event.preventDefault();
     dispatch(addPost({ title, userId, image }));
     setTitle('');
@@ -87,75 +91,76 @@ const InputForm = () => {
     setIsModalVisible(false);
   }
 
-  const [isModalVisible, setIsModalVisible] = useState(false);
+
 
   const showModal = () => {
     setIsModalVisible(true);
   };
 
-  const handleOk = () => {
-    setIsModalVisible(false);
-  };
+
 
   const handleCancel = () => {
     setIsModalVisible(false);
   };
 
-  const AvatarProfile = (props) => {
-    return (
-      <Link href={`/profile/${user._id}`}>
-        <a>
-          <Avatar
-            style={{ marginRight: '5px', marginBottom: '5px' }}
-            src={`${baseURL}/api/user/avatar/${user._id}`} />
-          {props.showName && <span style={{ fontSize: "20px", fontWeight: "bold" }}>{user.name}</span>}
-        </a>
-      </Link>
-    )
-  }
+
+
+
+
 
   return (
     <div className={styles["input-component"]}>
-      <div className={styles["input-form"]}>
-        <AvatarProfile showName={false} /> <span>
-          <Button className={styles["btn-inputForm"]} shape="round" onClick={showModal} >{placeHolder}</Button>
-        </span>
+      <Row >
+        <Col flex="15px">
+          <AvatarProfile user={user} showName={false} />
+        </Col>
+        <Col flex="auto">
+          <Button className={styles["btn-inputForm"]} shape="round" onClick={showModal} >{placeholderDefault}</Button>
+        </Col>
 
-        <Modal title="Create post" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel} footer={[]}>
-          <Row>
-            <Col>
-              <AvatarProfile showName={true} />
-            </Col>
-          </Row>
-          <Row justify="space-around" align="top" gutter={[16, 48]}>
-            <Col span={24}>
-              <TextArea rows={4} col={10} style={{ width: "100%" }} bordered={false} placeholder={placeHolder} onChange={handleChange} value={title} />
-            </Col>
-          </Row>
-          <Row justify="end" align="middle" gutter={[16, 48]}>
-            <Col >
-              <ImgCrop rotate>
-                <Upload
-                  listType="picture"
-                  fileList={fileList}
-                  onChange={onChange}
-                  onPreview={onPreview}
-                  beforeUpload={beforeUpload}
-                >
-                  {fileList.length < 1 &&
-                    <Button shape="circle" size="large" ghost={true} icon={<FontAwesomeIcon style={{ color: "green" }} className={styles["icon-image"]} icon={faImages} />} />
-                  }
-                </Upload>
-              </ImgCrop>
-            </Col>
-          </Row>
-          <Row justify="space-around" align="bottom" gutter={[16, 48]}>
-            <Col span={4}>
-              <Button type="primary" onClick={handleSubmit} disabled={bt_disable} >Post</Button>
-            </Col>
-          </Row>
-        </Modal>
-      </div>
+      </Row>
+
+      <Modal title="Create post" visible={isModalVisible} onCancel={handleCancel} footer={null}>
+        <Row>
+          <Col>
+            <AvatarProfile user={user} showName={true} />
+          </Col>
+        </Row>
+        <Row justify="space-around" align="top" gutter={[16, 48]}>
+          <Col span={24}>
+            <Input.TextArea style={{ width: "100%" }}
+              autoSize={{ minRows: 5, maxRows: 8 }}
+              maxLength={10000} showCount={true}
+              bordered={false} placeholder={placeHolder}
+              onChange={handleChange} value={title} />
+          </Col>
+        </Row>
+        <Row justify="end" align="middle" gutter={[16, 48]}>
+          <Col >
+              <Upload
+                listType="picture"
+                fileList={fileList}
+                onChange={onChange}
+                onPreview={onPreview}
+                beforeUpload={beforeUpload}
+                accept="image/*,video/*"
+              >
+                {fileList.length < 1 &&
+                  <Button shape="circle" size="large" ghost={true} icon={<FileImageFilled style={{ color: "green" }} icon={faImages} />} />
+                }
+              </Upload>
+
+          </Col>
+          <Col>
+            <Button shape="circle" size="large" ghost={true} icon={<VideoCameraFilled  style={{ color: "red" }} />} />
+          </Col>
+        </Row>
+        <Row justify="space-around" align="bottom" gutter={[16, 48]}>
+          <Col span={24}>
+            <Button type="primary" shape="round" size="medium" style={{ width: "100%" }} onClick={handleSubmit} disabled={bt_disable} >Post</Button>
+          </Col>
+        </Row>
+      </Modal>
     </div>
   );
 }

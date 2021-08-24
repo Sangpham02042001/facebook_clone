@@ -10,6 +10,7 @@ import { Menu, Dropdown, Avatar } from 'antd'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretDown } from '@fortawesome/free-solid-svg-icons'
 import styles from './navbar.module.scss'
+import AvatarProfile from '../AvatarProfile'
 
 const NavbarDropdownMenu = ({ user }) => {
   const router = useRouter()
@@ -50,6 +51,7 @@ const NavBar = React.memo(function NavBar(props) {
   }, [])
 
   console.log('header render')
+
   return (
     <div className={styles['main-header']}>
       <Link href="/">

@@ -15,28 +15,70 @@ export const addPost = createAsyncThunk('posts/addPost', async ({ title, userId,
     formData.append("article", title);
     formData.append("userId", userId);
 
-    const response = await axiosInstance.post(path.join('posts', userId), formData);
+    const response = await axiosInstance.post(path.join('posts', userId, 'post'), formData);
 
     return response.data;
 })
 
 export const deletePost = createAsyncThunk('posts/deletePost', async ({ userId, postId }) => {
-    const formData = new FormData();
-    formData.append("image-post", image);
+    const response = await axiosInstance.delete(path.join('posts', userId, 'post', postId))
 
-    const response = await axiosInstance.post(path.join('posts', userId, postId))
+    return response.data;
+})
+
+export const reactPost = createAsyncThunk('posts/reactPost', async ({ userId, postId, reactType }) => {
+    const data = {
+        userId,
+        postId,
+        reactType
+    }
+    const response = await axiosInstance.post(path.join('posts', userId, 'interactive', postId, 'reacts'), data)
+
+    return response.data;
+})
+
+export const addComment = createAsyncThunk('posts/addComment', async ({ userId, postId, comment }) => {
+    // const formData = new FormData();
+    // formData.append("postId", postId);
+    // formData.append("comment", comment);
+    // formData.append("userId", userId);
+    const data = {
+        userId, postId, comment
+    }
+
+    const response = await axiosInstance.post(path.join('posts', userId, 'interactive', postId, 'comments'), data);
+
+    return response.data;
+})
+
+export const deleteComment = createAsyncThunk('posts/deleteComment', async ({ userId, postId, commentId }) => {
+    console.log('delete')
+    const response = await axiosInstance.delete(path.join('posts', userId, 'interactive', postId, 'comments', commentId));
 
     return response.data;
 })
 
 
+
 const posts = createSlice({
     name: 'posts',
     initialState: {
-        posts: []
+        posts: [],
+        loadingPost: false,
     },
     reducers: {
-
+        hiddenComment: (state, action) => {
+            console.log(action.payload);
+            const post = state.posts.find(post => post._id == action.payload.postId);
+            const idx = post.comments.map(cmt => cmt._id).indexOf(action.payload.commentId);
+            post.comments.splice(idx, 1);
+        },
+        hiddenPost: (state, action) => {
+            console.log(action.payload);
+            const post = state.posts.find(post => post._id == action.payload.postId);
+            const idx = state.posts.indexOf(post);
+            state.posts.splice(idx, 1);
+        }
     },
     extraReducers: {
         [getPosts.pending]: (state, action) => {
@@ -49,22 +91,54 @@ const posts = createSlice({
         [getPosts.rejected]: (state, action) => {
             console.log('Failed to get data');
         },
+        [addPost.pending]: (state, action) => {
+            console.log('Adding post');
+            state.loadingPost = true;
+        },
         [addPost.fulfilled]: (state, action) => {
             console.log('Data added');
             console.log(action.payload);
             state.posts.unshift(action.payload);
+            state.loadingPost = false;
         },
         [addPost.rejected]: (state, action) => {
             console.log(action)
             console.log('Failed to post data');
+            state.loadingPost = false;
+        },
+        [deletePost.pending]: (state, action) => {
+            console.log('Deleting');
+            state.loadingPost = true;
         },
         [deletePost.fulfilled]: (state, action) => {
-            console.log('Deleted!');
-            state.posts.splice(state.posts.indexOf(action.payload, 1));
+            console.log('Post deleted!');
+            const idx = state.posts.map(post => post._id).indexOf(action.payload._id);
+            state.posts.splice(idx, 1);
+            state.loadingPost = false;
         },
         [deletePost.rejected]: (state, action) => {
             console.log(action)
             console.log('Failed to delete data');
+            state.loadingPost = false;
+        },
+        [reactPost.fulfilled]: (state, action) => {
+            const post = state.posts.find(post => post._id == action.payload._id);
+            post.reactList = action.payload.reactList;
+        },
+        [addComment.fulfilled]: (state, action) => {
+            console.log('Comment added');
+            console.log(action.payload);
+            const post = state.posts.find(post => post._id == action.payload._id);
+            post.comments = action.payload.comments;
+        },
+        [deleteComment.rejected]: (state, action) => {
+            console.log('Delete fail');        
+        },
+        [deleteComment.fulfilled]: (state, action) => {
+            console.log('Comment deleted');
+            console.log(action.payload);
+            const post = state.posts.find(post => post._id == action.payload._id);
+            post.comments = action.payload.comments;
         },
 
     }
@@ -74,6 +148,6 @@ const posts = createSlice({
 
 
 // export const postSelector = state => state.postsReducer.posts;
-// export const {} = posts.actions;
+export const {hiddenComment, hiddenPost} = posts.actions;
 
 export default posts.reducer;

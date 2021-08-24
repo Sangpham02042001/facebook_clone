@@ -1,23 +1,32 @@
 .input-component {
+  font-family: Segoe UI Historic, Segoe UI, Helvetica, Arial, sans-serif;
   color: black;
   background-color: #fff;
-  display: center;
-  width: 50%;
-  margin: 50px auto;
-  padding: 10px;
-  border: 1px solid gray;
+  width: 40%;
+  margin: 0px auto;
+  padding: 1em;
+  position: relative;
+  border-style: none;
   border-radius: 10px;
-  text-align: center;
-  justify-content: center;
-  word-break: break-all;
-  font-family: Segoe UI Historic, Segoe UI, Helvetica, Arial, sans-serif;
-  display: block;
+  box-shadow: 1px 1px 10px #ced0d2;
+  overflow: hidden;
+  
+  
 }
 
 .btn-inputForm {
-  width: 80%;
+  border-style: none;
+  background-color: #f0f2f5;
+  width: 100%;
 }
 
-.icon-image {
-  color: green;
+.btn-inputForm:hover {
+  background-color: #e6e7e9;
+  color: black;
+}
+
+.btn-inputForm:focus,
+.btn-inputForm:active:focus {
+  background-color: #f0f2f5;
+  color: black;
 }

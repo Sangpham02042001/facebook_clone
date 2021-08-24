@@ -1,17 +1,52 @@
 .post-component {
+  font-family: Segoe UI Historic, Segoe UI, Helvetica, Arial, sans-serif;
   color: black;
   background-color: #fff;
-  display: center;
-  width: 50%;
   margin: 20px auto;
   padding: 10px;
-  border: 1px solid gray;
+  border-style: none;
   border-radius: 10px;
+  box-shadow: 1px 1px 10px #ced0d2;
   text-align: left;
   word-break: break-word;
-  font-family: Segoe UI Historic, Segoe UI, Helvetica, Arial, sans-serif;
 }
 
 .post-main {
   justify-content: center;
+}
+
+.btn-react {
+  width: 95%;
+  border-style: none;
+  border-radius: 5px;
+  color: black;
+}
+
+
+.btn-react:hover{
+  background-color: #f0f2f5;
+  color: black;
+}
+
+.btn-react:focus {
+  color: black;
+}
+
+.btn-react-active {
+  width: 98%;
+  border-style: none;
+  border-radius: 5px;
+  color: #0571ed;
+}
+
+.btn-react-active:hover {
+  background-color: #f0f2f5;
+}
+
+.btn-dropdown {
+  border-style: none;
+}
+
+.btn-dropdown:hover {
+  background-color: #e6e7e9;
 }

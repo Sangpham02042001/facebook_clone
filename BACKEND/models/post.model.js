@@ -1,6 +1,34 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+const commentSchema = new Schema({
+    comment: {
+        type: String,
+        required: true
+    },
+    user: {
+        type: mongoose.Types.ObjectId,
+        require: true,
+        ref: 'User'
+    }
+}, {
+    timestamps: true
+})
+
+const reactSchema = new Schema({
+    reactType: {
+        type: String,
+        required: true
+    },
+    user: {
+        type: mongoose.Types.ObjectId,
+        require: true,
+        ref: 'User'
+    }
+}, {
+    timestamps: true,
+})
+
 const postSchema = new Schema({
     article: {
         type: String,
@@ -10,14 +38,15 @@ const postSchema = new Schema({
         data: String,
         contentType: String
     },
-    userId: {
+    user: {
         type: mongoose.Types.ObjectId,
+        require: true,
         ref: 'User'
     },
-    created: {
-        type: Date,
-        default: Date.now
-    },
+    reactList: [reactSchema],
+    comments: [commentSchema]
+}, {
+    timestamps: true
 })
 
 const Posts = mongoose.model('Post', postSchema);
