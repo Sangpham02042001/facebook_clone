@@ -12,8 +12,14 @@ const ConversationSchema = new Schema({
     sender: {
       _id: String,
       name: String
+    },
+    sendAt: {
+      type: Date,
+      default: Date.now
     }
-  }]
+  }],
+}, {
+  timestamps: true
 })
 
 module.exports = mongoose.model('Conversation', ConversationSchema)

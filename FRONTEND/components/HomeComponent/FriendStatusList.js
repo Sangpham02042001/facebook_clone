@@ -3,12 +3,14 @@ import { useSelector, useDispatch } from 'react-redux'
 import AvatarProfile from '../AvatarProfile'
 import socket from '../../socketClient'
 import { onFriendOnline, onFriendOffline } from '../../store/reducers/user.reducer'
+import { newConversation } from '../../store/reducers/conversation.reducer'
 import styles from './home.module.scss';
 import { Row, Col, Button } from 'antd'
 
 export default function FriendStatusList() {
   const dispatch = useDispatch()
   const user = useSelector(state => state.userReducer.user)
+  const conversations = useSelector(state => state.conversationReducer.conversations)
   useEffect(() => {
     socket.on("user-connected", ({ onlineUserList }) => {
       console.log('ccsdaasfdsfas', onlineUserList)
@@ -43,18 +45,31 @@ export default function FriendStatusList() {
     }
   }, [])
 
+  const handleNewConversation = userId => event => {
+    event.preventDefault()
+    let conversationId = userId + '-' + user._id + '-'
+    dispatch(newConversation({
+      conversationId,
+      participants: [userId, user._id]
+    }))
+    console.log(userId, user._id)
+  }
+
   return (
     <div className={styles["friend-list"]}>
       <h2>Contacts</h2>
       {user.friends && user.friends.map(user => (
         <Row className={styles["friend-style"]} key={user._id} >
           <Col span={24}>
-            <AvatarProfile showName={true} user={user} />
-            <span>{user.activityStatus}</span>
+            <span>
+              <AvatarProfile showName={true} user={user} />
+              <span>{user.activityStatus}</span>
+              <button onClick={handleNewConversation(user._id)}>new con</button>
+            </span>
           </Col>
         </Row>
-
       ))}
+      <p>{JSON.stringify(conversations)}</p>
     </div>
   )
 }
