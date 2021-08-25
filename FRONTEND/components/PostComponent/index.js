@@ -86,15 +86,15 @@ const PostComponent = (props) => {
     const ShowPeopleReacted = () => {
         if (numberOfReact > 1 && postReacted) {
             return (
-                <div><span ><LikeFilled style={{color: "#119af6"}}/></span>   You and {numberOfReact - 1} others </div>
+                <div><span ><LikeFilled style={{ color: "#119af6" }} /></span>   You and {numberOfReact - 1} others </div>
             )
         } else if (numberOfReact === 1 && postReacted) {
             return (
-                <div><span ><LikeFilled style={{color: "#119af6"}}/></span>   {props.user.name}</div>
+                <div><span ><LikeFilled style={{ color: "#119af6" }} /></span>   {props.user.name}</div>
             )
         } else if (numberOfReact > 0 && !postReacted) {
             return (
-                <div><span ><LikeFilled style={{color: "#119af6"}}/></span>   {numberOfReact}</div>
+                <div><span ><LikeFilled style={{ color: "#119af6" }} /></span>   {numberOfReact}</div>
             )
         } else {
             return null;
@@ -108,13 +108,13 @@ const PostComponent = (props) => {
         });
 
         const handlePostChange = (event) => {
-            
+
             setComment(event.target.value);
-            
+
         }
 
         const handlePostComment = (event) => {
-            
+
             if (comment) {
                 dispatch(addComment({ userId, postId, comment }));
                 setComment('');
@@ -131,8 +131,8 @@ const PostComponent = (props) => {
                             maxLength={10000}
                             onPressEnter={handlePostComment} onChange={handlePostChange}
                             placeholder="Write an answer..." value={comment}
-                            bordered={false} 
-                            size="large"/>
+                            bordered={false}
+                            size="large" />
                     </Col>
                 </Row>
                 {commentList}
@@ -162,7 +162,7 @@ const PostComponent = (props) => {
             <Row >
                 <Col span={8}>
                     <AvatarProfile user={props.post.user} showName={true} />
-                    <span style={{fontSize: "12px"}}> {postTimeFormatted(props.post.createdAt)}</span>
+                    <span style={{ fontSize: "12px" }}> {postTimeFormatted(props.post.createdAt)}</span>
                 </Col>
 
                 <Col offset={14}>
@@ -170,7 +170,7 @@ const PostComponent = (props) => {
                         <Button className={styles["btn-dropdown"]}
                             shape="circle"
                             size="medium"
-                            icon={<EllipsisOutlined style={{ color: "black", fontSize: '24px', fontWeight: "bold" }} />}
+                            icon={<EllipsisOutlined style={{ zIndex: 0, color: "black", fontSize: '24px', fontWeight: "bold" }} />}
                         />
 
                     </Dropdown>

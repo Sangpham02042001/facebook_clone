@@ -10,7 +10,6 @@ import { Row, Col, Button } from 'antd'
 export default function FriendStatusList() {
   const dispatch = useDispatch()
   const user = useSelector(state => state.userReducer.user)
-  const conversations = useSelector(state => state.conversationReducer.conversations)
   useEffect(() => {
     socket.on("user-connected", ({ onlineUserList }) => {
       console.log('ccsdaasfdsfas', onlineUserList)
@@ -47,10 +46,10 @@ export default function FriendStatusList() {
 
   const handleNewConversation = userId => event => {
     event.preventDefault()
-    let conversationId = userId + '-' + user._id + '-'
+    let conversationId = userId
     dispatch(newConversation({
       conversationId,
-      participants: [userId, user._id]
+      participant: userId,
     }))
     console.log(userId, user._id)
   }
@@ -69,7 +68,6 @@ export default function FriendStatusList() {
           </Col>
         </Row>
       ))}
-      <p>{JSON.stringify(conversations)}</p>
     </div>
   )
 }
