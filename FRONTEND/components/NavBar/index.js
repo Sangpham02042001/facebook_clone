@@ -11,6 +11,7 @@ import SearchUserInput from '../SearchUserInput'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretDown } from '@fortawesome/free-solid-svg-icons'
 import styles from './navbar.module.scss'
+import AvatarProfile from '../AvatarProfile'
 
 const NavbarDropdownMenu = ({ user, avatarUpdated }) => {
   const router = useRouter()

@@ -11,6 +11,7 @@ const HomeComponent = () => {
                 {/* <div className="post-form">
                     <InputForm />
                 </div> */}
+
                 <div className="post-article">
                     <PostList />
                 </div>

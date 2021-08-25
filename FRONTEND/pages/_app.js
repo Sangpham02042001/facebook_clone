@@ -1,6 +1,6 @@
 import 'antd/dist/antd.css'
 import '../components/scss/main.scss'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Head from 'next/head'
 import Router from 'next/router'
 import { Provider } from 'react-redux'

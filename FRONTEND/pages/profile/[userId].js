@@ -370,6 +370,73 @@ export default function Profile() {
             </Row>
           </>
           : <Loading />}
+=======
+        <Row style={{ justifyContent: 'center', height: '350px' }}>
+          <Col span={14} className={styles.imageContainer}>
+            {userId && userList.indexOf(userId) &&
+              <Image src={`${baseURL}/api/user/coverphoto/${userId}?reload=${reloadCoverPhoto}`}
+                className={styles.coverImage} preview={false}
+                width={'100%'} height={320} alt="Cover Photo" />}
+            {
+              userId === userLoginId && <span className={styles.editCoverPhoto} onClick={showModal('coverphoto')}>
+                <FontAwesomeIcon className={styles.camera} icon={faCamera} />
+                <b style={{ marginLeft: '10px' }}>Edit Cover Photo</b>
+              </span>
+            }
+            <span className={styles.avatar}>
+              {userId && userList.indexOf(userId) &&
+                <Avatar size={156} src={`${baseURL}/api/user/avatar/${userId}?reaload=${reloadAvatar}`} />}
+              {userId === userLoginId &&
+                <span onClick={showModal('profile')} className={styles.cameraContainer}>
+                  <FontAwesomeIcon className={styles.camera} icon={faCamera} />
+                </span>}
+            </span>
+          </Col>
+        </Row>
+        <Row style={{ display: 'flex', justifyContent: 'center' }}>
+          <Col className={styles.shortIntro} lg={14} md={16} >
+            {userLoginId === userId ? <h1>{userReducer.user.name}</h1>
+              : <h1>{profile.name}</h1>}
+            {!editing && userLoginId === userId && (
+              !userReducer.loading ? <>
+                {userReducer.user.bio && <p>{userReducer.user.bio}</p>}
+                <p style={{ color: '#00bbf0', cursor: 'pointer', marginBottom: 0 }}
+                  onClick={() => setEditing(true)}>
+                  Edit</p>
+              </> : <Image width={40} height={40} src="/images/spinner-loading.gif" alt="Updating..." />
+            )}
+            {editing && userLoginId === userId && <div className={styles.editBioContainer}>
+              <Input.TextArea rows={3} value={bio} onChange={handleBioChange} />
+              <p style={{ color: 'gray', textAlign: 'right' }}>{100 - bio && bio.length} characters remaining</p>
+              <div className={styles.editBioBtn}>
+                <Button onClick={cancelEditBio}>Cancel</Button>
+                <Button disabled={bio === userReducer.user.bio} onClick={saveBioChanged}>Save</Button>
+              </div>
+            </div>}
+            <Divider style={{ marginBottom: 0, borderColor: 'rgb(190, 190, 190)' }} />
+          </Col>
+        </Row>
+        <Row style={{ display: 'flex', justifyContent: 'center' }}>
+          <Col lg={14} md={16} className={styles.profileSelectionContainer}>
+            <ul className={styles.profileSeletionList}>
+              <li value='post' onClick={changeCurrentTab('post')}
+                className={currentTab === 'post' ? (styles.currentTab) : ''}>Post
+              </li>
+              <li value='about' onClick={changeCurrentTab('about')}
+                className={currentTab === 'about' ? (styles.currentTab) : ''}>About
+              </li>
+              <li value='friends' onClick={changeCurrentTab('friends')}
+                className={currentTab === 'friends' ? (styles.currentTab) : ''}>
+                Friends {profile.friends && profile.friends.length}
+              </li>
+            </ul>
+            <span className={styles.editProfileBtn}>
+              <FontAwesomeIcon icon={faPencilAlt} style={{ marginRight: '10px' }} />
+              Edit Profile
+            </span>
+          </Col>
+        </Row>
+        <Divider style={{ margin: 0, borderColor: 'rgb(190, 190, 190)' }} />
       </Layout>
       {
         profileModalVisible &&
