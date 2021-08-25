@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import { deletePost, reactPost, addComment, hiddenPost } from '../../store/reducers/post.reducer';
 import { DeleteOutlined, EllipsisOutlined, LikeOutlined, ShareAltOutlined, CommentOutlined, LikeFilled, CloseCircleOutlined } from '@ant-design/icons';
 import AvatarProfile from '../AvatarProfile';
-import CommentComponent from '../CommentComponent';
+import CommentComponent from '../Comment';
 
 const PostComponent = (props) => {
     const dispatch = useDispatch();
