@@ -5,8 +5,8 @@ const extend = require('lodash/extend')
 
 const listUser = async (req, res) => {
   try {
-    let users = await User.find({}).select('_id')
-    users = users.map(user => user._id)
+    let users = await User.find({}).select('_id name')
+    // users = users.map(user => user._id)
     return res.status(200).json({ userList: users })
   } catch (error) {
     return res.status(400).json({ error })

@@ -8,6 +8,7 @@ import { cancelFriendRequest } from '../../store/reducers/user.reducer'
 import { cancelFollowing } from '../../store/reducers/profile.reducer'
 import { baseURL, showError } from '../../utils'
 import RespondDropdown from '../RespondDropdown'
+import SearchUserInput from '../SearchUserInput'
 import styles from './FriendTabs.module.scss'
 
 const UserItem = ({ user, currentTab, ownProfile, userLoginId }) => {
@@ -109,11 +110,7 @@ export default function FriendTabs({ profile, ownProfile }) {
       <Col className={styles.friendTabsContainer} span={24}>
         <div className={styles.friendTabHeader}>
           <h2>Friends</h2>
-          <Input
-            className={styles.searchInput}
-            placeholder="Search"
-            prefix={<SearchOutlined className="site-form-item-icon" />}
-          />
+          <SearchUserInput userList={profile.friends} />
         </div>
         <ul className={styles.friendTabSelection}>
           <li onClick={changeCurrentTab('allFriends')}

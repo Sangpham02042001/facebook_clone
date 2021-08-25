@@ -38,7 +38,8 @@ export default function Profile() {
   const router = useRouter()
   const { userId } = router.query
   const userReducer = useSelector(state => state.userReducer)
-  const userList = useSelector(state => state.userListReducer.userList)
+  const userList = useSelector(state => state.userListReducer
+    .userList.map(user => user._id))
   const posts = useSelector(state => state.postReducer.posts);
   const user = useSelector(state => state.userReducer.user);
   // const profilePosts = useSelector(state => state.postReducer.posts
@@ -55,7 +56,7 @@ export default function Profile() {
   const [profileModalVisible, setProfileModalVisible] = useState(false)
   const [coverPhotoModalVisible, setCoverPhotoModalVisible] = useState(false)
   const [editProfileModalVisible, setEditProfileModalVisible] = useState(false)
- 
+
   let userLoginId = userReducer.user._id
 
   useEffect(() => {
@@ -347,7 +348,7 @@ export default function Profile() {
                           setFriendTabs={() => setCurrentTab('friends')} />}
                       </div>
                     </Col>
-                    <Col flex="auto">
+                    <Col flex="auto" style={{ marginLeft: '10px', paddingTop: '20px' }}>
                       <InputForm />
                       {posts.map(post => {
                         if (post.user._id === userId)

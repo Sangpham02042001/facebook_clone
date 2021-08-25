@@ -7,10 +7,10 @@ import { signout } from '../../store/reducers/user.reducer'
 import { baseURL } from '../../utils/axios.util'
 import eventManager from '../../utils/eventemiter'
 import { Menu, Dropdown, Avatar } from 'antd'
+import SearchUserInput from '../SearchUserInput'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretDown } from '@fortawesome/free-solid-svg-icons'
 import styles from './navbar.module.scss'
-import AvatarProfile from '../AvatarProfile'
 
 const NavbarDropdownMenu = ({ user, avatarUpdated }) => {
   const router = useRouter()
@@ -51,6 +51,7 @@ const MessengerDropdown = () => {
 
 const NavBar = React.memo(function NavBar(props) {
   const userReducer = useSelector(state => state.userReducer)
+  const userList = useSelector(state => state.userListReducer.userList)
   const [avatarUpdated, setAvatarUpdated] = useState('')
 
   useEffect(() => {
@@ -64,12 +65,15 @@ const NavBar = React.memo(function NavBar(props) {
 
   return (
     <div className={styles['main-header']}>
-      <Link href="/">
-        <a>
-          <Image src="/images/facebook-brands.svg" alt="Facebook"
-            width={40} height={40} />
-        </a>
-      </Link>
+      <span style={{ display: 'flex', alignItems: 'center' }}>
+        <Link href="/">
+          <a style={{ display: 'inline-block', marginRight: '15px' }}>
+            <Image src="/images/facebook-brands.svg" alt="Facebook"
+              width={40} height={40} />
+          </a>
+        </Link>
+        <SearchUserInput userList={userList} />
+      </span>
       {userReducer.authenticated && <div>
         <span className={styles['username-header']}>
           <Link href={`/profile/${userReducer.user._id}`}>
