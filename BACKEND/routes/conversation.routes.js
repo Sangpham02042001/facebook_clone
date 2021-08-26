@@ -1,5 +1,5 @@
 const express = require('express')
-const { getConversation, getConversationList, postNewMessage } = require('../controllers/conversation.controller')
+const { getConversation, getConversationList, postNewMessage, postMessage } = require('../controllers/conversation.controller')
 const router = express.Router()
 
 router.route('/api/conversations/:conversationId')
@@ -9,6 +9,7 @@ router.route('/api/conversations/:conversationId')
 router.route('/api/:userId/conversations')
   .get(getConversationList)
   .post(postNewMessage)
+  .put(postMessage)
 
 
 module.exports = router

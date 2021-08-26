@@ -40,6 +40,7 @@ export const newConversation = createAsyncThunk('/newconversation', async (data,
         let { conversation } = response.data
         return {
           conversation: {
+            _id: conversation._id,
             messages: conversation.messages
           }
         }
@@ -66,9 +67,25 @@ export const sendNewMessage = createAsyncThunk('/sendNewMessage', async (data, {
   try {
     let myData = {
       ...data,
-      _id: v4()
+      messeageId: v4()
     }
     const response = await axiosInstance.post(path.join('api', data.senderId, 'conversations'), myData);
+    return response.data;
+  } catch (error) {
+    let { data } = error.response
+    if (data && data.error) {
+      return rejectWithValue(data)
+    }
+  }
+})
+
+export const sendMessage = createAsyncThunk('/sendMessage', async (data, { getState, rejectWithValue }) => {
+  try {
+    let myData = {
+      ...data,
+      messageId: v4()
+    }
+    const response = await axiosInstance.put(path.join('api', data.senderId, 'conversations'), myData);
     return response.data;
   } catch (error) {
     let { data } = error.response
@@ -98,13 +115,18 @@ export const conversationSlice = createSlice({
       }
     },
     [newConversation.rejected]: (state, action) => {
-      console.log("fasfas")
+      console.log(action)
     },
     [sendNewMessage.fulfilled]: (state, action) => {
       console.log(action.payload);
       const conver = state.conversations.find(cv => cv._id === action.payload.participants[1]);
       conver._id = action.payload._id;
       conver.messages = action.payload.messages
+    },
+    [sendMessage.fulfilled]: (state, action) => {
+      console.log(action.payload);
+      const conver = state.conversations.find(cv => cv._id == action.payload._id);
+      conver.messages.push(action.payload.messages[action.payload.messages.length - 1]);
     },
     [getConversations.pending]: (state, action) => {
       console.log('get conversations pending')

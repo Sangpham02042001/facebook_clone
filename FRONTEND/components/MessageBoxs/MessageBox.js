@@ -5,7 +5,7 @@ import { Avatar, Input } from 'antd'
 import { useSelector } from 'react-redux'
 import styles from './MessageBoxs.module.scss'
 import { baseURL } from '../../utils'
-import { closeConversation, sendNewMessage } from '../../store/reducers/conversation.reducer'
+import { closeConversation, sendNewMessage, sendMessage } from '../../store/reducers/conversation.reducer'
 
 export default function MessageBox({ conversation: {
   participant,
@@ -25,8 +25,14 @@ export default function MessageBox({ conversation: {
 
   const handleSendMessage = event => {
     if (newMessage) {
-      dispatch(sendNewMessage({ content: newMessage, conversationId: _id, senderId: userLogin._id }));
+      if (messages.length) {
+        dispatch(sendMessage({ content: newMessage, conversationId: _id, senderId: userLogin._id }));
+      } else {
+        dispatch(sendNewMessage({ content: newMessage, conversationId: _id, senderId: userLogin._id }));
+      }
+
       setNewMessage('')
+
     }
   }
 
