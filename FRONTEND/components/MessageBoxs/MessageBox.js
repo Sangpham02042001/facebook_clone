@@ -5,7 +5,7 @@ import { Avatar, Input } from 'antd'
 import { useSelector } from 'react-redux'
 import styles from './MessageBoxs.module.scss'
 import { baseURL } from '../../utils'
-import { closeConversation } from '../../store/reducers/conversation.reducer'
+import { closeConversation, sendMessage } from '../../store/reducers/conversation.reducer'
 
 export default function MessageBox({ conversation: {
   participant,
@@ -22,8 +22,11 @@ export default function MessageBox({ conversation: {
     }))
   }
 
-  const sendMessage = event => {
-    event.preventDefault()
+  const handleSendMessage = event => {
+    if (newMessage) {
+      dispatch(sendMessage({content: newMessage, conversationId: _id, senderId: userLogin._id }));
+      setNewMessage('')
+    }
   }
 
   return (
@@ -48,7 +51,7 @@ export default function MessageBox({ conversation: {
           placeholder="Send message..."
           value={newMessage}
           onChange={e => setNewMessage(e.target.value)}
-          onPressEnter={sendMessage}
+          onPressEnter={handleSendMessage}
           suffix={<i className="fas fa-arrow-right"></i>} />
       </div>
     </div>

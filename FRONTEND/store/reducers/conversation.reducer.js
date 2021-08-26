@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { axiosInstance, showWarning } from '../../utils'
+import path from 'path';
 
 const initialState = {
   conversations: [],
@@ -39,7 +40,8 @@ export const newConversation = createAsyncThunk('/newconversation', async (data,
 
 export const sendMessage = createAsyncThunk('/sendMessage', async (data, { getState, rejectWithValue }) => {
   try {
-    let { content, conversationId, sender } = data
+    const response = await axiosInstance.post(path.join('api', data.senderId,'conversations'), data);
+    return response.data;
   } catch (error) {
     let { data } = error.response
     if (data && data.error) {
@@ -63,6 +65,11 @@ export const conversationSlice = createSlice({
     },
     [newConversation.rejected]: (state, action) => {
       console.log("fasfas")
+    },
+    [sendMessage.fulfilled]: (state, action) => {
+      console.log(action.payload);
+      const conver = state.conversations.find(cv => cv._id === action.payload.participants[1]);
+      conver._id = action.payload._id;
     }
   },
   reducers: {

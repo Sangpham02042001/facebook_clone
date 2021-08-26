@@ -25,7 +25,7 @@ const PostList = () => {
       {loadingPost && <Loading />}
 
       <div className={styles["post-list"]}>
-        
+      
         {posts.map(post => {
           return <PostComponent key={post._id} post={post} user={user} />
         })

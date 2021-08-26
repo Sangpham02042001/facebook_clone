@@ -35,7 +35,21 @@ const getConversationList = async (req, res) => {
   }
 }
 
+const postNewMessage = async (req, res, next) => {
+  try {
+    const { senderId, content, conversationId } = req.body;
+    let newConversation = { messages: [{ sender: senderId, content }], participants: [senderId, conversationId] }
+    newConversation = await Conversation.create(newConversation);
+
+    return res.status(200).json(newConversation);
+
+  } catch (error) {
+    return next(error)
+  }
+}
+
 module.exports = {
   getConversation,
-  getConversationList
+  getConversationList,
+  postNewMessage
 }

@@ -27,7 +27,7 @@ const addPost = (req, res, next) => {
     if (req.body.article || imageBase64) {
         Posts.create({ article: req.body.article, user: req.body.userId, image: { data: imageBase64, contentType: imageType } })
             .then((post) => {
-                console.log('post: ', post);
+                // console.log('post: ', post);
                 Posts.findById(post._id)
                     .populate('user', 'name _id')
                     .then(post => {
@@ -56,7 +56,7 @@ const deletePost = (req, res, next) => {
             if (post.user == req.params.userId) {
                 Posts.findByIdAndRemove(req.params.postId)
                     .then((resp) => {
-                        console.log(resp);
+                        // console.log(resp);
                         res.statusCode = 200;
                         res.setHeader('Content-Type', 'application/json');
                         res.json(resp);
@@ -105,7 +105,7 @@ const reactPost = async (req, res, next) => {
             .then(post => {
                 res.statusCode = 200;
                 res.setHeader('Content-Type', 'application/json');
-                console.log(post);
+                // console.log(post);
                 res.json(post);
             })
     } catch (error) {
@@ -131,7 +131,7 @@ const addCommentPost = async (req, res, next) => {
             .then(post => {
                 res.statusCode = 200;
                 res.setHeader('Content-Type', 'application/json');
-                console.log(post);
+                // console.log(post);
                 res.json(post);
             })
     } catch (error) {
@@ -160,7 +160,7 @@ const deleteComment = async (req, res, next) => {
             .then(post => {
                 res.statusCode = 200;
                 res.setHeader('Content-Type', 'application/json');
-                console.log(post);
+                // console.log(post);
                 res.json(post);
             })
 
