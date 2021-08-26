@@ -5,6 +5,7 @@ import { Avatar } from 'antd'
 import { useSelector } from 'react-redux'
 import styles from './MessageBoxs.module.scss'
 import { baseURL } from '../../utils'
+import {closeConversation} from '../../store/reducers/conversation.reducer'
 
 export default function MessageBox({ conversation: {
   participant,

@@ -4,7 +4,7 @@ import { getPosts } from '../../store/reducers/post.reducer';
 import PostComponent from '../PostComponent';
 import Loading from '../Loading';
 import styles from './home.module.scss';
-import InputForm from '../InputForm';
+
 
 const PostList = () => {
   const dispatch = useDispatch();
@@ -25,7 +25,7 @@ const PostList = () => {
       {loadingPost && <Loading />}
 
       <div className={styles["post-list"]}>
-        <InputForm />
+        
         {posts.map(post => {
           return <PostComponent key={post._id} post={post} user={user} />
         })

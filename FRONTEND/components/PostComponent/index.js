@@ -1,4 +1,4 @@
-import { Button, Divider, Row, Col, Dropdown, Menu, message, Input } from 'antd';
+import { Button, Divider, Row, Col, Dropdown, Menu, message, Input, Popover } from 'antd';
 import styles from './post.module.scss';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -12,11 +12,11 @@ const PostComponent = (props) => {
     const [postReacted, setPostReacted] = useState(false);
     const [postCommented, setPostCommented] = useState(false);
     const [numberOfReact, setNumberOfReact] = useState(0);
-
+    const reactList = props.post.reactList;
 
 
     useEffect(() => {
-        const reactList = props.post.reactList;
+        
         const userReactPost = reactList.find(react => {
             return react.user._id == props.user._id
         });
@@ -184,7 +184,10 @@ const PostComponent = (props) => {
             </Row>
             <Row>
                 <Col >
-                    <ShowPeopleReacted />
+                    <Popover content={reactList.map(react => <p>{react.user.name}</p>)}>
+                        <span> <ShowPeopleReacted /></span>
+                    </Popover>
+                   
                 </Col>
             </Row>
             <Divider style={{ marginBottom: "2px", marginTop: "10px", borderColor: '#ced0d4' }} />

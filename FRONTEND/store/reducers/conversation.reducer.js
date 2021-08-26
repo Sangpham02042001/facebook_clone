@@ -16,13 +16,8 @@ export const conversationSlice = createSlice({
       let participant = action.payload.participant
       let _id = action.payload.conversationId
       for (const cv of state.conversations) {
-        if (cv._id === _id) {
-          if (cv.visible === true) {
-            return;
-          } else {
-            cv.visible = false
-            return;
-          }
+        if (cv._id === _id && cv.visible === true) {
+          return;
         }
       }
       let newConversation = {
@@ -36,11 +31,11 @@ export const conversationSlice = createSlice({
     closeConversation: (state, action) => {
       let _id = action.payload._id
       let idx = state.conversations.map(cv => cv._id).indexOf(_id)
-      state.conversations[idx].visible = false
+      state.conversations.splice(idx, 1);
     }
   }
 })
 
-export const { newConversation } = conversationSlice.actions
+export const { newConversation, closeConversation } = conversationSlice.actions
 
 export default conversationSlice.reducer
