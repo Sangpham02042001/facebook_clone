@@ -13,6 +13,7 @@
   z-index: 1000;
   background-color: #fff;
   overflow: auto;
+  position: relative;
 }
 
 .messageHeader {
@@ -20,7 +21,12 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: rgb(94, 103, 235);
   padding: 0 10px;
-  color: #fff;
+  color: blue;
+}
+
+.messageInput {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
 }

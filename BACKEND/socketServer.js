@@ -17,10 +17,6 @@ const SocketServer = (socket) => {
   })
 
   socket.on('user-disconnect', ({ userID }) => {
-    let idx = onlineUserList.indexOf(userID)
-    console.log('server on user disconnected')
-    onlineUserList.splice(idx, 1)
-    console.log('new online user list', onlineUserList)
     socket.broadcast.emit('user-disconnected', { userID })
     socket.disconnect()
   })

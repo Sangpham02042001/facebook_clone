@@ -44,14 +44,12 @@ export default function FriendStatusList() {
     }
   }, [])
 
-  const handleNewConversation = userId => event => {
+  const handleNewConversation = user => event => {
     event.preventDefault()
-    let conversationId = userId
     dispatch(newConversation({
-      conversationId,
-      participant: userId,
+      user
     }))
-    console.log(userId, user._id)
+    console.log(user._id)
   }
 
   return (
@@ -63,7 +61,7 @@ export default function FriendStatusList() {
             <span>
               <AvatarProfile showName={true} user={user} />
               <span>{user.activityStatus}</span>
-              <button onClick={handleNewConversation(user._id)}>new con</button>
+              <button onClick={handleNewConversation(user)}>new con</button>
             </span>
           </Col>
         </Row>

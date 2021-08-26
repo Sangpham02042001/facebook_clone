@@ -8,6 +8,7 @@ require('dotenv').config()
 const userRoutes = require('./routes/user.routes')
 const authRoutes = require('./routes/auth.routes')
 const postRoutes = require('./routes/post.routes')
+const conversationRoutes = require('./routes/conversation.routes')
 
 const app = express()
 const HOST = process.env.HOST || 'http://localhost'
@@ -48,6 +49,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use('/', userRoutes);
 app.use('/', authRoutes);
 app.use('/posts/', postRoutes);
+app.use('/', conversationRoutes);
 
 
 http.listen(PORT, HOST, () => {

@@ -16,7 +16,7 @@ const PostComponent = (props) => {
 
 
     useEffect(() => {
-        
+
         const userReactPost = reactList.find(react => {
             return react.user._id == props.user._id
         });
@@ -184,10 +184,10 @@ const PostComponent = (props) => {
             </Row>
             <Row>
                 <Col >
-                    <Popover content={reactList.map(react => <p>{react.user.name}</p>)}>
+                    <Popover content={reactList.map(react => <p key={react.user._id}>{react.user.name}</p>)}>
                         <span> <ShowPeopleReacted /></span>
                     </Popover>
-                   
+
                 </Col>
             </Row>
             <Divider style={{ marginBottom: "2px", marginTop: "10px", borderColor: '#ced0d4' }} />
