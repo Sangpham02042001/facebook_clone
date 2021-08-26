@@ -10,8 +10,8 @@ const ConversationSchema = new Schema({
     _id: String,
     content: String,
     sender: {
-      _id: String,
-      name: String
+      type: mongoose.Types.ObjectId,
+      ref: 'User'
     },
     sendAt: {
       type: Date,

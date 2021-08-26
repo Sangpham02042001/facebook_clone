@@ -1,11 +1,28 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { axiosInstance, showWarning } from '../../utils'
 import path from 'path';
+import { v4 } from 'uuid';
 
 const initialState = {
   conversations: [],
   error: ''
 }
+
+export const getConversations = createAsyncThunk('/getConversations', async (data, { rejectWithValue }) => {
+  let { userLoginId } = data
+  try {
+    const response = await axiosInstance.get(path.join('api', userLoginId, 'conversations'));
+    let { conversations } = response.data
+    return {
+      conversations
+    }
+  } catch (error) {
+    let { data } = error.response
+    if (data && data.error) {
+      return rejectWithValue(data)
+    }
+  }
+})
 
 export const newConversation = createAsyncThunk('/newconversation', async (data, { getState, rejectWithValue }) => {
   const userLoggedIn = getState().userReducer.user
@@ -18,7 +35,14 @@ export const newConversation = createAsyncThunk('/newconversation', async (data,
         showWarning("Already open")
         return { }
       } else {
-        // get messages here
+        let conver = conversations.filter(cv => cv.participant._id == _id)[0]
+        const response = await axiosInstance.get(path.join('api/conversations', conver._id));
+        let { conversation } = response.data
+        return {
+          conversation: {
+            messages: conversation.messages
+          }
+        }
       }
     } else {
       return {
@@ -38,9 +62,13 @@ export const newConversation = createAsyncThunk('/newconversation', async (data,
   }
 })
 
-export const sendMessage = createAsyncThunk('/sendMessage', async (data, { getState, rejectWithValue }) => {
+export const sendNewMessage = createAsyncThunk('/sendNewMessage', async (data, { getState, rejectWithValue }) => {
   try {
-    const response = await axiosInstance.post(path.join('api', data.senderId,'conversations'), data);
+    let myData = {
+      ...data,
+      _id: v4()
+    }
+    const response = await axiosInstance.post(path.join('api', data.senderId, 'conversations'), myData);
     return response.data;
   } catch (error) {
     let { data } = error.response
@@ -60,40 +88,39 @@ export const conversationSlice = createSlice({
     [newConversation.fulfilled]: (state, action) => {
       let { conversation } = action.payload
       if (conversation) {
-        state.conversations.push(conversation)
+        let checkIdx = state.conversations.map(cv => cv._id).indexOf(conversation._id)
+        if (checkIdx >= 0) {
+          state.conversations[checkIdx].messages = conversation.messages
+          state.conversations[checkIdx].visible = true
+        } else {
+          state.conversations.push(conversation)
+        }
       }
     },
     [newConversation.rejected]: (state, action) => {
       console.log("fasfas")
     },
-    [sendMessage.fulfilled]: (state, action) => {
+    [sendNewMessage.fulfilled]: (state, action) => {
       console.log(action.payload);
       const conver = state.conversations.find(cv => cv._id === action.payload.participants[1]);
       conver._id = action.payload._id;
-    }
+      conver.messages = action.payload.messages
+    },
+    [getConversations.pending]: (state, action) => {
+      console.log('get conversations pending')
+    },
+    [getConversations.fulfilled]: (state, action) => {
+      let { conversations } = action.payload
+      if (conversations) {
+        conversations = conversations.map(cv => ({
+          ...cv,
+          visible: false
+        }))
+      }
+      state.conversations = conversations
+    },
   },
   reducers: {
-    // newConversation: (state, action) => {
-    //   let participant = action.payload.participant
-    //   let _id = action.payload.conversationId
-    //   for (const cv of state.conversations) {
-    //     if (cv._id === _id) {
-    //       if (cv.visible === true) {
-    //         return;
-    //       } else {
-    //         cv.visible = false
-    //         return;
-    //       }
-    //     }
-    //   }
-    //   let newConversation = {
-    //     _id,
-    //     participant,
-    //     messages: [],
-    //     visible: true
-    //   }
-    //   state.conversations.push(newConversation)
-    // },
     closeConversation: (state, action) => {
       let _id = action.payload._id
       let idx = state.conversations.map(cv => cv._id).indexOf(_id)

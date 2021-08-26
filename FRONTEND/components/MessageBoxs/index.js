@@ -10,7 +10,7 @@ export default function MessageBoxs() {
       {
         conversations.filter(cv => cv.visible === true)
           .map(cv => (
-            <MessageBox key={cv.participant._id} conversation={cv} />
+            <MessageBox key={cv._id} conversation={cv} />
           ))
       }
     </div>

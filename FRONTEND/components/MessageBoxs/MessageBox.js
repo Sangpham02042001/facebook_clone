@@ -5,11 +5,12 @@ import { Avatar, Input } from 'antd'
 import { useSelector } from 'react-redux'
 import styles from './MessageBoxs.module.scss'
 import { baseURL } from '../../utils'
-import { closeConversation, sendMessage } from '../../store/reducers/conversation.reducer'
+import { closeConversation, sendNewMessage } from '../../store/reducers/conversation.reducer'
 
 export default function MessageBox({ conversation: {
   participant,
-  _id
+  _id,
+  messages
 } }) {
   const userLogin = useSelector(state => state.userReducer.user)
   const [newMessage, setNewMessage] = useState('')
@@ -24,7 +25,7 @@ export default function MessageBox({ conversation: {
 
   const handleSendMessage = event => {
     if (newMessage) {
-      dispatch(sendMessage({content: newMessage, conversationId: _id, senderId: userLogin._id }));
+      dispatch(sendNewMessage({ content: newMessage, conversationId: _id, senderId: userLogin._id }));
       setNewMessage('')
     }
   }
@@ -41,11 +42,21 @@ export default function MessageBox({ conversation: {
             <span>{participant.name}{"   "}{participant.activityStatus}</span>
           </a>
         </Link>
-
         <i style={{ cursor: 'pointer', padding: '10px' }}
           onClick={handleClose}
           className="fas fa-times"></i>
       </div>
+
+      <div>
+        {
+          messages.map(message => (
+            <div key={message._id}>
+              {message.content}
+            </div>
+          ))
+        }
+      </div>
+
       <div className={styles.messageInput}>
         <Input
           placeholder="Send message..."

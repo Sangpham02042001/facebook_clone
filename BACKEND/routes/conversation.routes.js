@@ -4,7 +4,7 @@ const router = express.Router()
 
 router.route('/api/conversations/:conversationId')
   .get(getConversation)
-  
+
 
 router.route('/api/:userId/conversations')
   .get(getConversationList)
