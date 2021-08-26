@@ -7,26 +7,70 @@
 }
 
 .messageFrame {
-  height: 400px;
+  height: 450px;
   margin-left: 20px;
-  min-width: 300px;
+  min-width: 320px;
   z-index: 1000;
   background-color: #fff;
   overflow: auto;
   position: relative;
+  box-shadow: 0 0 2px 1px rgb(214, 212, 212);
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
 }
 
 .messageHeader {
-  height: 50px;
+  height: 60px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 10px;
   color: blue;
+  position: fixed;
+  width: 320px;
+  z-index: 1000;
+  box-shadow: 0 0 2px 1px rgb(214, 212, 212);
+  background-color: #fff;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
 }
 
 .messageInput {
-  position: absolute;
+  position: fixed;
   bottom: 0;
-  width: 100%;
+  width: 320px;
+}
+
+.messageList {
+  margin-top: 70px;
+  margin-bottom: 40px;
+}
+
+.messageLine {
+  // padding: 10px;
+  margin-bottom: 10px;
+}
+
+.myMessageLine {
+  text-align: right;
+}
+
+.yourMessageLine {
+  display: flex;
+}
+
+.message {
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 16px;
+}
+
+.myMessage {
+  color: #fff;
+  background-color: blue;
+}
+
+.yourMessage {
+  margin-left: 15px;
+  border: 1px solid rgb(231, 228, 228);
 }

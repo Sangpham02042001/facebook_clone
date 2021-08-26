@@ -1,11 +1,23 @@
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import Link from 'next/link'
-import { Avatar, Input } from 'antd'
+import { Avatar, Input, Tooltip } from 'antd'
 import { useSelector } from 'react-redux'
 import styles from './MessageBoxs.module.scss'
 import { baseURL } from '../../utils'
 import { closeConversation, sendNewMessage, sendMessage } from '../../store/reducers/conversation.reducer'
+
+const getTime = (time) => {
+  let hours = new Date(time).getHours().toString()
+  if (hours.length < 2) {
+    hours = '0' + hours
+  }
+  let minutes = new Date(time).getMinutes().toString()
+  if (minutes.length < 2) {
+    minutes = '0' + minutes
+  }
+  return hours + ":" + minutes
+}
 
 export default function MessageBox({ conversation: {
   participant,
@@ -53,11 +65,24 @@ export default function MessageBox({ conversation: {
           className="fas fa-times"></i>
       </div>
 
-      <div>
+      <div className={styles.messageList}>
         {
-          messages.map(message => (
-            <div key={message._id}>
-              {message.content}
+          messages.map((message, idx) => (
+            <div key={message._id}
+              className={message.sender == userLogin._id ?
+                `${styles.messageLine} ${styles.myMessageLine}`
+                : `${styles.messageLine} ${styles.yourMessageLine}`}>
+              {message.sender !== userLogin._id
+                && ((idx < messages.length - 2 && message.sender !== messages[idx + 1].sender)
+                  || idx === messages.length - 1)
+                && <Avatar src={`${baseURL}/api/user/avatar/${message.sender}`} />}
+              <Tooltip
+                title={getTime(message.sendAt)}
+                className={message.sender == userLogin._id ?
+                  `${styles.message} ${styles.myMessage}`
+                  : `${styles.message} ${styles.yourMessage}`}>
+                {message.content}
+              </Tooltip>
             </div>
           ))
         }
