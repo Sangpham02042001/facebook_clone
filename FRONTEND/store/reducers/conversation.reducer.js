@@ -67,7 +67,7 @@ export const sendNewMessage = createAsyncThunk('/sendNewMessage', async (data, {
   try {
     let myData = {
       ...data,
-      messeageId: v4()
+      messageId: v4()
     }
     const response = await axiosInstance.post(path.join('api', data.senderId, 'conversations'), myData);
     return response.data;
@@ -95,6 +95,58 @@ export const sendMessage = createAsyncThunk('/sendMessage', async (data, { getSt
   }
 })
 
+export const receviceMessage = createAsyncThunk('/receiveMessage', async (data, { getState, rejectWithValue }) => {
+  try {
+    let { newMessage, sender, conversationId } = data
+    const conversations = getState().conversationReducer.conversations
+    let idx = conversations.map(cv => cv._id).indexOf(conversationId)
+    let message = {
+      content: newMessage,
+      sender,
+      _id: v4(),
+      sendAt: new Date()
+    }
+    if (idx >= 0) {
+      let conversation = conversations[idx]
+      if (conversation) {
+        if (conversation.visible) {
+          let newMessages = [...conversation.messages, message]
+          return {
+            _id: conversation._id,
+            messages: newMessages
+          }
+        } else {
+          //request
+          const response = await axiosInstance.get(path.join('api/conversations', conversation._id));
+          let cv = response.data.conversation
+          // let lastMessage = cv.messages[cv.messages.length - 1]
+          // if (lastMessage._id != message._id) {
+          //   cv.messages.push(message)
+          // }
+          return {
+            _id: cv._id,
+            messages: cv.messages,
+          }
+        }
+      }
+    } else {
+      // let userList = getState().userListReducer.userList
+      // let idx = userList.map(user => user._id).indexOf(sender)
+      return {
+        // conversation: {
+        //   _id: conversationId,
+        //   participant: userList[idx],
+        //   messages: [message],
+        //   visible: true
+        // }
+        message: "FIXED SOON"
+      }
+    }
+  } catch (error) {
+    return rejectWithValue(error)
+  }
+})
+
 export const conversationSlice = createSlice({
   name: 'conversations',
   initialState,
@@ -118,13 +170,11 @@ export const conversationSlice = createSlice({
       console.log(action)
     },
     [sendNewMessage.fulfilled]: (state, action) => {
-      console.log(action.payload);
       const conver = state.conversations.find(cv => cv._id === action.payload.participants[1]);
       conver._id = action.payload._id;
       conver.messages = action.payload.messages
     },
     [sendMessage.fulfilled]: (state, action) => {
-      console.log(action.payload);
       const conver = state.conversations.find(cv => cv._id == action.payload._id);
       conver.messages.push(action.payload.messages[action.payload.messages.length - 1]);
     },
@@ -141,6 +191,21 @@ export const conversationSlice = createSlice({
       }
       state.conversations = conversations
     },
+    [receviceMessage.fulfilled]: (state, action) => {
+      if (action.payload.message) {
+        console.log("fadsfsadf")
+        return;
+      }
+      let { _id, messages } = action.payload
+      let idx = state.conversations.map(cv => cv._id).indexOf(_id)
+      state.conversations[idx].messages = messages
+      if (!state.conversations[idx].visible) {
+        state.conversations[idx].visible = true
+      }
+    },
+    [receviceMessage.rejected]: (state, action) => {
+      console.log(action.payload)
+    }
   },
   reducers: {
     closeConversation: (state, action) => {
@@ -153,7 +218,7 @@ export const conversationSlice = createSlice({
         state.conversations[idx].visible = false
         state.conversations[idx].messages = []
       }
-    }
+    },
   }
 })
 

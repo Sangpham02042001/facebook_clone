@@ -16,6 +16,16 @@ const SocketServer = (socket) => {
     receiverId: socket.userID
   })
 
+  socket.on('private-message', ({ content, to, conversationId }) => {
+    console.log(socket.id)
+    console.log('content - to', content, to)
+    socket.to(to).emit('receive-private-message', {
+      content,
+      from: socket.userID,
+      conversationId
+    })
+  })
+
   socket.on('user-disconnect', ({ userID }) => {
     socket.broadcast.emit('user-disconnected', { userID })
     socket.disconnect()

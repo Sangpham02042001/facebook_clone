@@ -1,11 +1,15 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import Link from 'next/link'
 import { Avatar, Input, Tooltip } from 'antd'
 import { useSelector } from 'react-redux'
 import styles from './MessageBoxs.module.scss'
 import { baseURL } from '../../utils'
-import { closeConversation, sendNewMessage, sendMessage } from '../../store/reducers/conversation.reducer'
+import socketClient from '../../socketClient'
+import {
+  closeConversation, sendNewMessage,
+  sendMessage
+} from '../../store/reducers/conversation.reducer'
 
 const getTime = (time) => {
   let hours = new Date(time).getHours().toString()
@@ -42,6 +46,11 @@ export default function MessageBox({ conversation: {
       } else {
         dispatch(sendNewMessage({ content: newMessage, conversationId: _id, senderId: userLogin._id }));
       }
+      socketClient.emit('private-message', {
+        content: newMessage,
+        to: participant._id,
+        conversationId: _id
+      })
 
       setNewMessage('')
 
