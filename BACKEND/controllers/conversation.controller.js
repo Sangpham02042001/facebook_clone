@@ -72,7 +72,7 @@ const postMessage = async (req, res, next) => {
   }
 }
 
-const getConversationId = async ( senderId, content, conversationId, messageId ) => {
+const saveConversation = async ( senderId, content, conversationId, messageId ) => {
   try {
     console.log('aaaaaaaaaaaaaaaaaaaaaa', conversationId)
     const conversation = await Conversation.findById(conversationId);
@@ -101,5 +101,5 @@ module.exports = {
   getConversationList,
   postNewMessage,
   postMessage,
-  getConversationId,
+  saveConversation,
 }

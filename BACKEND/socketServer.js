@@ -1,4 +1,5 @@
-const { getConversationId } = require('./controllers/conversation.controller')
+const {saveConversation} = require('./controllers/conversation.controller')
+
 let onlineUserList = []
 
 const SocketServer = (socket) => {
@@ -29,7 +30,7 @@ const SocketServer = (socket) => {
   socket.on('send-private-message', async ({ content, from, to, conversationId, messageId }) => {
     console.log('content - to - from', content, to, from, socket.id, socket.userID)
     console.log('xxxxxxxx', conversationId)
-    const conversation = await getConversationId(socket.userID, content, conversationId, messageId);
+    const conversation = await saveConversation(socket.userID, content, conversationId, messageId);
 
     socket.to(to).emit('sent-private-message', {
       content,
