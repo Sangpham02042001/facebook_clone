@@ -36,8 +36,10 @@ io.on('connection', socket => {
 
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true, useCreateIndex: true,
-  useUnifiedTopology: true, useFindAndModify: true
+  useUnifiedTopology: true, useFindAndModify: false
 })
+
+
 mongoose.connection.on('error', () => {
   throw new Error(`unable to connect to database: ${config.mongoUri}`)
 })

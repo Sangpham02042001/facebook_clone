@@ -1,4 +1,7 @@
 const Posts = require('../models/post.model')
+// const Videos = require('../models/videos.gridfs.model')
+const mongoose = require('mongoose');
+const Grid = require('gridfs-stream');
 
 const getPosts = (req, res, next) => {
     Posts.find({})
@@ -18,26 +21,70 @@ const getPosts = (req, res, next) => {
 }
 
 
-const addPost = (req, res, next) => {
+
+const addVideo = (req, res, next) => {
+    console.log(res);
+    return res.status(200).json("ok")
+}
+
+const playVideo = (req, res, next) => {
+    // const bucket = new mongodb.GridFSBucket(db);
+    //   const downloadStream = bucket.openDownloadStreamByName('uploads');
+
+    //   // Finally pipe video to response
+    //   downloadStream.pipe(res);
+    mongoose.connection.on('connected', () => {
+        gfs = Grid(mongoose.connection.db, mongoose.mongo);
+        gfs.collection('videos');
+        console.log(gfs.files)
+        const sth = gfs.files.find({})
+        console.log(sth)
+
+    })
+}
+
+
+// Videos.files.find().toArray((err, files) => {
+//     // Check if files
+//     if (!files || files.length === 0) {
+//         res.status(403).json("false")
+//     } else {
+//         files.map(file => {
+//             if (
+//                 file.contentType === 'video/mp4' ||
+//                 file.contentType === 'video/webm '
+//             ) {
+//                 file.isVideo = true;
+//             } else {
+//                 file.isVideo = false;
+//             }
+//         });
+
+//         res.status(200).json("imok");
+//     }
+// })
+
+
+
+const addPost = async (req, res, next) => {
     // console.log(req.file);
     let fileImage = req.file;
     let imageType = fileImage && fileImage.mimetype;
     let imageBase64 = fileImage && fileImage.buffer.toString('base64');
 
     if (req.body.article || imageBase64) {
-        Posts.create({ article: req.body.article, user: req.body.userId, image: { data: imageBase64, contentType: imageType } })
-            .then((post) => {
-                // console.log('post: ', post);
-                Posts.findById(post._id)
-                    .populate('user', 'name _id')
-                    .then(post => {
-                        res.statusCode = 200;
-                        res.setHeader('Content-Type', 'application/json');
-                        res.json(post);
-                    })
-
-            }, (err) => next(err))
-            .catch((err) => next(err));
+        try {
+            const post = await Posts.create({ article: req.body.article, user: req.body.userId, image: { data: imageBase64, contentType: imageType } })
+            Posts.findById(post._id)
+                .populate('user', 'name _id')
+                .then(post => {
+                    res.statusCode = 200;
+                    res.setHeader('Content-Type', 'application/json');
+                    res.json(post);
+                })
+        } catch (error) {
+            return next(error);
+        }
     } else {
         res.statusCode = 403;
         res.end('Could not post!');
@@ -172,4 +219,4 @@ const deleteComment = async (req, res, next) => {
 }
 
 
-module.exports = { getPosts, addPost, deletePost, reactPost, addCommentPost, deleteComment }
+module.exports = { getPosts, addPost, deletePost, reactPost, addCommentPost, deleteComment, addVideo, playVideo }

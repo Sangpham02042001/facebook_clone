@@ -10,6 +10,7 @@ import {
   closeConversation, sendNewMessage,
   sendMessage
 } from '../../store/reducers/conversation.reducer'
+import { v4 } from 'uuid'
 
 const getTime = (time) => {
   let hours = new Date(time).getHours().toString()
@@ -41,21 +42,26 @@ export default function MessageBox({ conversation: {
 
   const handleSendMessage = event => {
     if (newMessage) {
-      if (messages.length) {
-        dispatch(sendMessage({ content: newMessage, conversationId: _id, senderId: userLogin._id }));
-      } else {
-        dispatch(sendNewMessage({ content: newMessage, conversationId: _id, senderId: userLogin._id }));
-      }
-      socketClient.emit('private-message', {
+      // if (messages.length) {
+      //   dispatch(sendMessage({ content: newMessage, conversationId: _id, senderId: userLogin._id }));
+      // } else {
+      //   dispatch(sendNewMessage({ content: newMessage, conversationId: _id, senderId: userLogin._id }));
+      // }
+      console.log(_id)
+      socketClient.emit('send-private-message', {
         content: newMessage,
+        from: userLogin._id,
         to: participant._id,
-        conversationId: _id
+        conversationId: _id,
+        messageId: v4(),
       })
 
       setNewMessage('')
 
     }
   }
+
+  
 
   return (
     <div className={styles.messageFrame}>

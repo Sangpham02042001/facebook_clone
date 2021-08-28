@@ -1,6 +1,32 @@
 const express = require('express');
-const { getPosts, addPost, deletePost, reactPost, addCommentPost, deleteComment } = require('../controllers/post.controller');
+const { getPosts, addPost, deletePost, reactPost, addCommentPost, deleteComment, addVideo, playVideo } = require('../controllers/post.controller');
 const multer = require('multer');
+const path = require('path')
+
+const {GridFsStorage} = require('multer-gridfs-storage');
+const crypto = require('crypto');
+
+
+const storage = new GridFsStorage({
+    url: process.env.MONGO_URI,
+    file: (req, file) => {
+      return new Promise((resolve, reject) => {
+        crypto.randomBytes(16, (err, buf) => {
+          if (err) {
+            return reject(err);
+          }
+          const filename = buf.toString('hex') + path.extname(file.originalname);
+          const fileInfo = {
+            filename: filename,
+            bucketName: 'uploads'
+          };
+          resolve(fileInfo);
+        });
+      });
+    }
+  });
+  
+const uploadVideo = multer({ storage });
 const upload = multer();
 
 const postRouter = express.Router();
@@ -23,5 +49,10 @@ postRouter.route('/:userId/interactive/:postId/comments')
 
 postRouter.route('/:userId/interactive/:postId/comments/:commentId')
     .delete(deleteComment)
+
+
+postRouter.route('/:userId/videos')
+  .get(playVideo)
+  .post(uploadVideo.single('video-post'), addVideo)
 
 module.exports = postRouter;

@@ -1,4 +1,4 @@
-import { Button, Divider, Row, Col, Dropdown, Menu, message, Input, Popover } from 'antd';
+import { Button, Divider, Row, Col, Dropdown, Menu, message, Input, Tooltip } from 'antd';
 import styles from './post.module.scss';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -184,9 +184,9 @@ const PostComponent = (props) => {
             </Row>
             <Row>
                 <Col >
-                    <Popover content={reactList.map(react => <p key={react.user._id}>{react.user.name}</p>)}>
+                    <Tooltip title={reactList.map(react => <p key={react.user._id}>{react.user.name}</p>)}>
                         <span> <ShowPeopleReacted /></span>
-                    </Popover>
+                    </Tooltip>
 
                 </Col>
             </Row>

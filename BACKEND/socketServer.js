@@ -1,3 +1,4 @@
+const {getConversationId} = require('./controllers/conversation.controller')
 let onlineUserList = []
 
 const SocketServer = (socket) => {
@@ -16,13 +17,32 @@ const SocketServer = (socket) => {
     receiverId: socket.userID
   })
 
-  socket.on('private-message', ({ content, to, conversationId }) => {
-    console.log(socket.id)
-    console.log('content - to', content, to)
-    socket.to(to).emit('receive-private-message', {
+  socket.on('send-private-message', async ({ content, from, to, conversationId, messageId }) => {
+    console.log('content - to - from', content, to, from, socket.id, socket.userID)
+    console.log('xxxxxxxx', conversationId)
+    const conversation = await getConversationId(socket.userID, content, conversationId, messageId);
+
+    socket.to(to).emit('sent-private-message', {
       content,
       from: socket.userID,
-      conversationId
+      to,
+      conversationId: conversation._id,
+      messageId,
+
+    })
+  
+  })
+
+  socket.on('receive-private-message', async ({ content, from, to, conversationId, messageId }) => {
+
+    console.log('content - to - from - socketId - socketUserId', content, to, from, socket.id, socket.userID)
+    
+    socket.to(from).emit('received-private-message', {
+      content,
+      from,
+      to,
+      conversationId,
+      messageId,
     })
   })
 
