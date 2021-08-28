@@ -8,6 +8,7 @@ import { baseURL } from '../../utils/axios.util'
 import eventManager from '../../utils/eventemiter'
 import { Menu, Dropdown, Avatar } from 'antd'
 import SearchUserInput from '../SearchUserInput'
+import { newConversation } from '../../store/reducers/conversation.reducer'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretDown } from '@fortawesome/free-solid-svg-icons'
 import styles from './navbar.module.scss'
@@ -41,19 +42,28 @@ const NavbarDropdownMenu = ({ user, avatarUpdated }) => {
   </Menu>
 }
 
-const MessengerDropdown = () => {
+const MessengerDropdown = ({ conversations, openMessage }) => {
   return <Menu style={{ minWidth: '300px', maxHeight: '500px' }}>
     <Menu.Item key="1">
       <h2>Messenger</h2>
     </Menu.Item>
-    <Menu.Divider />
+    {conversations.map((cv, idx) => (
+      <Menu.Item key={cv._id} onClick={openMessage(cv.participant)}>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <Avatar src={`${baseURL}/api/user/avatar/${cv.participant._id}`} />
+          <h2 style={{ marginLeft: '10px' }}>{cv.participant.name}</h2>
+        </div>
+      </Menu.Item>
+    ))}
   </Menu>
 }
 
 const NavBar = React.memo(function NavBar(props) {
   const userReducer = useSelector(state => state.userReducer)
   const userList = useSelector(state => state.userListReducer.userList)
+  const conversations = useSelector(state => state.conversationReducer.conversations)
   const [avatarUpdated, setAvatarUpdated] = useState('')
+  const dispatch = useDispatch()
 
   useEffect(() => {
     eventManager.on('avatarUpdated', (time) => {
@@ -61,6 +71,12 @@ const NavBar = React.memo(function NavBar(props) {
       avatarUpdated !== time && setAvatarUpdated(time)
     })
   }, [])
+
+  const handleNewConversation = (participant) => {
+    dispatch(newConversation({
+      user: participant
+    }))
+  }
 
   console.log('header render')
 
@@ -88,7 +104,8 @@ const NavBar = React.memo(function NavBar(props) {
           </Link>
         </span>
         <span className={styles.messenger}>
-          <Dropdown overlay={<MessengerDropdown />}
+          <Dropdown overlay={<MessengerDropdown
+            conversations={conversations} openMessage={handleNewConversation} />}
             trigger={['click']}>
             <i className={`fab fa-facebook-messenger ${styles.messengerIcon}`}></i>
           </Dropdown>

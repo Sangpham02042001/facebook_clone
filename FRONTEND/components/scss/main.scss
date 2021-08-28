@@ -6,3 +6,11 @@
 .ant-btn {
   z-index: 0 !important;
 }
+
+.ant-btn::before {
+  z-index: 0 !important;
+}
+
+.ant-dropdown {
+  position: fixed;
+}

@@ -22,6 +22,7 @@ import Loading from '../../components/Loading'
 import RespondDropdown from '../../components/RespondDropdown'
 import IntroProfile from '../../components/IntroProfile'
 import FriendsProfile from '../../components/FriendsProfile'
+import MessageBoxs from '../../components/MessageBoxs'
 import {
   update, addFriend, cancelFriendRequest,
   unfriend, isAuthenticated
@@ -335,6 +336,7 @@ export default function Profile() {
             <Divider style={{ margin: 0, borderColor: 'rgb(190, 190, 190)' }} />
             <Row className={styles.profileContainerPage} >
               <Col span={14} >
+                <MessageBoxs />
                 {
                   currentTab === 'post' && <Row>
                     <Col className={styles.mainLeftPage} span={10}>

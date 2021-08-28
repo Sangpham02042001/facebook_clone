@@ -58,11 +58,12 @@ export default function FriendStatusList() {
       {user.friends && user.friends.map(user => (
         <Row className={styles["friend-style"]} key={user._id} >
           <Col span={24}>
-            <span>
+            <div className={styles.friendItem} onClick={handleNewConversation(user)}>
               <AvatarProfile showName={true} user={user} />
-              <span>{user.activityStatus}</span>
-              <button onClick={handleNewConversation(user)}>new con</button>
-            </span>
+              {user.activityStatus === 'online' ?
+                <div className={`${styles['userStatus']} ${styles['online']}`}></div>
+                : <div className={`${styles['userStatus']} ${styles['offline']}`}></div>}
+            </div>
           </Col>
         </Row>
       ))}

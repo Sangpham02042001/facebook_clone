@@ -29,8 +29,8 @@
   position: fixed;
   width: 320px;
   z-index: 1000;
-  box-shadow: 0 0 2px 1px rgb(214, 212, 212);
   background-color: #fff;
+  box-shadow: 0 0 2px 1px rgb(214, 212, 212);
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
 }
@@ -73,4 +73,19 @@
 .yourMessage {
   margin-left: 15px;
   border: 1px solid rgb(231, 228, 228);
+}
+
+.userStatus {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-left: 10px;
+}
+
+.userStatus.online {
+  background-color: rgb(18, 194, 18);
+}
+
+.userStatus.offline {
+  background-color: orange;
 }

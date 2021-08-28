@@ -62,11 +62,16 @@ export default function MessageBox({ conversation: {
       <div className={styles.messageHeader}>
         <Link style={{ marginBottom: 0 }}
           href={`/profile/${participant._id}`}>
-          <a>
+          <a style={{ display: 'flex' }}>
             <Avatar src={`${baseURL}/api/user/avatar/${participant._id}`}
               style={{ marginRight: '10px' }}
             />
-            <span>{participant.name}{"   "}{participant.activityStatus}</span>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              {participant.name}
+              {participant.activityStatus === 'online' ?
+                <div className={`${styles['userStatus']} ${styles['online']}`}></div>
+                : <div className={`${styles['userStatus']} ${styles['offline']}`}></div>}
+            </div>
           </a>
         </Link>
         <i style={{ cursor: 'pointer', padding: '10px' }}
