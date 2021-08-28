@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { axiosInstance, showWarning } from '../../utils'
 import path from 'path';
 import { v4 } from 'uuid';
+import socketClient from '../../socketClient'
 
 const initialState = {
   conversations: [],
@@ -33,7 +34,7 @@ export const newConversation = createAsyncThunk('/newconversation', async (data,
     if (checkIndex >= 0) {
       if (conversations[checkIndex].visible) {
         showWarning("Already open")
-        return {}
+        return { }
       } else {
         let cons = conversations.filter(cv => cv.participant._id == _id)[0]
         const response = await axiosInstance.get(path.join('api/conversations', cons._id));
@@ -186,10 +187,13 @@ export const conversationSlice = createSlice({
           visible: false
         }))
       }
+      socketClient.emit("check-conversations", {
+        conversations
+      })
       state.conversations = conversations
     },
     [receiveMessage.fulfilled]: (state, action) => {
-      let {idx, messages, conversation} = action.payload;
+      let { idx, messages, conversation } = action.payload;
       if (!conversation) {
         state.conversations[idx].messages = messages;
         state.conversations[idx].visible = true;
@@ -235,11 +239,21 @@ export const conversationSlice = createSlice({
           conver.messages = [message];
         }
       }
-    }
-
+    },
+    checkMessageSocket: (state, action) => {
+      let { newMessage, sender, receiveId, conversationId, messageId } = action.payload;
+      const conversation = state.conversations.find(cv => cv.participant._id == receiveId);
+      console.log(state.conversations);
+      if (conversation) {
+        if (conversation._id != conversationId) {
+          conversation._id = conversationId;
+        }
+      }
+    },
   }
 })
 
-export const { closeConversation, sendMessageSocket } = conversationSlice.actions
+export const { closeConversation, sendMessageSocket,
+  checkMessageSocket } = conversationSlice.actions
 
 export default conversationSlice.reducer

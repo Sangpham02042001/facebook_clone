@@ -7,8 +7,8 @@ import styles from './MessageBoxs.module.scss'
 import { baseURL } from '../../utils'
 import socketClient from '../../socketClient'
 import {
-  closeConversation, sendNewMessage,
-  sendMessage
+  closeConversation,
+  sendMessageSocket
 } from '../../store/reducers/conversation.reducer'
 import { v4 } from 'uuid'
 
@@ -48,20 +48,27 @@ export default function MessageBox({ conversation: {
       //   dispatch(sendNewMessage({ content: newMessage, conversationId: _id, senderId: userLogin._id }));
       // }
       console.log(_id)
+      let messageId = v4()
       socketClient.emit('send-private-message', {
         content: newMessage,
         from: userLogin._id,
         to: participant._id,
         conversationId: _id,
-        messageId: v4(),
+        messageId: messageId,
       })
+
+      dispatch(sendMessageSocket({
+        newMessage: newMessage,
+        sender: userLogin._id,
+        receiveId: participant._id,
+        conversationId: _id,
+        messageId: messageId,
+      }))
 
       setNewMessage('')
 
     }
   }
-
-  
 
   return (
     <div className={styles.messageFrame}>
@@ -74,9 +81,9 @@ export default function MessageBox({ conversation: {
             />
             <div style={{ display: 'flex', alignItems: 'center' }}>
               {participant.name}
-              {participant.activityStatus === 'online' ?
+              {/* {participant.activityStatus === 'online' ?
                 <div className={`${styles['userStatus']} ${styles['online']}`}></div>
-                : <div className={`${styles['userStatus']} ${styles['offline']}`}></div>}
+                : <div className={`${styles['userStatus']} ${styles['offline']}`}></div>} */}
             </div>
           </a>
         </Link>

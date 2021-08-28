@@ -43,12 +43,20 @@ const NavbarDropdownMenu = ({ user, avatarUpdated }) => {
 }
 
 const MessengerDropdown = ({ conversations, openMessage }) => {
-  return <Menu style={{ minWidth: '300px', maxHeight: '500px' }}>
+  const handleMenuClick = (e) => {
+    if (e.key === '1') {
+      return;
+    }
+    let idx = conversations.map(cv => cv._id).indexOf(e.key)
+    openMessage(conversations[idx].participant)
+  }
+  return <Menu style={{ minWidth: '300px', maxHeight: '500px' }}
+    onClick={handleMenuClick}>
     <Menu.Item key="1">
       <h2>Messenger</h2>
     </Menu.Item>
     {conversations.map((cv, idx) => (
-      <Menu.Item key={cv._id} onClick={openMessage(cv.participant)}>
+      <Menu.Item key={cv._id} >
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <Avatar src={`${baseURL}/api/user/avatar/${cv.participant._id}`} />
           <h2 style={{ marginLeft: '10px' }}>{cv.participant.name}</h2>
@@ -73,6 +81,7 @@ const NavBar = React.memo(function NavBar(props) {
   }, [])
 
   const handleNewConversation = (participant) => {
+    // event.preventDefault()
     dispatch(newConversation({
       user: participant
     }))
