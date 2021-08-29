@@ -5,7 +5,7 @@ const extend = require('lodash/extend')
 
 const listUser = async (req, res) => {
   try {
-    let users = await User.find({}).select('_id name')
+    let users = await User.find({ }).select('_id name')
     // users = users.map(user => user._id)
     return res.status(200).json({ userList: users })
   } catch (error) {
@@ -268,6 +268,27 @@ const comfirmFriendRequest = async (req, res) => {
   }
 }
 
+const removeFollower = async (req, res) => {
+  const { followerId, userId } = req.body
+  console.log('remove follower', req.body)
+  try {
+    const follower = await User.findById(followerId)
+    const user = await User.findById(userId)
+    let followingIdx = follower.followings.indexOf(userId)
+    let followerIdx = user.followers.indexOf(followerId)
+    follower.followings.splice(followingIdx, 1)
+    user.followers.splice(followerIdx, 1)
+    return res.status(200).json({
+      message: 'remove follower success'
+    })
+  } catch (error) {
+    console.log(error)
+    return res.status('400').json({
+      error: 'Something wrong when delete friend request'
+    })
+  }
+}
+
 const userByID = async (req, res, next, id) => {
   try {
     let user = await User.findById(id)
@@ -299,5 +320,6 @@ module.exports = {
   addFriend,
   comfirmFriendRequest,
   cancelRequest,
-  unfriend
+  unfriend,
+  removeFollower
 }

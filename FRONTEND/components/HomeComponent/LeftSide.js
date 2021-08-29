@@ -2,7 +2,9 @@ import React from 'react'
 import Link from 'next/link'
 import { useSelector } from 'react-redux'
 import AvatarProfile from '../AvatarProfile'
+import { Avatar } from 'antd'
 import styles from './home.module.scss'
+import { baseURL } from '../../utils'
 
 export default function LeftSide() {
   const user = useSelector(state => state.userReducer.user)
@@ -11,7 +13,8 @@ export default function LeftSide() {
       <div>
         <Link href={`/profile/${user._id}`}>
           <a className={styles.leftSideLink}>
-            <AvatarProfile showName={true} user={user} />
+            <Avatar size='large' src={`${baseURL}/api/user/avatar/${user._id}`} />
+            <span style={{ marginLeft: '10px' }}>{user.name}</span>
           </a>
         </Link>
       </div>

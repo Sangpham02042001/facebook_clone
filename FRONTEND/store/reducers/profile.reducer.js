@@ -4,7 +4,7 @@ import axios from 'axios'
 import extend from 'lodash/extend'
 
 const initialState = {
-  profile: {},
+  profile: { },
   error: null,
   loading: false
 }
@@ -45,9 +45,9 @@ export const profileSlice = createSlice({
     },
     cancelFollowing: (state, action) => {
       let userId = action.payload.followingId
-      let idx = state.profile.followers.map(user => user._id).indexOf(userId)
+      let idx = state.profile.followings.map(user => user._id).indexOf(userId)
       if (idx > -1) {
-        state.profile.followers.splice(idx, 1)
+        state.profile.followings.splice(idx, 1)
       }
     },
     removeFriend: (state, action) => {

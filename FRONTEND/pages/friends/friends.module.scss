@@ -70,4 +70,34 @@
   margin-bottom: 20px;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
+  cursor: pointer;
+}
+
+.userItemInfo {
+  display: flex;
+  flex-direction: column;
+  padding: 0 10px;
+}
+
+.userItemBtn {
+  width: 100%;
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+.userItemBtn a {
+  color: white;
+}
+
+.userItemBtn.profileLink {
+  background-color: rgb(65, 65, 236);
+  color: white;
+}
+
+.userItemBtn.unfriendBtn {
+  background-color: rgb(224, 222, 222);
 }

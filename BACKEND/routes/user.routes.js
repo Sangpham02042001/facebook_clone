@@ -1,7 +1,7 @@
 const express = require('express')
 const { signup, getAvatar, getDefaultAvatar,
   userByID, getCoverPhoto, getDefaultCoverPhoto,
-  listUser, updateProfile, userProfile, addFriend,
+  listUser, updateProfile, userProfile, addFriend, removeFollower,
   comfirmFriendRequest, cancelRequest, unfriend } = require('../controllers/user.controller')
 const { requireSignin, hasAuthorization } = require('../controllers/auth.controller')
 
@@ -28,6 +28,9 @@ router.route('/api/users/cancelrequest/:userId')
 
 router.route('/api/users/confirmfriend/:userId')
   .post(requireSignin, hasAuthorization, comfirmFriendRequest)
+
+router.route('/api/users/followers/:userId')
+  .delete(requireSignin, hasAuthorization, removeFollower)
 
 router.route('/api/users/:userId')
   .get(requireSignin, userProfile)
