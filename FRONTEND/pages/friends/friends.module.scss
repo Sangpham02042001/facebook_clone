@@ -1,0 +1,73 @@
+.leftSideCol {
+  padding: 10px;
+  position: fixed;
+  top: 0;
+  background-color: #fff;
+  box-shadow: 1px 0px 2px gray;
+  margin-top: 60px;
+  height: 100vh;
+  width: 360px;
+}
+
+.leftSideCol > div {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 10px;
+  margin-bottom: 5px;
+}
+
+.leftSideCol > div:hover {
+  background-color: rgb(236, 231, 231);
+  transition: background-color 0.4s ease;
+}
+
+.leftSideCol > div h2 {
+  margin-bottom: 0;
+}
+
+.leftSideCol > div i {
+  margin-right: 10px;
+  padding: 10px;
+  border-radius: 50%;
+  background-color: rgb(187, 187, 187);
+}
+
+.leftSideCol .activate {
+  background-color: rgb(236, 231, 231);
+}
+
+.leftSideCol .activate:hover {
+  transition: none;
+}
+
+.leftSideCol .activate > i {
+  color: white;
+  background-color: rgb(53, 138, 235);
+}
+
+.rightSide {
+  padding: 10px;
+}
+
+.rightSideUserList {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  column-gap: 15px;
+  row-gap: 15px;
+}
+
+.userItem {
+  min-height: 300px;
+  border-radius: 10px;
+  box-shadow: 1px 1px 1px 1px rgb(212, 211, 211);
+}
+
+.userAvatar {
+  width: 100%;
+  height: 160px;
+  margin-bottom: 20px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}

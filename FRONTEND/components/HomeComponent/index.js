@@ -6,23 +6,26 @@ import FriendStatusList from './FriendStatusList';
 import MessageBoxs from '../MessageBoxs';
 import styles from './home.module.scss';
 import Loading from '../Loading';
+import LeftSide from './LeftSide';
+import { Row, Col } from 'antd';
+
 const HomeComponent = () => {
     const loadingPost = useSelector(state => state.postReducer.loadingPost);
     return (
-        <div className={styles["home-component"]}>
-            <div className="home-message">
-                <MessageBoxs />
-                <FriendStatusList />
-            </div>
-            <div className={styles["home-middle"]}>
+        <Row className={styles["home-component"]}>
+            <MessageBoxs />
+            <Col span={6} >
+                <LeftSide />
+            </Col>
+            <Col offset={1} span={10}>
                 {loadingPost && <Loading />}
-                <div className={styles["post-article"]}>
-                    <InputForm />
-                    <PostList />
-                </div>
-            </div>
-
-        </div>
+                <InputForm />
+                <PostList />
+            </Col>
+            <Col offset={1} span={6}>
+                <FriendStatusList />
+            </Col>
+        </Row>
     );
 
 }
