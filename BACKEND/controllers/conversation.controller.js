@@ -23,15 +23,17 @@ const getConversationList = async (req, res) => {
   let { userId } = req.params
   try {
     let conversations = await Conversation
-      .find({})
+      .find({ })
       .populate('participants', '_id name')
     conversations = conversations.filter(cv => {
       return cv.participants.map(p => p._id).indexOf(userId) >= 0
     })
     conversations = conversations.map(cv => ({
       _id: cv._id,
-      participant: cv.participants.filter(p => p._id != userId)[0]
+      participant: cv.participants.filter(p => p._id != userId)[0],
+      messages: [cv.messages[cv.messages.length - 1]]
     }))
+    console.log('server', conversations)
     return res.status(200).json({ conversations })
   } catch (error) {
     console.log(error)
@@ -72,7 +74,7 @@ const postMessage = async (req, res, next) => {
   }
 }
 
-const saveConversation = async ( senderId, content, conversationId, messageId ) => {
+const saveConversation = async (senderId, content, conversationId, messageId) => {
   try {
     console.log('aaaaaaaaaaaaaaaaaaaaaa', conversationId)
     const conversation = await Conversation.findById(conversationId);

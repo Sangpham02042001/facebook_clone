@@ -31,6 +31,7 @@ import {
   setProfileAsync, setProfileSync,
   addFollower, cancelFollowing, removeFriend
 } from '../../store/reducers/profile.reducer'
+import { newConversation } from '../../store/reducers/conversation.reducer'
 import styles from './profile.module.scss'
 import InputForm from '../../components/InputForm'
 
@@ -97,6 +98,16 @@ export default function Profile() {
 
   const handleBioChange = e => {
     setBio(e.target.value)
+  }
+
+  const openMessage = (event) => {
+    event.preventDefault()
+    dispatch(newConversation({
+      user: {
+        _id: profile._id,
+        name: profile.name
+      }
+    }))
   }
 
   const showModal = name => event => {
@@ -214,7 +225,7 @@ export default function Profile() {
           ? <>
             <Row style={{ justifyContent: 'center', height: '350px' }}>
               <Col span={14} className={styles.imageContainer}>
-                {userId && userList.indexOf(userId) &&
+                {userId &&
                   <Image src={`${baseURL}/api/user/coverphoto/${userId}?reload=${reloadCoverPhoto}`}
                     className={styles.coverImage} preview={false}
                     key={reloadCoverPhoto}
@@ -227,7 +238,7 @@ export default function Profile() {
                   </span>
                 }
                 <span className={styles.avatar}>
-                  {userId && userList.indexOf(userId) &&
+                  {userId &&
                     <Avatar size={156} key={reloadAvatar}
                       src={`${baseURL}/api/user/avatar/${userId}?reaload=${reloadAvatar}`} />}
                   {userId === userLoginId &&
@@ -275,52 +286,62 @@ export default function Profile() {
                     Friends {profile.friends && profile.friends.length}
                   </li>
                 </ul>
-                {
-                  userId === userLoginId ? <span onClick={showModal('editProfile')} className={styles.editProfileBtn}>
-                    {/* <FontAwesomeIcon icon={faPencilAlt} style={{ marginRight: '10px' }} /> */}
-                    <i className="fas fa-pencil-alt" style={{ marginRight: '10px' }}></i>
-                    Edit Profile
-                  </span> : (
-                    userReducer.user.followings
-                      && userReducer.user.followings.map(user => user._id).indexOf(userId) < 0 ?
-                      (
-                        userReducer.user.followers.map(user => user._id).indexOf(userId) >= 0
-                          ? <span className={styles.addFriendBtn}>
-                            <Dropdown overlay={<RespondDropdown userLoginId={userLoginId} userId={userId} />}
-                              trigger={['click']}>
-                              <span>Respond</span>
-                            </Dropdown>
+                <div>
+                  {
+                    userId !== userLoginId &&
+                    user.friends.map(user => user._id.indexOf(userId)) >= 0
+                    && <span onClick={openMessage} className={styles.addFriendBtn} style={{ marginRight: '20px' }}>
+                      <i className="fab fa-facebook-messenger" style={{ marginRight: '10px' }}></i>
+                      Message
+                    </span>
+                  }
+                  {
+                    userId === userLoginId ? <span onClick={showModal('editProfile')} className={styles.editProfileBtn}>
+                      {/* <FontAwesomeIcon icon={faPencilAlt} style={{ marginRight: '10px' }} /> */}
+                      <i className="fas fa-pencil-alt" style={{ marginRight: '10px' }}></i>
+                      Edit Profile
+                    </span> : (
+                      userReducer.user.followings
+                        && userReducer.user.followings.map(user => user._id).indexOf(userId) < 0 ?
+                        (
+                          userReducer.user.followers.map(user => user._id).indexOf(userId) >= 0
+                            ? <span className={styles.addFriendBtn}>
+                              <Dropdown overlay={<RespondDropdown userLoginId={userLoginId} userId={userId} />}
+                                trigger={['click']}>
+                                <span>Respond</span>
+                              </Dropdown>
+                            </span>
+                            : (
+                              userReducer.user.friends.map(user => user._id).indexOf(userId) >= 0
+                                ? <span className={styles.addFriendBtn}>
+                                  <Dropdown
+                                    overlay={<Menu>
+                                      <Menu.Item key="0" onClick={handleUnfriend}>
+                                        Unfriend
+                                      </Menu.Item>
+                                    </Menu>} trigger={['click']}>
+                                    <span>
+                                      {/* <FontAwesomeIcon icon={faCheck} style={{ marginRight: '10px' }} /> */}
+                                      <i className="fas fa-check" style={{ marginRight: '10px' }}></i>
+                                      Friend</span>
+                                  </Dropdown>
+                                </span>
+                                : <span className={styles.addFriendBtn} onClick={handleAddFriend}>
+                                  {/* <FontAwesomeIcon icon={faUserPlus} style={{ marginRight: '10px' }} /> */}
+                                  <i className="fas fa-user-plus" style={{ marginRight: '10px' }}></i>
+                                  Add friend
+                                </span>
+                            )
+                        ) : <div>
+                          <span className={styles.editProfileBtn} onClick={handleCancelRequest}>
+                            {/* <FontAwesomeIcon icon={faTimes} style={{ marginRight: '10px' }} /> */}
+                            <i className="fas fa-times" style={{ marginRight: '10px' }}></i>
+                            Cancel Request
                           </span>
-                          : (
-                            userReducer.user.friends.map(user => user._id).indexOf(userId) >= 0
-                              ? <span className={styles.addFriendBtn}>
-                                <Dropdown
-                                  overlay={<Menu>
-                                    <Menu.Item key="0" onClick={handleUnfriend}>
-                                      Unfriend
-                                    </Menu.Item>
-                                  </Menu>} trigger={['click']}>
-                                  <span>
-                                    {/* <FontAwesomeIcon icon={faCheck} style={{ marginRight: '10px' }} /> */}
-                                    <i className="fas fa-check" style={{ marginRight: '10px' }}></i>
-                                    Friend</span>
-                                </Dropdown>
-                              </span>
-                              : <span className={styles.addFriendBtn} onClick={handleAddFriend}>
-                                {/* <FontAwesomeIcon icon={faUserPlus} style={{ marginRight: '10px' }} /> */}
-                                <i className="fas fa-user-plus" style={{ marginRight: '10px' }}></i>
-                                Add friend
-                              </span>
-                          )
-                      ) : <div>
-                        <span className={styles.editProfileBtn} onClick={handleCancelRequest}>
-                          {/* <FontAwesomeIcon icon={faTimes} style={{ marginRight: '10px' }} /> */}
-                          <i className="fas fa-times" style={{ marginRight: '10px' }}></i>
-                          Cancel Request
-                        </span>
-                      </div>
-                  )
-                }
+                        </div>
+                    )
+                  }
+                </div>
                 {/* <div>
                         <span className={styles.addFriendBtn} style={{ marginRight: '10px' }}>
                           <FontAwesomeIcon icon={faCheckCircle} style={{ marginRight: '10px' }} />
@@ -335,10 +356,10 @@ export default function Profile() {
             </Row>
             <Divider style={{ margin: 0, borderColor: 'rgb(190, 190, 190)' }} />
             <Row className={styles.profileContainerPage} >
+              <MessageBoxs />
               <Col span={14} >
-                <MessageBoxs />
                 {
-                  currentTab === 'post' && <Row>
+                  currentTab === 'post' && <Row style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <Col className={styles.mainLeftPage} span={10}>
                       <div className={styles.profileSubContainer}>
                         <IntroProfile profile={profile} />
@@ -350,7 +371,7 @@ export default function Profile() {
                           setFriendTabs={() => setCurrentTab('friends')} />}
                       </div>
                     </Col>
-                    <Col flex="auto" style={{ marginLeft: '10px', paddingTop: '20px' }}>
+                    <Col span={13} style={{ paddingTop: '20px' }}>
                       <InputForm />
                       {posts.map(post => {
                         if (post.user._id === userId)

@@ -213,8 +213,8 @@ export const conversationSlice = createSlice({
       if (conversation.participant._id === _id) {
         state.conversations.splice(idx, 1)
       } else {
-        state.conversations[idx].visible = false
-        state.conversations[idx].messages = []
+        conversation.visible = false
+        conversation.messages = [conversation.messages[conversation.messages.length - 1]]
       }
     },
     sendMessageSocket: (state, action) => {

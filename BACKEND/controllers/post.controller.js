@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const Grid = require('gridfs-stream');
 
 const getPosts = (req, res, next) => {
-    Posts.find({})
+    Posts.find({ })
         .populate('user', 'name _id')
         .populate('reactList.user', 'name _id')
         .populate('comments.user', 'name _id')
@@ -33,11 +33,11 @@ const playVideo = (req, res, next) => {
 
     //   // Finally pipe video to response
     //   downloadStream.pipe(res);
-    mongoose.connection.on('connected', () => {
+    mongoose.connection.on('connected', (error) => {
         gfs = Grid(mongoose.connection.db, mongoose.mongo);
         gfs.collection('videos');
         console.log(gfs.files)
-        const sth = gfs.files.find({})
+        const sth = gfs.files.find({ })
         console.log(sth)
 
     })

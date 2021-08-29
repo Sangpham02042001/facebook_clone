@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useDispatch } from 'react-redux'
 import Link from 'next/link'
 import { Avatar, Input, Tooltip } from 'antd'
@@ -32,6 +32,11 @@ export default function MessageBox({ conversation: {
   const userLogin = useSelector(state => state.userReducer.user)
   const [newMessage, setNewMessage] = useState('')
   const dispatch = useDispatch()
+  const messageEnd = useRef()
+
+  useEffect(() => {
+    messageEnd.current.scrollIntoView({ behavior: "smooth" })
+  }, [messages])
 
   const handleClose = (event) => {
     event.preventDefault()
@@ -92,7 +97,7 @@ export default function MessageBox({ conversation: {
           className="fas fa-times"></i>
       </div>
 
-      <div className={styles.messageList}>
+      <div className={styles.messageList} ref={messageEnd}>
         {
           messages.map((message, idx) => (
             <div key={message._id}
