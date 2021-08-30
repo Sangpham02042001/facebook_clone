@@ -123,10 +123,7 @@ export const confirmFriendRequest = createAsyncThunk('/user/confirmFrRequest', a
 export const removeFollower = createAsyncThunk('/user/removeFollower', async (data, { getState, rejectWithValue }) => {
   const state = getState().userReducer
   try {
-    let response = await axios.delete(`${baseURL}/api/users/followers/${data.userId}`, {
-      userId: data.userId,
-      followerId: data.followerId
-    }, {
+    let response = await axios.delete(`${baseURL}/api/users/followers/${data.userId}?followerId=${data.followerId}`, {
       headers: {
         Authorization: 'Bearer ' + state.user.token
       }

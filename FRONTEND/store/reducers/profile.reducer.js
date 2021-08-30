@@ -69,6 +69,13 @@ export const profileSlice = createSlice({
       checkIndex = state.profile.followers.map(user => user._id).indexOf(userId)
       state.profile.followers.splice(checkIndex, 1)
     },
+    profileRemoveFollower: (state, action) => {
+      let { followerId } = action.payload
+      let idx = state.profile.followers.map(user => user._id).indexOf(followerId)
+      if (idx >= 0) {
+        state.profile.followers.splice(idx, 1)
+      }
+    },
     updateProfile: (state, action) => {
       let data = action.payload
       state.profile = extend(state.profile, data)
@@ -97,7 +104,7 @@ export const profileSlice = createSlice({
   }
 })
 
-export const { setProfileSync, addFollower,
+export const { setProfileSync, addFollower, profileRemoveFollower,
   cancelFollowing, removeFriend, profileAddFriend, updateProfile } = profileSlice.actions
 
 export default profileSlice.reducer

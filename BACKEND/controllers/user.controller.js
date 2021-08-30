@@ -269,8 +269,10 @@ const comfirmFriendRequest = async (req, res) => {
 }
 
 const removeFollower = async (req, res) => {
-  const { followerId, userId } = req.body
-  console.log('remove follower', req.body)
+  // const { followerId, userId } = req.body
+  let { userId } = req.params
+  let { followerId } = req.query
+  console.log('remove follower', userId, followerId)
   try {
     const follower = await User.findById(followerId)
     const user = await User.findById(userId)
