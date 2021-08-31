@@ -1,10 +1,12 @@
 const Posts = require('../models/post.model')
 // const Videos = require('../models/videos.gridfs.model')
 const mongoose = require('mongoose');
+const fs = require('fs')
+const mongodb = require('mongodb')
 const Grid = require('gridfs-stream');
 
 const getPosts = (req, res, next) => {
-    Posts.find({})
+    Posts.find({ })
         .populate('user', 'name _id')
         .populate('reactList.user', 'name _id')
         .populate('comments.user', 'name _id')
@@ -27,20 +29,71 @@ const addVideo = (req, res, next) => {
     return res.status(200).json("ok")
 }
 
-const playVideo = (req, res, next) => {
-    // const bucket = new mongodb.GridFSBucket(db);
-    //   const downloadStream = bucket.openDownloadStreamByName('uploads');
+const addVideo2 = (req, res) => {
+    mongodb.MongoClient.connect(process.env.MONGO_URI, function (error, client) {
+        if (error) {
+            res.json(error);
+            return;
+        }
+        const db = client.db('myFirstDatabase');
+        const bucket = new mongodb.GridFSBucket(db);
+        const videoUploadStream = bucket.openUploadStream('cong-son');
+        const videoReadStream = fs.createReadStream('./cong-son.mp4');
+        videoReadStream.pipe(videoUploadStream);
+        res.status(200).send("Done...");
+    });
+};
 
-    //   // Finally pipe video to response
-    //   downloadStream.pipe(res);
-    mongoose.connection.on('connected', () => {
-        gfs = Grid(mongoose.connection.db, mongoose.mongo);
-        gfs.collection('videos');
-        console.log(gfs.files)
-        const sth = gfs.files.find({})
-        console.log(sth)
+const getVideo = (req, res, next) => {
+    mongodb.MongoClient.connect(process.env.MONGO_URI,
+        function (error, client) {
+            if (error) {
+                console.log(error)
+                res.status(500).json(error);
+                return;
+            }
 
-    })
+            const range = req.headers.range;
+            if (!range) {
+                res.status(400).send("Requires Range header");
+            }
+
+            const db = client.db('myFirstDatabase');
+            // GridFS Collection
+            db.collection('fs.files').findOne({ }, (err, video) => {
+                if (!video) {
+                    res.status(404).send("No video uploaded!");
+                    return;
+                }
+
+                // Create response headers
+                const videoSize = video.length;
+                console.log(videoSize, 'videoSize')
+                // const start = 0;
+                const start = Number(range.replace(/\D/g, ""));
+                const end = Number(videoSize - 1);
+                console.log('start', start, 'end', end)
+
+                const contentLength = end - start + 1;
+                const headers = {
+                    "Content-Range": `bytes ${start}-${end}/${videoSize}`,
+                    "Accept-Ranges": "bytes",
+                    "Content-Length": contentLength,
+                    "Content-Type": "video/mp4",
+                };
+
+                // HTTP Status 206 for Partial Content
+                res.writeHead(206, headers);
+
+                const bucket = new mongodb.GridFSBucket(db);
+                const downloadStream = bucket.openDownloadStreamByName(video.filename, {
+                    start
+                });
+
+                // Finally pipe video to response
+                downloadStream.pipe(res);
+            });
+        });
 }
 
 
@@ -215,8 +268,9 @@ const deleteComment = async (req, res, next) => {
     } catch (err) {
         return next(err)
     }
-
 }
 
 
-module.exports = { getPosts, addPost, deletePost, reactPost, addCommentPost, deleteComment, addVideo, playVideo }
+
+
+module.exports = { getPosts, addPost, deletePost, reactPost, addCommentPost, deleteComment, addVideo2, addVideo, getVideo }

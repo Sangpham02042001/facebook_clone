@@ -4,8 +4,8 @@ import { useRouter } from 'next/router'
 import { Menu } from 'antd'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons'
-import { confirmFriendRequest } from '../../store/reducers/user.reducer'
-import { profileAddFriend } from '../../store/reducers/profile.reducer'
+import { confirmFriendRequest, removeFollower } from '../../store/reducers/user.reducer'
+import { profileAddFriend, profileRemoveFollower } from '../../store/reducers/profile.reducer'
 import styles from './RespondDropdown.module.scss'
 
 const RespondDropdown = ({ userLoginId, user }) => {
@@ -27,6 +27,18 @@ const RespondDropdown = ({ userLoginId, user }) => {
     }
   }
 
+  const handleRemove = (event) => {
+    dispatch(removeFollower({
+      followerId: user._id,
+      userId: userLoginId
+    }))
+    if (userId === userLoginId) {
+      dispatch(profileRemoveFollower({
+        followerId: user._id
+      }))
+    }
+  }
+
   return (
     <Menu>
       <Menu.Item key="0" onClick={handleConfirm} className={styles.dropdownItem}>
@@ -34,7 +46,7 @@ const RespondDropdown = ({ userLoginId, user }) => {
         <i className="fas fa-check" style={{ marginRight: '10px' }}></i>
         Confirm Request
       </Menu.Item>
-      <Menu.Item key="1" className={styles.dropdownItem}>
+      <Menu.Item key="1" onClick={handleRemove} className={styles.dropdownItem}>
         {/* <FontAwesomeIcon icon={faTimes} style={{ marginRight: '10px' }} /> */}
         <i className="fas fa-times" style={{ marginRight: '10px' }}></i>
         Refuse

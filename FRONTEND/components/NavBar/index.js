@@ -42,7 +42,7 @@ const NavbarDropdownMenu = ({ user, avatarUpdated }) => {
   </Menu>
 }
 
-const MessengerDropdown = ({ conversations, openMessage }) => {
+const MessengerDropdown = ({ conversations, openMessage, userLoginId }) => {
   const handleMenuClick = (e) => {
     if (e.key === '1') {
       return;
@@ -55,11 +55,18 @@ const MessengerDropdown = ({ conversations, openMessage }) => {
     <Menu.Item key="1">
       <h2>Messenger</h2>
     </Menu.Item>
+    <Menu.Divider />
     {conversations.map((cv, idx) => (
       <Menu.Item key={cv._id} >
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <Avatar src={`${baseURL}/api/user/avatar/${cv.participant._id}`} />
-          <h2 style={{ marginLeft: '10px' }}>{cv.participant.name}</h2>
+          <Avatar src={`${baseURL}/api/user/avatar/${cv.participant._id}`} size='large' />
+          <div style={{ marginLeft: '10px', display: 'flex', flexDirection: 'column' }}>
+            <p style={{ marginBottom: 0, fontSize: '18px' }}>{cv.participant.name}</p>
+            <span style={{ marginBottom: 0 }}>{cv.messages[cv.messages.length - 1].sender === userLoginId ?
+              'You: ' : cv.participant.name}
+              {cv.messages[cv.messages.length - 1].content}
+            </span>
+          </div>
         </div>
       </Menu.Item>
     ))}
@@ -114,7 +121,8 @@ const NavBar = React.memo(function NavBar(props) {
         </span>
         <span className={styles.messenger}>
           <Dropdown overlay={<MessengerDropdown
-            conversations={conversations} openMessage={handleNewConversation} />}
+            conversations={conversations} userLoginId={userReducer.user._id}
+            openMessage={handleNewConversation} />}
             trigger={['click']}>
             <i className={`fab fa-facebook-messenger ${styles.messengerIcon}`}></i>
           </Dropdown>

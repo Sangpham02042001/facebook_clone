@@ -5,7 +5,7 @@ import extend from 'lodash/extend'
 import socket from '../../socketClient'
 
 const initialState = {
-  user: {},
+  user: { },
   error: null,
   authenticated: false,
   loading: false
@@ -120,6 +120,26 @@ export const confirmFriendRequest = createAsyncThunk('/user/confirmFrRequest', a
   }
 })
 
+export const removeFollower = createAsyncThunk('/user/removeFollower', async (data, { getState, rejectWithValue }) => {
+  const state = getState().userReducer
+  try {
+    let response = await axios.delete(`${baseURL}/api/users/followers/${data.userId}?followerId=${data.followerId}`, {
+      headers: {
+        Authorization: 'Bearer ' + state.user.token
+      }
+    })
+    console.log(response.data)
+    return {
+      followerId: data.followerId
+    }
+  } catch (error) {
+    let { data } = error.response
+    if (data && data.error) {
+      return rejectWithValue(data)
+    }
+  }
+})
+
 export const unfriend = createAsyncThunk('/user/unfriend', async (data, { getState, rejectWithValue }) => {
   const state = getState().userReducer
   try {
@@ -159,7 +179,7 @@ export const userSlice = createSlice({
       }
     },
     signout: (state) => {
-      state.user = {}
+      state.user = { }
       state.authenticated = false
       localStorage.removeItem('user')
     },
@@ -241,6 +261,9 @@ export const userSlice = createSlice({
         name: action.payload.name
       })
       let currentUser = JSON.parse(localStorage.getItem('user'))
+      for (const friend of state.user.friends) {
+        friend.activityStatus = undefined
+      }
       currentUser = extend(currentUser, state.user)
       localStorage.setItem('user', JSON.stringify(currentUser))
       // state.loading = false
@@ -256,6 +279,12 @@ export const userSlice = createSlice({
       let followingId = action.payload.followingId
       let idx = state.user.followings.map(user => user._id).indexOf(followingId)
       state.user.followings.splice(idx, 1)
+      let currentUser = JSON.parse(localStorage.getItem('user'))
+      for (const friend of state.user.friends) {
+        friend.activityStatus = undefined
+      }
+      currentUser = extend(currentUser, state.user)
+      localStorage.setItem('user', JSON.stringify(currentUser))
     },
     [cancelFriendRequest.rejected]: (state, action) => {
       state.error = action.payload.error
@@ -268,6 +297,12 @@ export const userSlice = createSlice({
       let followerIdx = state.user.followers.indexOf(action.payload.followerId)
       state.user.followers.splice(followerIdx, 1)
       state.user.friends.push(newFriend)
+      let currentUser = JSON.parse(localStorage.getItem('user'))
+      for (const friend of state.user.friends) {
+        friend.activityStatus = undefined
+      }
+      currentUser = extend(currentUser, state.user)
+      localStorage.setItem('user', JSON.stringify(currentUser))
     },
     [confirmFriendRequest.rejected]: (state, action) => {
       state.error = action.payload.error
@@ -281,8 +316,33 @@ export const userSlice = createSlice({
       if (friendIdx > -1) {
         state.user.friends.splice(friendIdx, 1)
       }
+      let currentUser = JSON.parse(localStorage.getItem('user'))
+      for (const friend of state.user.friends) {
+        friend.activityStatus = undefined
+      }
+      currentUser = extend(currentUser, state.user)
+      localStorage.setItem('user', JSON.stringify(currentUser))
     },
     [unfriend.rejected]: (state, action) => {
+      state.error = action.payload.error
+    },
+    [removeFollower.pending]: (state, action) => {
+      console.log('remove fr req pending')
+    },
+    [removeFollower.fulfilled]: (state, action) => {
+      let { followerId } = action.payload
+      let idx = state.user.followers.map(user => user._id).indexOf(followerId)
+      if (idx >= 0) {
+        state.user.followers.splice(idx, 1)
+      }
+      let currentUser = JSON.parse(localStorage.getItem('user'))
+      for (const friend of state.user.friends) {
+        friend.activityStatus = undefined
+      }
+      currentUser = extend(currentUser, state.user)
+      localStorage.setItem('user', JSON.stringify(currentUser))
+    },
+    [removeFollower.rejected]: (state, action) => {
       state.error = action.payload.error
     }
   }

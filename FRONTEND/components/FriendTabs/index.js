@@ -30,9 +30,15 @@ const UserItem = ({ user, currentTab, ownProfile, userLoginId }) => {
       followerId,
       userId
     }))
-    dispatch(cancelFollowing({
-      followingId: followerId
-    }))
+    if (ownProfile) {
+      dispatch(cancelFollowing({
+        followingId: user._id
+      }))
+    } else {
+      dispatch(cancelFollowing({
+        followingId: followerId
+      }))
+    }
   }
 
   return <div className={styles.userItem}>
