@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import MessageBox from './MessageBox'
-import { receiveMessage, checkMessageSocket } from '../../store/reducers/conversation.reducer'
+import { receiveMessage, checkConversationId } from '../../store/reducers/conversation.reducer'
 import socketClient from '../../socketClient'
 import styles from './MessageBoxs.module.scss'
 
@@ -11,9 +11,9 @@ export default function MessageBoxs() {
   useEffect(() => {
 
     socketClient.on("check-conversation-id", ({ conversationId, participantId }) => {
-      dispatch(checkMessageSocket({
+      dispatch(checkConversationId({
+        receiveId: participantId,
         conversationId,
-        receiveId: participantId
       }))
     })
 
@@ -34,7 +34,7 @@ export default function MessageBoxs() {
 
     socketClient.on('received-private-message', ({ content, from, to, conversationId, messageId }) => {
       console.log('received-private-message')
-      dispatch(checkMessageSocket({
+      dispatch(checkConversationId({
         newMessage: content,
         sender: from,
         receiveId: to,

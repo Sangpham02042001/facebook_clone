@@ -7,8 +7,7 @@ import styles from './MessageBoxs.module.scss'
 import { baseURL } from '../../utils'
 import socketClient from '../../socketClient'
 import {
-  closeConversation,
-  sendMessageSocket
+  closeConversation
 } from '../../store/reducers/conversation.reducer'
 import { v4 } from 'uuid'
 
@@ -42,12 +41,6 @@ export default function MessageBox({ conversation: {
 
   const handleSendMessage = event => {
     if (newMessage) {
-      // if (messages.length) {
-      //   dispatch(sendMessage({ content: newMessage, conversationId: _id, senderId: userLogin._id }));
-      // } else {
-      //   dispatch(sendNewMessage({ content: newMessage, conversationId: _id, senderId: userLogin._id }));
-      // }
-      console.log(_id)
       let messageId = v4()
       socketClient.emit('send-private-message', {
         content: newMessage,

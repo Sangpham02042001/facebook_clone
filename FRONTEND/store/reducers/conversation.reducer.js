@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { axiosInstance, showWarning } from '../../utils'
 import path from 'path';
-import { v4 } from 'uuid';
 import socketClient from '../../socketClient'
 
 const initialState = {
@@ -64,37 +63,6 @@ export const newConversation = createAsyncThunk('/newconversation', async (data,
   }
 })
 
-export const sendNewMessage = createAsyncThunk('/sendNewMessage', async (data, { getState, rejectWithValue }) => {
-  try {
-    let myData = {
-      ...data,
-      messageId: v4()
-    }
-    const response = await axiosInstance.post(path.join('api', data.senderId, 'conversations'), myData);
-    return response.data;
-  } catch (error) {
-    let { data } = error.response
-    if (data && data.error) {
-      return rejectWithValue(data)
-    }
-  }
-})
-
-export const sendMessage = createAsyncThunk('/sendMessage', async (data, { getState, rejectWithValue }) => {
-  try {
-    let myData = {
-      ...data,
-      messageId: v4()
-    }
-    const response = await axiosInstance.put(path.join('api', data.senderId, 'conversations'), myData);
-    return response.data;
-  } catch (error) {
-    let { data } = error.response
-    if (data && data.error) {
-      return rejectWithValue(data)
-    }
-  }
-})
 
 export const receiveMessage = createAsyncThunk('/receiveMessage', async (data, { getState, rejectWithValue }) => {
   try {
@@ -167,15 +135,6 @@ export const conversationSlice = createSlice({
     [newConversation.rejected]: (state, action) => {
       console.log(action)
     },
-    [sendNewMessage.fulfilled]: (state, action) => {
-      const conversation = state.conversations.find(cv => cv._id === action.payload.participants[1]);
-      conversation._id = action.payload._id;
-      conversation.messages = action.payload.messages
-    },
-    [sendMessage.fulfilled]: (state, action) => {
-      const conversation = state.conversations.find(cv => cv._id == action.payload._id);
-      conversation.messages.push(action.payload.messages[action.payload.messages.length - 1]);
-    },
     [getConversations.pending]: (state, action) => {
       console.log('get conversations pending')
     },
@@ -240,7 +199,7 @@ export const conversationSlice = createSlice({
         }
       }
     },
-    checkMessageSocket: (state, action) => {
+    checkConversationId: (state, action) => {
       let { newMessage, sender, receiveId, conversationId, messageId } = action.payload;
       const conversation = state.conversations.find(cv => cv.participant._id == receiveId);
       console.log(state.conversations);
@@ -254,6 +213,6 @@ export const conversationSlice = createSlice({
 })
 
 export const { closeConversation, sendMessageSocket,
-  checkMessageSocket } = conversationSlice.actions
+  checkConversationId } = conversationSlice.actions
 
 export default conversationSlice.reducer
