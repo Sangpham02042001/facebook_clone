@@ -1,5 +1,6 @@
 const express = require('express');
-const { getPosts, addPost, deletePost, reactPost, addCommentPost, deleteComment, addVideo, getVideo, addVideo2 } = require('../controllers/post.controller');
+const { getPosts, addPost, deletePost, reactPost, addCommentPost, deleteComment,
+  getVideo } = require('../controllers/post.controller');
 const multer = require('multer');
 const path = require('path')
 
@@ -35,7 +36,9 @@ postRouter.route('/')
   .get(getPosts)
 
 postRouter.route('/:userId/post')
-  .post(upload.single('image-post'), addPost)
+  .post(addPost)
+
+
 
 postRouter.route('/:userId/post/:postId')
   .delete(deletePost)
@@ -50,10 +53,7 @@ postRouter.route('/:userId/interactive/:postId/comments')
 postRouter.route('/:userId/interactive/:postId/comments/:commentId')
   .delete(deleteComment)
 
-
-postRouter.route('/:userId/videos')
+postRouter.route('/:userId/videos/:videoId')
   .get(getVideo)
-  // .post(uploadVideo.single('video-post'), addVideo)
-  .post(addVideo2)
 
 module.exports = postRouter;

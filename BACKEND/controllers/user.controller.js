@@ -126,6 +126,7 @@ const updateProfile = (req, res) => {
         user = extend(user, fields)
       }
       if (files.avatar) {
+        console.log(files.avatar)
         user.avatar.data = fs.readFileSync(files.avatar.path)
         user.avatar.contentType = files.avatar.type
       }

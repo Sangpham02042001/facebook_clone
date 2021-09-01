@@ -43,6 +43,9 @@ const postSchema = new Schema({
         require: true,
         ref: 'User'
     },
+    videoId: {
+        type: mongoose.Types.ObjectId
+    },
     reactList: [reactSchema],
     comments: [commentSchema]
 }, {
