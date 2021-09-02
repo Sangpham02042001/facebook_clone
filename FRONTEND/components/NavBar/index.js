@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { signout } from '../../store/reducers/user.reducer'
 import { baseURL } from '../../utils/axios.util'
 import eventManager from '../../utils/eventemiter'
-import { Menu, Dropdown, Avatar } from 'antd'
+import { Menu, Dropdown, Avatar, Tooltip } from 'antd'
 import SearchUserInput from '../SearchUserInput'
 import { newConversation } from '../../store/reducers/conversation.reducer'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -78,7 +78,13 @@ const NavBar = React.memo(function NavBar(props) {
   const userList = useSelector(state => state.userListReducer.userList)
   const conversations = useSelector(state => state.conversationReducer.conversations)
   const [avatarUpdated, setAvatarUpdated] = useState('')
+  const [currentPage, setCurrentPage] = useState('')
   const dispatch = useDispatch()
+  const router = useRouter()
+
+  useEffect(() => {
+    setCurrentPage(router.pathname)
+  }, [router.pathname])
 
   useEffect(() => {
     eventManager.on('avatarUpdated', (time) => {
@@ -107,6 +113,22 @@ const NavBar = React.memo(function NavBar(props) {
         </Link>
         <SearchUserInput userList={userList} />
       </span>
+      <div className={styles['icon-list']}>
+        <Link href="/">
+          <Tooltip placement="bottom" title="Home">
+            <span className={`${currentPage === '/' ? styles['current-page-icon'] : ''}`}>
+              <i className="fas fa-home"></i>
+            </span>
+          </Tooltip>
+        </Link>
+        <Link href="/friends">
+          <Tooltip placement="bottom" title='Friends'>
+            <span className={`${currentPage === '/friends' ? styles['current-page-icon'] : ''}`}>
+              <i className="fas fa-user-friends"></i>
+            </span>
+          </Tooltip>
+        </Link>
+      </div>
       {userReducer.authenticated && <div>
         <span className={styles['username-header']}>
           <Link href={`/profile/${userReducer.user._id}`}>

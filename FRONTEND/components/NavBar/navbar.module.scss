@@ -63,3 +63,37 @@
   font-size: 20px;
   margin-left: 20px;
 }
+
+.icon-list span {
+  font-size: 30px;
+  padding: 15px 35px;
+  cursor: pointer;
+  border-radius: 10px;
+  margin: 0 10px;
+  position: relative;
+}
+
+.icon-list span:hover {
+  background-color: rgba(226, 221, 221, 0.5);
+  transition: background-color 0.3s ease;
+}
+
+.icon-list span.current-page-icon:hover {
+  background-color: inherit;
+}
+
+.current-page-icon {
+  color: rgb(34, 34, 255);
+  position: relative;
+  width: 100%;
+}
+
+.current-page-icon::after {
+  content: "";
+  position: absolute;
+  height: 3px;
+  width: 100%;
+  bottom: 3%;
+  left: 0;
+  background-color: rgb(34, 34, 255);
+}
