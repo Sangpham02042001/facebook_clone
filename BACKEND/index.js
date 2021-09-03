@@ -9,6 +9,7 @@ const userRoutes = require('./routes/user.routes')
 const authRoutes = require('./routes/auth.routes')
 const postRoutes = require('./routes/post.routes')
 const conversationRoutes = require('./routes/conversation.routes')
+const groupRoutes = require('./routes/group.routes')
 
 const app = express()
 const HOST = process.env.HOST || 'http://localhost'
@@ -53,6 +54,7 @@ app.use('/', userRoutes);
 app.use('/', authRoutes);
 app.use('/posts/', postRoutes);
 app.use('/', conversationRoutes);
+app.use('/', groupRoutes)
 
 
 http.listen(PORT, HOST, () => {
