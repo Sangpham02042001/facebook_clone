@@ -26,6 +26,14 @@ export default function LeftSide() {
           </a>
         </Link>
       </div>
+      <div>
+        <Link href={`/groups/feeds`}>
+          <a className={styles.leftSideLink}>
+            <i className="fas fa-users" style={{ marginRight: '10px' }}></i>
+            Groups
+          </a>
+        </Link>
+      </div>
     </div>
   )
 }

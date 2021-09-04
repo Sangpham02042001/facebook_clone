@@ -84,12 +84,6 @@ export default function Profile() {
   }, [userReducer.user.bio])
 
   useEffect(() => {
-    if (!userReducer.authenticated) {
-      dispatch(isAuthenticated())
-    }
-  }, [userReducer.authenticated])
-
-  useEffect(() => {
     if (userList.length > 0 && userList.indexOf(userId) < 0) {
       router.push('/404')
       return;
@@ -218,7 +212,7 @@ export default function Profile() {
   return (
     <>
       <Head>
-        <title>Profile</title>
+        <title>Profile | Facebook</title>
       </Head>
       <Layout>
         {(!userReducer.loading && !profileReducer.loading)

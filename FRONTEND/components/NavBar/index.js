@@ -128,6 +128,13 @@ const NavBar = React.memo(function NavBar(props) {
             </span>
           </Tooltip>
         </Link>
+        <Link href="/groups/feeds">
+          <Tooltip placement="bottom" title='Groips'>
+            <span className={`${currentPage.startsWith('/groups') ? styles['current-page-icon'] : ''}`}>
+              <i className="fas fa-users"></i>
+            </span>
+          </Tooltip>
+        </Link>
       </div>
       {userReducer.authenticated && <div>
         <span className={styles['username-header']}>

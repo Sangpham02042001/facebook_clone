@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import NavBar from '../NavBar'
 import { getUserList } from '../../store/reducers/userList.reducer'
 import { getConversations } from '../../store/reducers/conversation.reducer'
+import { isAuthenticated } from '../../store/reducers/user.reducer'
 
 export default function Layout(props) {
   const userList = useSelector(state => state.userListReducer.userList)
@@ -22,6 +23,9 @@ export default function Layout(props) {
       dispatch(getConversations({
         userLoginId: userReducer.user._id
       }))
+    }
+    if (!userReducer.authenticated) {
+      dispatch(isAuthenticated())
     }
   }, [userReducer.authenticated])
 

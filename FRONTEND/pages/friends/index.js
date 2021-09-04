@@ -37,12 +37,6 @@ export default function FriendsPage() {
   })
   const dispatch = useDispatch()
 
-  useEffect(() => {
-    if (!userReducer.authenticated) {
-      dispatch(isAuthenticated())
-    }
-  }, [userReducer.authenticated])
-
   const changeTab = tab => event => {
     event.preventDefault()
     if (tab !== currentTab) {
