@@ -5,11 +5,11 @@ import { Row, Col } from 'antd'
 import GroupLeftSide from '../../components/groups/GroupLeftSide'
 import styles from './group.module.scss'
 
-export default function GroupsFeeds() {
+export default function GroupsDiscover() {
   return (
     <>
       <Head>
-        <title>Groups | Facebook</title>
+        <title>Discover | Facebook</title>
       </Head>
       <Layout>
         <Row style={{ backgroundColor: 'gray' }}>

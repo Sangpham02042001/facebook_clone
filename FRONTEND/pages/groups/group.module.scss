@@ -1,0 +1,75 @@
+.left-side {
+  padding: 15px;
+  box-shadow: 1px 0 0px 1px rgb(233, 232, 232);
+  position: fixed;
+  width: 400px;
+  min-height: 100vh;
+}
+
+.cancel-create-btn {
+  padding: 10px 15px;
+  font-size: 20px;
+  border-radius: 50%;
+  cursor: pointer;
+  background-color: gray;
+  color: #fff;
+}
+
+.group-create-input {
+  margin: 10px 0;
+  padding: 20px 15px;
+  border-radius: 15px;
+  font-size: 20px;
+}
+
+.group-create-select > div {
+  width: 100%;
+  margin: 10px 0;
+  padding: 20px 15px;
+  border-radius: 15px !important;
+  font-size: 20px;
+  border-color: rgb(216, 214, 214);
+  position: relative;
+}
+
+.privacy-option {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: left;
+  word-break: break-word;
+}
+
+.privacy-option > i {
+  font-size: 20px;
+  padding: 10px;
+  border-radius: 50%;
+  background-color: rgb(216, 214, 214);
+  margin-left: 0;
+}
+
+.privacy-option > div {
+  margin-left: 15px;
+}
+
+.create-btn-container {
+  position: absolute;
+  left: 0;
+  bottom: 60px;
+  width: 100%;
+  padding: 20px;
+  text-align: center;
+}
+
+.create-btn-container > button {
+  padding: 5px 0;
+  text-align: center;
+  width: 100%;
+  border-radius: 10px;
+  background-color: rgb(216, 214, 214);
+  color: gray;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  font-weight: 600;
+}
