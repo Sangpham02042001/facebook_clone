@@ -129,7 +129,7 @@ const NavBar = React.memo(function NavBar(props) {
           </Tooltip>
         </Link>
         <Link href="/groups/feeds">
-          <Tooltip placement="bottom" title='Groips'>
+          <Tooltip placement="bottom" title='Groups'>
             <span className={`${currentPage.startsWith('/groups') ? styles['current-page-icon'] : ''}`}>
               <i className="fas fa-users"></i>
             </span>

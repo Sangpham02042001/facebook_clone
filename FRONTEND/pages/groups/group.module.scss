@@ -2,8 +2,11 @@
   padding: 15px;
   box-shadow: 1px 0 0px 1px rgb(233, 232, 232);
   position: fixed;
+  top: 0;
+  left: 0;
   width: 400px;
   min-height: 100vh;
+  background-color: #fff;
 }
 
 .cancel-create-btn {
@@ -55,7 +58,7 @@
 .create-btn-container {
   position: absolute;
   left: 0;
-  bottom: 60px;
+  bottom: 0;
   width: 100%;
   padding: 20px;
   text-align: center;
@@ -66,10 +69,109 @@
   text-align: center;
   width: 100%;
   border-radius: 10px;
-  background-color: rgb(216, 214, 214);
-  color: gray;
+  background-color: rgb(53, 87, 196);
+  color: white;
   border: none;
   outline: none;
   cursor: pointer;
   font-weight: 600;
+}
+
+.create-btn-container > button:disabled {
+  background-color: rgb(216, 214, 214);
+  color: gray;
+}
+
+.group-preview-container {
+  height: 90vh;
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.group-preview {
+  width: 65vw;
+  box-shadow: 0 0 1px 1px rgb(216, 214, 214);
+  padding: 15px;
+  height: 85vh;
+  border-radius: 15px;
+  position: relative;
+}
+
+.group-preview-item {
+  height: 75vh;
+  overflow-y: auto;
+  border-radius: 15px;
+  border: 1px solid rgb(243, 240, 240);
+  background-color: rgba(243, 240, 240, 0.4);
+}
+
+.image-preview {
+  -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
+  filter: grayscale(100%);
+  display: block;
+  border-radius: 15px;
+}
+
+.group-preview-header {
+  padding: 20px;
+  background-color: #fff;
+}
+
+.group-preview-header > h1 {
+  color: gray;
+  margin-bottom: 10px;
+}
+
+.group-preview-header > ul {
+  list-style-type: none;
+  padding-left: 0;
+  display: flex;
+  width: 100%;
+  cursor: not-allowed;
+}
+
+.group-preview-header > ul > li {
+  font-weight: 600;
+  padding: 0 20px;
+}
+
+.group-preview-body {
+  background-color: rgb(216, 214, 214, 0.3);
+  padding: 15px 25px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.post-preview {
+  border-radius: 15px;
+  background-color: #fff;
+  max-height: 120px;
+  padding: 10px;
+  width: 55%;
+  color: gray;
+}
+
+.post-input-preview {
+  border-radius: 10px;
+  margin-left: 10px;
+}
+
+.post-preview-list {
+  margin-top: 15px;
+  display: flex;
+  width: 100%;
+  list-style-type: none;
+  justify-content: space-between;
+  padding-left: 0;
+  font-size: 16px;
+  cursor: not-allowed;
+}
+
+.about-preview {
+  border-radius: 15px;
+  background-color: #fff;
+  padding: 10px;
+  width: 40%;
 }
