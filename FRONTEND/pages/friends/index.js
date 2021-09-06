@@ -104,7 +104,7 @@ export default function FriendsPage() {
             <h2>All friends</h2>
           </div>
         </Col>
-        <Col offset={6} className={styles.rightSide} span={17}>
+        <Col offset={6} className={styles.rightSide} span={18}>
           {currentTab === 'home' &&
             <>
               <h1>Friends</h1>

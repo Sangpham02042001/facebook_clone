@@ -4,8 +4,14 @@ import Head from 'next/head'
 import Image from 'next/image'
 import Layout from '../../components/layout'
 import Link from 'next/link'
-import { Row, Col, Divider, Avatar, Input, Select } from 'antd'
-import { baseURL, showWarning } from '../../utils'
+import { useRouter } from 'next/router'
+import {
+  Row, Col, Divider, Avatar, Input,
+  Select, Modal
+} from 'antd'
+import UploadImage from '../../components/UploadImage'
+import { baseURL, showError, showWarning } from '../../utils'
+import axios from 'axios'
 import styles from './group.module.scss'
 
 const { Option } = Select
@@ -14,13 +20,48 @@ export default function GroupsCreate() {
   let user = useSelector(state => state.userReducer.user)
   let [groupName, setGroupName] = useState('')
   let [isPublic, setIsPublic] = useState(true)
+  let [coverPhoto, setCoverPhoto] = useState(null)
+  let [previewCoverPhoto, setPreviewCoverPhoto] = useState(null)
+  let router = useRouter()
 
-  const createGroup = e => {
+  const createGroup = async e => {
     e.preventDefault()
     if (groupName.length < 6) {
-      showWarning('Group name must be at list six characters')
+      showWarning('Group name must be at least six characters')
       return
     }
+    let formData = new FormData()
+    formData.append('name', groupName)
+    formData.append('isPublic', isPublic)
+    formData.append('coverPhoto', coverPhoto)
+    try {
+      const response = await axios.post(`${baseURL}/api/groups`, formData, {
+        headers: {
+          'Authorization': 'Bearer ' + user.token,
+          'Content-Type': 'application/json'
+        },
+      })
+      console.log(response.data)
+      if (response.status === 200) {
+        router.push('/groups/feeds')
+      }
+    } catch (error) {
+      console.log(error)
+      showError('Something wrong when create group')
+      setGroupName('')
+      setCoverPhoto(null)
+      setIsPublic(true)
+      setPreviewCoverPhoto(null)
+    }
+  }
+
+  const uploadCoverPhoto = (file) => {
+    setCoverPhoto(file.originFileObj)
+    let reader = new FileReader()
+    reader.onload = e => {
+      setPreviewCoverPhoto(e.target.result)
+    }
+    reader.readAsDataURL(file.originFileObj)
   }
 
   return (
@@ -75,9 +116,12 @@ export default function GroupsCreate() {
                 </div>
               </Option>
             </Select>
+            <h3>Group Cover Photo</h3>
+            <UploadImage multiple={false} name="ProfileImage"
+              content="Upload group cover photo" onUploadSuccess={uploadCoverPhoto} />
             <div className={styles['create-btn-container']}>
               <button onClick={createGroup}
-                className={!groupName ? 'disabled' : ''} disabled={!groupName}>
+                className={!groupName ? 'disabled' : ''} disabled={!groupName || !coverPhoto}>
                 Create</button>
             </div>
           </Col>
@@ -87,7 +131,7 @@ export default function GroupsCreate() {
                 <h3>Preview</h3>
               </div>
               <div className={styles['group-preview-item']}>
-                <Image src="/images/groups-default-cover-photo-2x.png"
+                <Image src={!previewCoverPhoto ? "/images/groups-default-cover-photo-2x.png" : previewCoverPhoto}
                   className={styles['image-preview']}
                   width={1000} height={400} />
                 <div className={styles['group-preview-header']}>

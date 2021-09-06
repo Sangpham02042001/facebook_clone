@@ -79,6 +79,7 @@
 
 .create-btn-container > button:disabled {
   background-color: rgb(216, 214, 214);
+  cursor: not-allowed;
   color: gray;
 }
 

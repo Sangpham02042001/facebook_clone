@@ -11,7 +11,7 @@ const createGroup = async (req, res) => {
     let { coverPhoto } = files
     let group = new Group()
     group.name = name
-    group.isPublic = isPublic || true
+    group.isPublic = isPublic
     group.coverPhoto = {
       data: fs.readFileSync(coverPhoto.path),
       contentType: coverPhoto.type
