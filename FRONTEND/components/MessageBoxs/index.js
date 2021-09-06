@@ -43,6 +43,7 @@ export default function MessageBoxs() {
       }))
     })
   }, [])
+
   return (
     <div className={styles.messageBoxs}>
       {

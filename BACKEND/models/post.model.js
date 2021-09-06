@@ -35,7 +35,7 @@ const postSchema = new Schema({
         require: true
     },
     image: {
-        data: String,
+        data: Buffer,
         contentType: String
     },
     user: {

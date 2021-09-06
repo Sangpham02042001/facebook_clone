@@ -13,18 +13,18 @@ const HomeComponent = () => {
     const loadingPost = useSelector(state => state.postReducer.loadingPost);
     return (
         <Row className={styles["home-component"]}>
-            <MessageBoxs />
             <Col span={6} >
                 <LeftSide />
             </Col>
-            <Col offset={1} span={10}>
-                {loadingPost && <Loading />}
+            {loadingPost && <Loading />}
+            <Col offset={2} span={8}>
                 <InputForm />
                 <PostList />
             </Col>
-            <Col offset={1} span={6}>
+            <Col offset={3} span={5}>
                 <FriendStatusList />
             </Col>
+            <MessageBoxs />
         </Row>
     );
 

@@ -8,9 +8,10 @@ export const getPosts = createAsyncThunk('posts/getPosts', async () => {
     return response.data;
 })
 
-export const addPost = createAsyncThunk('posts/addPost', async ({ title, userId, image }) => {
+export const addPost = createAsyncThunk('posts/addPost', async ({ title, userId, image, video }) => {
     const formData = new FormData();
     formData.append("image-post", image);
+    formData.append("video-post", video);
     formData.append("_id", nanoid());
     formData.append("article", title);
     formData.append("userId", userId);
@@ -19,6 +20,8 @@ export const addPost = createAsyncThunk('posts/addPost', async ({ title, userId,
 
     return response.data;
 })
+
+
 
 export const deletePost = createAsyncThunk('posts/deletePost', async ({ userId, postId }) => {
     const response = await axiosInstance.delete(path.join('posts', userId, 'post', postId))

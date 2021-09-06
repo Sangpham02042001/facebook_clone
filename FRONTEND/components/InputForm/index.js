@@ -17,44 +17,32 @@ const InputForm = () => {
   const [title, setTitle] = useState('');
   const [bt_disable, setBt_disable] = useState(true);
   const user = useSelector(state => state.userReducer.user);
-  const [fileList, setFileList] = useState([]);
+  const [fileListImg, setFileListImg] = useState([]);
   const [image, setImage] = useState(null);
+  const [video, setVideo] = useState(null);
+  const [fileListVideo, setFileListVideo] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const onChange = ({ fileList: newFileList }) => {
+  const onChangeImg = ({ fileList }) => {
 
-    for (let file of newFileList) {
+    for (let file of fileList) {
       if (file.status == "done") {
         setImage(file.originFileObj);
         setBt_disable(false);
       }
     }
 
-
-    if (!newFileList.length) {
+    if (!fileList.length) {
       setImage(null);
-      setBt_disable(true);
+      if (!video) {
+        setBt_disable(true);
+      }
     }
 
-    setFileList(newFileList);
+    setFileListImg(fileList);
   };
 
-  const onPreview = async (file) => {
-    let src = file.url;
-    if (!src) {
-      src = await new Promise(resolve => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file.originFileObj);
-        reader.onload = () => resolve(reader.result);
-      });
-    }
-    const image = new Image();
-    image.src = src;
-    const imgWindow = window.open(src);
-    imgWindow.document.write(image.outerHTML);
-  };
-
-  function beforeUpload(file) {
+  function checkTypeFileUpload(file) {
     const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
     if (!isJpgOrPng) {
       message.error('You can only upload JPG/PNG file!');
@@ -66,31 +54,56 @@ const InputForm = () => {
     return isJpgOrPng && isLt2M;
   }
 
-  const handleChange = (event) => {
+  const onChangeTextArea = (event) => {
     setTitle(event.target.value);
     if (event.target.value) {
       setBt_disable(false);
       setPlaceHolder(event.target.value);
     } else {
-      if (!image) {
+      if (!image && !video) {
         setBt_disable(true);
       }
       setPlaceHolder(placeholderDefault);
     }
   }
 
-  const handleSubmit = (event) => {
+  const handlePost = (event) => {
     let userId = user._id;
     event.preventDefault();
-    dispatch(addPost({ title, userId, image }));
+    console.log(video)
+    dispatch(addPost({ title, userId, image, video }));
+
+    //text area
     setTitle('');
     setBt_disable(true);
     setPlaceHolder(placeholderDefault);
-    setFileList([]);
+    //image
+    setFileListImg([]);
     setImage(null);
+    //video
+    setFileListVideo([]);
+    setVideo(null);
     setIsModalVisible(false);
   }
 
+  const onChangeVideo = ({ fileList }) => {
+    for (let file of fileList) {
+      if (file.status == "done") {
+        setVideo(file.originFileObj);
+        console.log(file);
+        setBt_disable(false);
+      }
+    }
+
+    if (!fileList.length) {
+      setVideo(null);
+      if (!image) {
+        setBt_disable(true);
+      }
+    }
+
+    setFileListVideo(fileList);
+  }
 
 
   const showModal = () => {
@@ -99,12 +112,9 @@ const InputForm = () => {
 
 
 
-  const handleCancel = () => {
+  const cancelModal = () => {
     setIsModalVisible(false);
   };
-
-
-
 
 
 
@@ -120,7 +130,7 @@ const InputForm = () => {
 
       </Row>
 
-      <Modal title="Create post" visible={isModalVisible} onCancel={handleCancel} footer={null}>
+      <Modal title="Create post" visible={isModalVisible} onCancel={cancelModal} footer={null}>
         <Row>
           <Col>
             <AvatarProfile user={user} showName={true} />
@@ -132,32 +142,41 @@ const InputForm = () => {
               autoSize={{ minRows: 5, maxRows: 8 }}
               maxLength={10000} showCount={true}
               bordered={false} placeholder={placeHolder}
-              onChange={handleChange} value={title} />
+              onChange={onChangeTextArea} value={title} />
           </Col>
         </Row>
         <Row justify="end" align="middle" gutter={[16, 48]}>
           <Col >
-              <Upload
-                listType="picture"
-                fileList={fileList}
-                onChange={onChange}
-                onPreview={onPreview}
-                beforeUpload={beforeUpload}
-                accept="image/*,video/*"
-              >
-                {fileList.length < 1 &&
-                  <Button shape="circle" size="large" ghost={true} icon={<FileImageFilled style={{ color: "green" }} icon={faImages} />} />
-                }
-              </Upload>
+            <Upload
+              listType="picture"
+              fileList={fileListImg}
+              onChange={onChangeImg}
+              beforeUpload={checkTypeFileUpload}
+              accept="image/*,video/*"
+            >
+              {fileListImg.length < 1 &&
+                <Button shape="circle" size="large" ghost={true} icon={<FileImageFilled style={{ color: "green" }} icon={faImages} />} />
+              }
+            </Upload>
 
           </Col>
           <Col>
-            <Button shape="circle" size="large" ghost={true} icon={<VideoCameraFilled  style={{ color: "red" }} />} />
+            <Upload
+              fileList={fileListVideo}
+              onChange={onChangeVideo}
+              accept="video/*"
+            >
+              {fileListVideo.length < 1 &&
+                <Button shape="circle" size="large" ghost={true} icon={<VideoCameraFilled style={{ color: "red" }} />} />
+              }
+
+            </Upload>
+
           </Col>
         </Row>
         <Row justify="space-around" align="bottom" gutter={[16, 48]}>
           <Col span={24}>
-            <Button type="primary" shape="round" size="medium" style={{ width: "100%" }} onClick={handleSubmit} disabled={bt_disable} >Post</Button>
+            <Button type="primary" shape="round" size="medium" style={{ width: "100%" }} onClick={handlePost} disabled={bt_disable} >Post</Button>
           </Col>
         </Row>
       </Modal>

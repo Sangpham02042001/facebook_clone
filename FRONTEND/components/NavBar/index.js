@@ -12,7 +12,7 @@ import { newConversation } from '../../store/reducers/conversation.reducer'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretDown } from '@fortawesome/free-solid-svg-icons'
 import styles from './navbar.module.scss'
-import AvatarProfile from '../AvatarProfile'
+
 
 const NavbarDropdownMenu = ({ user, avatarUpdated }) => {
   const router = useRouter()
@@ -44,7 +44,7 @@ const NavbarDropdownMenu = ({ user, avatarUpdated }) => {
 
 const MessengerDropdown = ({ conversations, openMessage, userLoginId }) => {
   const handleMenuClick = (e) => {
-    if (e.key === '1') {
+    if (e.key === 'title') {
       return;
     }
     let idx = conversations.map(cv => cv._id).indexOf(e.key)
@@ -52,7 +52,7 @@ const MessengerDropdown = ({ conversations, openMessage, userLoginId }) => {
   }
   return <Menu style={{ minWidth: '300px', maxHeight: '500px' }}
     onClick={handleMenuClick}>
-    <Menu.Item key="1">
+    <Menu.Item key="title">
       <h2>Messenger</h2>
     </Menu.Item>
     <Menu.Divider />
@@ -63,7 +63,7 @@ const MessengerDropdown = ({ conversations, openMessage, userLoginId }) => {
           <div style={{ marginLeft: '10px', display: 'flex', flexDirection: 'column' }}>
             <p style={{ marginBottom: 0, fontSize: '18px' }}>{cv.participant.name}</p>
             <span style={{ marginBottom: 0 }}>{cv.messages[cv.messages.length - 1].sender === userLoginId ?
-              'You: ' : cv.participant.name}
+              'You: ' : cv.participant.name + ': '}
               {cv.messages[cv.messages.length - 1].content}
             </span>
           </div>
@@ -125,6 +125,13 @@ const NavBar = React.memo(function NavBar(props) {
           <Tooltip placement="bottom" title='Friends'>
             <span className={`${currentPage === '/friends' ? styles['current-page-icon'] : ''}`}>
               <i className="fas fa-user-friends"></i>
+            </span>
+          </Tooltip>
+        </Link>
+        <Link href="/videos">
+          <Tooltip placement="bottom" title='Videos'>
+            <span className={`${currentPage === '/videos' ? styles['current-page-icon'] : ''}`} >
+              <i className="fas fa-video"></i>
             </span>
           </Tooltip>
         </Link>

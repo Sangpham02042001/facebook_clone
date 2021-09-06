@@ -7,7 +7,7 @@ import styles from './MessageBoxs.module.scss'
 import { baseURL } from '../../utils'
 import socketClient from '../../socketClient'
 import {
-  closeConversation
+  closeConversation, sendMessageSocket
 } from '../../store/reducers/conversation.reducer'
 import { v4 } from 'uuid'
 
@@ -27,7 +27,8 @@ export default function MessageBox({ conversation: {
   participant,
   _id,
   messages
-} }) {
+}}) 
+{
   const userLogin = useSelector(state => state.userReducer.user)
   const [newMessage, setNewMessage] = useState('')
   const dispatch = useDispatch()
@@ -35,7 +36,8 @@ export default function MessageBox({ conversation: {
 
   useEffect(() => {
     messageEnd.current.scrollIntoView({ behavior: "smooth" })
-  }, [messages])
+  }, [])
+
 
   const handleClose = (event) => {
     event.preventDefault()

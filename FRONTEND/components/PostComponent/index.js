@@ -6,6 +6,7 @@ import { deletePost, reactPost, addComment, hiddenPost } from '../../store/reduc
 import { DeleteOutlined, EllipsisOutlined, LikeOutlined, ShareAltOutlined, CommentOutlined, LikeFilled, CloseCircleOutlined } from '@ant-design/icons';
 import AvatarProfile from '../AvatarProfile';
 import CommentComponent from '../Comment';
+import { baseURL } from '../../utils/axios.util';
 
 const PostComponent = (props) => {
     const dispatch = useDispatch();
@@ -27,10 +28,9 @@ const PostComponent = (props) => {
 
     }, [])
 
-
-
     const base64URL = props.post.image && "data:" + props.post.image.contentType
-        + ";base64, " + props.post.image.data;
+        + ";base64, " + Buffer.from(props.post.image.data.data).toString('base64');
+
     const userId = props.user._id;
     const postId = props.post._id;
     const reactType = "LIKE";
@@ -179,9 +179,19 @@ const PostComponent = (props) => {
             <Row>
                 <div style={{ fontSize: "30px" }}>{props.post.article}</div>
             </Row>
-            <Row>
-                <img src={base64URL} width="100%" />
-            </Row>
+            {base64URL &&
+                <Row>
+                    <img src={base64URL} width="100%" height="500px" />
+                </Row>
+            }
+            {props.post.videoId &&
+                <Row>
+                    <video controls width="100%" height="500px">
+                        <source src={`${baseURL}/posts/${props.user._id}/videos/${props.post.videoId}`}/>
+                    </video>
+                </Row>
+            }
+
             <Row>
                 <Col >
                     <Tooltip title={reactList.map(react => <p key={react.user._id}>{react.user.name}</p>)}>

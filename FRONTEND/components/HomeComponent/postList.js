@@ -5,7 +5,7 @@ import PostComponent from '../PostComponent';
 import styles from './home.module.scss';
 
 
-const PostList = () => {
+export default function PostList() {
   const dispatch = useDispatch();
   const posts = useSelector(state => state.postReducer.posts);
   const user = useSelector(state => state.userReducer.user);
@@ -16,8 +16,6 @@ const PostList = () => {
     dispatch(getPosts());
 
   }, [dispatch]);
-
-
 
   return (
 
@@ -30,5 +28,3 @@ const PostList = () => {
 
   );
 }
-
-export default PostList;

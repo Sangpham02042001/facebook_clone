@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import AvatarProfile from '../AvatarProfile'
 import socket from '../../socketClient'
 import { onFriendOnline, onFriendOffline } from '../../store/reducers/user.reducer'
 import { newConversation } from '../../store/reducers/conversation.reducer'
 import styles from './home.module.scss';
-import { Row, Col, Button } from 'antd'
+import { Row, Col, Avatar } from 'antd';
+import { baseURL } from '../../utils'
 
 export default function FriendStatusList() {
   const dispatch = useDispatch()
@@ -59,7 +59,13 @@ export default function FriendStatusList() {
         <Row className={styles["friend-style"]} key={user._id} >
           <Col span={24}>
             <div className={styles.friendItem} onClick={handleNewConversation(user)}>
-              <AvatarProfile showName={true} user={user} />
+              {/* <AvatarProfile showName={true} user={user} /> */}
+
+              <Avatar
+                style={{ marginRight: '5px', marginBottom: '5px' }}
+                src={`${baseURL}/api/user/avatar/${user._id}`} />
+              {<span style={{ fontSize: "20px", fontWeight: "bold", float: "right" }}>{user.name}</span>}
+
               {user.activityStatus === 'online' ?
                 <div className={`${styles['userStatus']} ${styles['online']}`}></div>
                 : <div className={`${styles['userStatus']} ${styles['offline']}`}></div>}
