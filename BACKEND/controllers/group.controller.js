@@ -59,6 +59,58 @@ const getGroupById = async (req, res) => {
   }
 }
 
+const getGroupsManagedByUser = async (req, res) => {
+  let userId = req.auth._id
+  try {
+    let groupsManage = await Group.find({
+      admins: {
+        $elemMatch: {
+          _id: userId
+        }
+      }
+    })
+    groupsManage = groupsManage.map(group => {
+      group.coverPhoto = undefined
+      group.admins = undefined
+      group.members = undefined
+      group.request_members = undefined
+      return group
+    })
+    return res.status(200).json({
+      groupsManage
+    })
+  } catch (error) {
+    console.log(error)
+    return res.status(400).json({ error })
+  }
+}
+
+const getGroupsJoinedByUser = async (req, res) => {
+  let userId = req.auth._id
+  try {
+    let groupsJoined = await Group.find({
+      members: {
+        $elemMatch: {
+          _id: userId
+        }
+      }
+    })
+    groupsJoined = groupsJoined.map(group => {
+      group.coverPhoto = undefined
+      group.admins = undefined
+      group.members = undefined
+      group.request_members = undefined
+      return group
+    })
+    return res.status(200).json({
+      groupsJoined
+    })
+  } catch (error) {
+    console.log(error)
+    return res.status(400).json({ error })
+  }
+}
+
 const getCoverPhoto = async (req, res) => {
   let { groupId } = req.params
   try {
@@ -73,4 +125,7 @@ const getCoverPhoto = async (req, res) => {
   }
 }
 
-module.exports = { createGroup, getGroupById, getAllGroup, getCoverPhoto }
+module.exports = {
+  createGroup, getGroupById, getAllGroup,
+  getGroupsManagedByUser, getCoverPhoto, getGroupsJoinedByUser
+}

@@ -5,6 +5,7 @@ import userListReducer from './reducers/userList.reducer'
 import profileReducer from './reducers/profile.reducer';
 import conversationReducer from './reducers/conversation.reducer';
 import groupReducer from './reducers/group.reducer'
+import groupListReducer from './reducers/groupList.reducer';
 
 const store = configureStore({
   reducer: {
@@ -13,7 +14,8 @@ const store = configureStore({
     userListReducer,
     profileReducer,
     conversationReducer,
-    groupReducer
+    groupReducer,
+    groupListReducer
   }
 })
 
