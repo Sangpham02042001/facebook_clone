@@ -50,3 +50,26 @@
   color: blue;
   font-weight: 500;
 }
+
+.group-item-link {
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  border-radius: 10px;
+  margin-bottom: 5px;
+  color: #000;
+}
+
+.group-item-link:hover {
+  background-color: rgb(231, 229, 229);
+  transition: background-color 0.4s ease;
+  color: #000;
+}
+
+.group-item-link h3 {
+  margin-bottom: 0;
+}
+
+.group-item-link img {
+  border-radius: 10px;
+}

@@ -29,7 +29,7 @@ export const getGroupById = createAsyncThunk('/getGroupById', async (data, { rej
   }
 })
 
-export const userListSlice = createSlice({
+export const groupSlice = createSlice({
   name: 'group',
   initialState,
   extraReducers: {
@@ -47,4 +47,4 @@ export const userListSlice = createSlice({
   }
 })
 
-export default userListSlice.reducer
+export default groupSlice.reducer
