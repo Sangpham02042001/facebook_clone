@@ -27,6 +27,7 @@ const InputForm = () => {
 
     for (let file of fileList) {
       if (file.status == "done") {
+        console.log(JSON.stringify(file))
         setImage(file.originFileObj);
         setBt_disable(false);
       }

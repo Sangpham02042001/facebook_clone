@@ -22,9 +22,10 @@ export default function VideoList() {
             user: post.user,
             reactList: post.reactList,
             comments: post.comments,
-            createAt: post.createAt,
-            updateAt: post.updateAt
+            createdAt: post.createdAt,
+            updatedAt: post.updatedAt
         }
+
         return !post.videoId ? null : video
     })
     console.log(videoPosts);

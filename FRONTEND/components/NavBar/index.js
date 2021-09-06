@@ -44,21 +44,18 @@ const NavbarDropdownMenu = ({ user, avatarUpdated }) => {
 
 const MessengerDropdown = ({ conversations, openMessage, userLoginId }) => {
   const handleMenuClick = (e) => {
-    if (e.key === 'title') {
-      return;
-    }
     let idx = conversations.map(cv => cv._id).indexOf(e.key)
     openMessage(conversations[idx].participant)
   }
   return <Menu style={{ minWidth: '300px', maxHeight: '500px' }}
     onClick={handleMenuClick}>
-    <Menu.Item key="title">
+    <Menu.ItemGroup>
       <h2>Messenger</h2>
-    </Menu.Item>
+    </Menu.ItemGroup>
     <Menu.Divider />
     {conversations.map((cv, idx) => (
       <Menu.Item key={cv._id} >
-        <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div className={styles.messageUserItem}>
           <Avatar src={`${baseURL}/api/user/avatar/${cv.participant._id}`} size='large' />
           <div style={{ marginLeft: '10px', display: 'flex', flexDirection: 'column' }}>
             <p style={{ marginBottom: 0, fontSize: '18px' }}>{cv.participant.name}</p>
