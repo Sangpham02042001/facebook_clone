@@ -4,6 +4,7 @@ import postReducer from './reducers/post.reducer';
 import userListReducer from './reducers/userList.reducer'
 import profileReducer from './reducers/profile.reducer';
 import conversationReducer from './reducers/conversation.reducer';
+import groupReducer from './reducers/group.reducer'
 
 const store = configureStore({
   reducer: {
@@ -11,7 +12,8 @@ const store = configureStore({
     postReducer,
     userListReducer,
     profileReducer,
-    conversationReducer
+    conversationReducer,
+    groupReducer
   }
 })
 

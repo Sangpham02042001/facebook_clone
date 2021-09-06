@@ -13,7 +13,7 @@ let postSchema = new Schema({
 })
 
 let memberSchema = new Schema({
-  _id: {
+  user: {
     type: mongoose.Types.ObjectId,
     ref: 'User'
   },

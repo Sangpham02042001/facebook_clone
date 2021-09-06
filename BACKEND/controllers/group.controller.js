@@ -28,6 +28,37 @@ const createGroup = async (req, res) => {
   })
 }
 
+const getAllGroup = async (req, res) => {
+  try {
+    let groups = await Group.find({})
+      .populate('members._id', 'name _id')
+    groups = groups.map(group => {
+      group.coverPhoto = undefined
+      return group
+    })
+    return res.status(200).json({ groups })
+  } catch (error) {
+    return res.status(400).json({ error })
+  }
+}
+
+const getGroupById = async (req, res) => {
+  let { groupId } = req.params
+  try {
+    let group = await Group.findById(groupId)
+      .populate('members.user', 'name _id')
+      .populate('admins.user', 'name _id')
+    group.coverPhoto = undefined
+    let userId = req.auth._id
+    if (group.admins.map(user => user._id).indexOf(userId) < 0) {
+      group.admins = undefined
+    }
+    return res.status(200).json({ group })
+  } catch (error) {
+    return res.status(400).json({ error })
+  }
+}
+
 const getCoverPhoto = async (req, res) => {
   let { groupId } = req.params
   try {
@@ -42,4 +73,4 @@ const getCoverPhoto = async (req, res) => {
   }
 }
 
-module.exports = { createGroup, getCoverPhoto }
+module.exports = { createGroup, getGroupById, getAllGroup, getCoverPhoto }
