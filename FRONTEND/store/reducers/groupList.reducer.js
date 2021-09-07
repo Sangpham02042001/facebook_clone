@@ -5,11 +5,41 @@ import { baseURL } from '../../utils'
 const initialState = {
   groupsManage: [],
   groupsJoined: [],
+  groupsNotJoined: [],
   error: null,
   loading: false,
   groupsManageLoaded: false,
-  groupsJoinedLoaded: false
+  groupsJoinedLoaded: false,
+  groupsNotJoinedLoaded: false
 }
+
+export const createGroup = createAsyncThunk('/createNewGroup', async (data) => {
+  let { token } = JSON.parse(window.localStorage.getItem('user'))
+  let { groupName, coverPhoto, isPublic } = data
+  let formData = new FormData()
+  formData.append('name', groupName)
+  formData.append('isPublic', isPublic)
+  formData.append('coverPhoto', coverPhoto)
+  try {
+    const response = await axios.post(`${baseURL}/api/groups`, formData, {
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json'
+      },
+    })
+    console.log(response.data)
+    return {
+      group: response.data.group
+    }
+  } catch (error) {
+    console.log(error)
+    showError('Something wrong when create group')
+    setGroupName('')
+    setCoverPhoto(null)
+    setIsPublic(true)
+    setPreviewCoverPhoto(null)
+  }
+})
 
 export const getGroupsManaged = createAsyncThunk('/getGroupsManaged', async () => {
   let { token } = JSON.parse(window.localStorage.getItem('user'))
@@ -32,6 +62,18 @@ export const getGroupsJoined = createAsyncThunk('/getGroupsJoined', async () => 
   })
   return {
     groupsJoined: response.data.groupsJoined
+  }
+})
+
+export const getGroupsNotJoinedAndManage = createAsyncThunk('/getGroupsNotJoinedAndManage', async () => {
+  let { token } = JSON.parse(window.localStorage.getItem('user'))
+  const response = await axios.get(`${baseURL}/api/groups/notjoinedbyuser`, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  })
+  return {
+    groupsNotJoined: response.data.groupsNotJoined
   }
 })
 
@@ -60,6 +102,30 @@ export const groupListSlice = createSlice({
     },
     [getGroupsJoined.rejected]: (state, action) => {
       console.log(action)
+    },
+    [createGroup.pending]: (state, action) => {
+      state.loading = true
+    },
+    [createGroup.fulfilled]: (state, action) => {
+      let { group } = action.payload
+      state.groupsManage.push(group)
+      state.loading = false
+    },
+    [createGroup.rejected]: (state, action) => {
+      state.loading = false
+      console.log(action)
+    },
+    [getGroupsNotJoinedAndManage.pending]: (state, action) => {
+      state.loading = true
+    },
+    [getGroupsNotJoinedAndManage.fulfilled]: (state, action) => {
+      let { groupsNotJoined } = action.payload
+      state.groupsNotJoined = groupsNotJoined
+      state.loading = false
+    },
+    [getGroupsNotJoinedAndManage.rejected]: (state, action) => {
+      console.log(action)
+      state.loading = false
     }
   }
 })

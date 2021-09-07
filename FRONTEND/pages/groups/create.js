@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import Head from 'next/head'
 import Image from 'next/image'
 import Layout from '../../components/layout'
@@ -10,13 +10,14 @@ import {
   Select, Modal
 } from 'antd'
 import UploadImage from '../../components/UploadImage'
+import { createGroup } from '../../store/reducers/groupList.reducer'
 import { baseURL, showError, showWarning } from '../../utils'
-import axios from 'axios'
 import styles from './group.module.scss'
 
 const { Option } = Select
 
 export default function GroupsCreate() {
+  const dispatch = useDispatch()
   let user = useSelector(state => state.userReducer.user)
   let [groupName, setGroupName] = useState('')
   let [isPublic, setIsPublic] = useState(true)
@@ -24,35 +25,18 @@ export default function GroupsCreate() {
   let [previewCoverPhoto, setPreviewCoverPhoto] = useState(null)
   let router = useRouter()
 
-  const createGroup = async e => {
+  const handleCreate = async e => {
     e.preventDefault()
     if (groupName.length < 6) {
       showWarning('Group name must be at least six characters')
       return
     }
-    let formData = new FormData()
-    formData.append('name', groupName)
-    formData.append('isPublic', isPublic)
-    formData.append('coverPhoto', coverPhoto)
-    try {
-      const response = await axios.post(`${baseURL}/api/groups`, formData, {
-        headers: {
-          'Authorization': 'Bearer ' + user.token,
-          'Content-Type': 'application/json'
-        },
-      })
-      console.log(response.data)
-      if (response.status === 200) {
-        router.push('/groups/feeds')
-      }
-    } catch (error) {
-      console.log(error)
-      showError('Something wrong when create group')
-      setGroupName('')
-      setCoverPhoto(null)
-      setIsPublic(true)
-      setPreviewCoverPhoto(null)
-    }
+    dispatch(createGroup({
+      groupName,
+      isPublic,
+      coverPhoto
+    }))
+    router.push('/groups/feeds')
   }
 
   const uploadCoverPhoto = (file) => {
@@ -120,7 +104,7 @@ export default function GroupsCreate() {
             <UploadImage multiple={false} name="ProfileImage"
               content="Upload group cover photo" onUploadSuccess={uploadCoverPhoto} />
             <div className={styles['create-btn-container']}>
-              <button onClick={createGroup}
+              <button onClick={handleCreate}
                 className={!groupName ? 'disabled' : ''} disabled={!groupName || !coverPhoto}>
                 Create</button>
             </div>

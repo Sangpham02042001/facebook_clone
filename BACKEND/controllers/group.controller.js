@@ -2,6 +2,16 @@ const Group = require('../models/group.model')
 const formidable = require('formidable')
 const fs = require('fs')
 
+const filterGroupInfo = (group) => {
+  group.coverPhoto = undefined
+  group.admins = undefined
+  group.members = undefined
+  group.request_members = undefined
+  group.posts = undefined
+  group.topics = undefined
+  return group
+}
+
 const createGroup = async (req, res) => {
   const form = formidable.IncomingForm()
   form.keepExtensions = true
@@ -19,7 +29,7 @@ const createGroup = async (req, res) => {
     group.admins = [{ user: userId }]
     try {
       await group.save()
-      group.coverPhoto = undefined
+      group = filterGroupInfo(group)
       return res.status(200).json({ group })
     } catch (error) {
       return res.status(400).json({ error })
@@ -69,11 +79,7 @@ const getGroupsManagedByUser = async (req, res) => {
       }
     })
     groupsManage = groupsManage.map(group => {
-      group.coverPhoto = undefined
-      group.admins = undefined
-      group.members = undefined
-      group.request_members = undefined
-      return group
+      return filterGroupInfo(group)
     })
     return res.status(200).json({
       groupsManage
@@ -90,19 +96,41 @@ const getGroupsJoinedByUser = async (req, res) => {
     let groupsJoined = await Group.find({
       members: {
         $elemMatch: {
-          _id: userId
+          user: userId
         }
       }
     })
     groupsJoined = groupsJoined.map(group => {
-      group.coverPhoto = undefined
-      group.admins = undefined
-      group.members = undefined
-      group.request_members = undefined
-      return group
+      return filterGroupInfo(group)
     })
     return res.status(200).json({
       groupsJoined
+    })
+  } catch (error) {
+    console.log(error)
+    return res.status(400).json({ error })
+  }
+}
+
+const getGroupsNotJoinedByUser = async (req, res) => {
+  let userId = req.auth._id
+  try {
+    let groupsNotJoined = await Group.find({
+      'members.user._id': {
+        $nin: [userId]
+      },
+      'admins.user._id': {
+        $nin: [userId]
+      }
+    })
+    groupsNotJoined = groupsNotJoined.map(group => {
+      let numOfMembers = group.members.length
+      group = filterGroupInfo(group)
+      group.members = numOfMembers
+      return group
+    })
+    return res.status(200).json({
+      groupsNotJoined
     })
   } catch (error) {
     console.log(error)
@@ -126,5 +154,6 @@ const getCoverPhoto = async (req, res) => {
 
 module.exports = {
   createGroup, getGroupById, getAllGroup,
-  getGroupsManagedByUser, getCoverPhoto, getGroupsJoinedByUser
+  getGroupsManagedByUser, getCoverPhoto,
+  getGroupsJoinedByUser, getGroupsNotJoinedByUser
 }

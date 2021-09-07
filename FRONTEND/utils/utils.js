@@ -24,6 +24,7 @@ const getTimeDiff = (t) => {
     return `${Math.floor(time / 3600)} hours ago`
   if (time > 60)
     return `${Math.floor(time / 60)} minutes ago`
+  return `${time} seconds ago`
 }
 
 export { showError, showWarning, showSuccess, getTimeDiff }
