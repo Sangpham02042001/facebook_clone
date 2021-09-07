@@ -9,7 +9,8 @@ import socketClient from '../../socketClient'
 import {
   closeConversation, sendMessageSocket
 } from '../../store/reducers/conversation.reducer'
-import { v4 } from 'uuid'
+import { v4 } from 'uuid';
+import { Row, Col } from 'antd';
 
 const getTime = (time) => {
   let hours = new Date(time).getHours().toString()
@@ -27,8 +28,7 @@ export default function MessageBox({ conversation: {
   participant,
   _id,
   messages
-}}) 
-{
+} }) {
   const userLogin = useSelector(state => state.userReducer.user)
   const [newMessage, setNewMessage] = useState('')
   const dispatch = useDispatch()
@@ -40,10 +40,15 @@ export default function MessageBox({ conversation: {
 
 
   const handleClose = (event) => {
-    event.preventDefault()
+    event.preventDefault();
     dispatch(closeConversation({
       _id
     }))
+  }
+
+  const handleVideoCall = (event) => {
+    event.preventDefault();
+    window.open('http://localhost:3000/videocall/incall/' + _id, '_blank').focus();
   }
 
   const handleSendMessage = event => {
@@ -72,25 +77,44 @@ export default function MessageBox({ conversation: {
 
   return (
     <div className={styles.messageFrame}>
-      <div className={styles.messageHeader}>
-        <Link style={{ marginBottom: 0 }}
-          href={`/profile/${participant._id}`}>
-          <a style={{ display: 'flex' }}>
-            <Avatar src={`${baseURL}/api/user/avatar/${participant._id}`}
-              style={{ marginRight: '10px' }}
-            />
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              {participant.name}
-              {/* {participant.activityStatus === 'online' ?
+
+      <Row className={styles.messageHeader}>
+        <Col span={10} className={styles["tagNameMessageHeader"]}>
+          <Link style={{ marginBottom: 0 }}
+            href={`/profile/${participant._id}`}>
+            <a style={{ display: 'flex' }}>
+              <Avatar src={`${baseURL}/api/user/avatar/${participant._id}`}
+                style={{ marginRight: '10px' }}
+              />
+              <span style={{ color: '#050505', fontWeight: '400', fontSize: '18px' }}>
+                {participant.name}
+                {/* {participant.activityStatus === 'online' ?
                 <div className={`${styles['userStatus']} ${styles['online']}`}></div>
                 : <div className={`${styles['userStatus']} ${styles['offline']}`}></div>} */}
-            </div>
-          </a>
-        </Link>
-        <i style={{ cursor: 'pointer', padding: '10px' }}
-          onClick={handleClose}
-          className="fas fa-times"></i>
-      </div>
+              </span>
+            </a>
+          </Link>
+        </Col>
+        <Col offset={8} span={2} className={styles["iconMessageHeader"]}>
+          <Tooltip title="start a voice call" placement="top">
+            <i style={{ cursor: 'pointer' }}
+              onClick={handleVideoCall}
+              className="fas fa-phone">
+            </i>
+          </Tooltip>
+        </Col>
+        <Col offset={2} span={2} className={styles["iconMessageHeader"]}>
+
+          <Tooltip title="close" placement="top">
+            <i style={{ cursor: 'pointer' }}
+              onClick={handleClose}
+              className="fas fa-times">
+            </i>
+          </Tooltip>
+        </Col>
+      </Row>
+
+
 
       <div className={styles.messageList} ref={messageEnd}>
         {

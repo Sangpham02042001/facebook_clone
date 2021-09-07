@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faImages } from '@fortawesome/free-solid-svg-icons';
 import styles from './InputForm.module.scss';
-import ImgCrop from 'antd-img-crop';
 import AvatarProfile from '../AvatarProfile';
 import { VideoCameraFilled, FileImageFilled } from '@ant-design/icons'
 

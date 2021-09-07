@@ -19,7 +19,7 @@ export default function SearchUserInput({ userList }) {
     <div className={styles.searchInputContainer}>
       <Input
         className={styles.searchInput}
-        placeholder="Search"
+        placeholder="Search Fakebook"
         value={searchVal}
         onChange={e => setSearchVal(e.target.value)}
         prefix={<SearchOutlined className="site-form-item-icon" />}

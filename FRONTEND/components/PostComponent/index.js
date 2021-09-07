@@ -1,4 +1,5 @@
-import { Button, Divider, Row, Col, Dropdown, Menu, message, Input, Tooltip } from 'antd';
+import { Button, Divider, Row, Col, Dropdown, Menu, message, Input, Tooltip, Avatar } from 'antd';
+import Link from 'next/link';
 import styles from './post.module.scss';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -159,13 +160,28 @@ const PostComponent = (props) => {
 
     return (
         <div className={styles["post-component"]} >
-            <Row >
-                <Col span={8}>
-                    <AvatarProfile user={props.post.user} showName={true} />
-                    <span style={{ fontSize: "12px" }}> {postTimeFormatted(props.post.createdAt)}</span>
+            <Row className={styles["post-header"]}>
+                <Col span={2} >
+                    <Avatar
+                        style={{ marginRight: '5px', marginBottom: '5px' }}
+                        src={`${baseURL}/api/user/avatar/${props.user._id}`} />
                 </Col>
 
-                <Col offset={14}>
+                <Link href={`/profile/${props.user._id}`}>
+                    <a>
+                        <Col>
+                            <div style={{ fontSize: "15px", fontWeight: "600", color: '#050505' }}>{props.user.name}</div>
+                            <div style={{ fontSize: "13px", fontWeight: "300", color: '#050505' }}>
+                                {postTimeFormatted(props.post.createdAt)} . <i style={{ fontSize: '12px' }} className="fas fa-globe-asia"></i>
+                                
+                            </div>
+                        </Col>
+
+                    </a>
+                </Link>
+
+
+                <Col offset={18}>
                     <Dropdown overlay={menu} placement="bottomRight" trigger={["click"]}>
                         <Button className={styles["btn-dropdown"]}
                             shape="circle"
@@ -187,7 +203,7 @@ const PostComponent = (props) => {
             {props.post.videoId &&
                 <Row>
                     <video controls width="100%" height="500px">
-                        <source src={`${baseURL}/posts/${props.user._id}/videos/${props.post.videoId}`}/>
+                        <source src={`${baseURL}/posts/${props.user._id}/videos/${props.post.videoId}`} />
                     </video>
                 </Row>
             }

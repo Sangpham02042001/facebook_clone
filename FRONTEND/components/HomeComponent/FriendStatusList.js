@@ -59,12 +59,10 @@ export default function FriendStatusList() {
         <Row className={styles["friend-style"]} key={user._id} >
           <Col span={24}>
             <div className={styles.friendItem} onClick={handleNewConversation(user)}>
-              {/* <AvatarProfile showName={true} user={user} /> */}
-
               <Avatar
                 style={{ marginRight: '5px', marginBottom: '5px' }}
                 src={`${baseURL}/api/user/avatar/${user._id}`} />
-              {<span style={{ fontSize: "20px", fontWeight: "bold", float: "right" }}>{user.name}</span>}
+              {<span style={{ fontSize: "15px", fontWeight: "550", float: "right" }}>{user.name}</span>}
 
               {user.activityStatus === 'online' ?
                 <div className={`${styles['userStatus']} ${styles['online']}`}></div>

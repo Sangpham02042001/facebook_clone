@@ -113,28 +113,28 @@ const NavBar = React.memo(function NavBar(props) {
       <div className={styles['icon-list']}>
         <Link href="/">
           <Tooltip placement="bottom" title="Home">
-            <span className={`${currentPage === '/' ? styles['current-page-icon'] : ''}`}>
+            <span className={`${currentPage === '/' ? styles['current-page-icon'] : styles['page-icon']}`}>
               <i className="fas fa-home"></i>
             </span>
           </Tooltip>
         </Link>
         <Link href="/friends">
           <Tooltip placement="bottom" title='Friends'>
-            <span className={`${currentPage === '/friends' ? styles['current-page-icon'] : ''}`}>
+            <span className={`${currentPage === '/friends' ? styles['current-page-icon'] : styles['page-icon']}`}>
               <i className="fas fa-user-friends"></i>
             </span>
           </Tooltip>
         </Link>
         <Link href="/videos">
           <Tooltip placement="bottom" title='Videos'>
-            <span className={`${currentPage === '/videos' ? styles['current-page-icon'] : ''}`} >
-              <i className="fas fa-video"></i>
+            <span className={`${currentPage === '/videos' ? styles['current-page-icon'] : styles['page-icon']}`} >
+              <i className="fas fa-tv " ></i>
             </span>
           </Tooltip>
         </Link>
         <Link href="/groups/feeds">
           <Tooltip placement="bottom" title='Groups'>
-            <span className={`${currentPage.startsWith('/groups') ? styles['current-page-icon'] : ''}`}>
+            <span className={`${currentPage.startsWith('/groups') ? styles['current-page-icon'] : styles['page-icon']}`}>
               <i className="fas fa-users"></i>
             </span>
           </Tooltip>
@@ -148,7 +148,7 @@ const NavBar = React.memo(function NavBar(props) {
                 key={avatarUpdated}
                 style={{ marginRight: '5px', marginBottom: '5px' }}
                 src={`${baseURL}/api/user/avatar/${userReducer.user._id}`} />
-              <b>{userReducer.user.name.split(' ')[0]}</b>
+              <span style={{color: "black", fontWeight: "500", fontSize: "15px"}}>{userReducer.user.name.split(' ')[0]}</span>
             </a>
           </Link>
         </span>

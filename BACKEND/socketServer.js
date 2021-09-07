@@ -1,4 +1,4 @@
-const {saveConversation} = require('./controllers/conversation.controller')
+const { saveConversation } = require('./controllers/conversation.controller')
 
 let onlineUserList = []
 
@@ -56,6 +56,19 @@ const SocketServer = (socket) => {
     })
   })
 
+  //message
+  socket.on("user-call", ({from, to, signalData}) => {
+    console.log('call user')
+    socket.to(to).emit('hey', {from, signalData});
+  })
+
+  socket.on("accept-call", ({to, signalData}) => {
+    console.log('accept call')
+    socket.to(to).emit('accepted-call', {signalData});
+  })
+
+
+  //disconnect
   socket.on('user-disconnect', ({ userID }) => {
     socket.broadcast.emit('user-disconnected', { userID })
     socket.disconnect()
