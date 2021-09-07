@@ -16,8 +16,7 @@ const createGroup = async (req, res) => {
       data: fs.readFileSync(coverPhoto.path),
       contentType: coverPhoto.type
     }
-    group.admins = [{ _id: userId }]
-    group.members = [{ _id: userId }]
+    group.admins = [{ user: userId }]
     try {
       await group.save()
       group.coverPhoto = undefined
@@ -50,9 +49,9 @@ const getGroupById = async (req, res) => {
       .populate('admins.user', 'name _id')
     group.coverPhoto = undefined
     let userId = req.auth._id
-    if (group.admins.map(user => user._id).indexOf(userId) < 0) {
-      group.admins = undefined
-    }
+    // if (group.admins.map(user => user.user).indexOf(userId) < 0) {
+    //   group.admins = undefined
+    // }
     return res.status(200).json({ group })
   } catch (error) {
     return res.status(400).json({ error })
@@ -65,7 +64,7 @@ const getGroupsManagedByUser = async (req, res) => {
     let groupsManage = await Group.find({
       admins: {
         $elemMatch: {
-          _id: userId
+          user: userId
         }
       }
     })

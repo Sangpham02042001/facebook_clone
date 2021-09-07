@@ -1,3 +1,23 @@
+.group-page {
+  position: relative;
+}
+
+.menu-btn {
+  position: fixed;
+  padding: 10px;
+  font-size: 20px;
+  margin-top: 10px;
+  margin-left: 10px;
+  border-radius: 50%;
+  cursor: pointer;
+  background-color: rgb(229, 226, 226);
+}
+
+.menu-btn:hover {
+  background-color: rgb(240, 236, 236);
+  transition: background-color 0.3s ease;
+}
+
 .group-coverphoto {
   position: relative;
   width: 60%;
@@ -14,4 +34,66 @@
   position: absolute;
   right: 20px;
   bottom: 20px;
+  border-radius: 10px;
+  font-weight: 500;
+  background-color: rgb(229, 226, 226);
+}
+
+.edit-cover-photo-btn:hover {
+  color: #000;
+  outline: none;
+  border-color: transparent;
+}
+
+.group-intro {
+  width: 58%;
+  margin: auto;
+}
+
+.group-intro-header {
+  font-size: 16px;
+}
+
+.selection-bar {
+  list-style-type: none;
+  padding-left: 0;
+  display: flex;
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
+.selection-bar > li {
+  padding: 15px 20px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 16px;
+  position: relative;
+}
+
+.selection-bar > li:hover {
+  border-radius: 10px;
+  background-color: rgb(229, 226, 226);
+  transition: background-color 0.3s ease;
+}
+
+.selection-bar > li.current-tab:hover {
+  background-color: inherit;
+}
+
+.selection-bar > li.current-tab::after {
+  position: absolute;
+  content: "";
+  height: 4px;
+  width: 100%;
+  background-color: black;
+  bottom: -4px;
+  left: 0;
+}
+
+.group-page-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(218, 216, 216, 0.2);
 }

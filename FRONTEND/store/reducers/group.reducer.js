@@ -17,8 +17,11 @@ export const getGroupById = createAsyncThunk('/getGroupById', async (data, { rej
       }
     })
     if (response.status === 200) {
+      let group = response.data.group
+      group.admins = group.admins.map(admin => admin.user)
+      group.members = group.members.map(user => user.user)
       return {
-        group: response.data.group
+        group
       }
     }
   } catch (error) {
