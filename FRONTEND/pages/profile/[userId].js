@@ -283,7 +283,7 @@ export default function Profile() {
                 <div>
                   {
                     userId !== userLoginId &&
-                    user.friends.map(user => user._id.indexOf(userId)) >= 0
+                    user.friends.map(user => user._id).indexOf(userId) >= 0
                     && <span onClick={openMessage} className={styles.addFriendBtn} style={{ marginRight: '20px' }}>
                       <i className="fab fa-facebook-messenger" style={{ marginRight: '10px' }}></i>
                       Message
@@ -326,13 +326,11 @@ export default function Profile() {
                                   Add friend
                                 </span>
                             )
-                        ) : <div>
-                          <span className={styles.editProfileBtn} onClick={handleCancelRequest}>
-                            {/* <FontAwesomeIcon icon={faTimes} style={{ marginRight: '10px' }} /> */}
-                            <i className="fas fa-times" style={{ marginRight: '10px' }}></i>
-                            Cancel Request
-                          </span>
-                        </div>
+                        ) : <span className={styles.editProfileBtn} onClick={handleCancelRequest}>
+                          {/* <FontAwesomeIcon icon={faTimes} style={{ marginRight: '10px' }} /> */}
+                          <i className="fas fa-times" style={{ marginRight: '10px' }}></i>
+                          Cancel Request
+                        </span>
                     )
                   }
                 </div>

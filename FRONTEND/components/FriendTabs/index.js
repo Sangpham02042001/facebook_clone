@@ -50,43 +50,20 @@ const UserItem = ({ user, currentTab, ownProfile, userLoginId }) => {
         <h2 style={{ marginLeft: '20px' }}>{user.name}</h2>
       </a>
     </Link>
-    {/* {
-      userLoginId === user._id
-        ? (currentTab === 'allFriends' ? <Button ><Link href={`/profile/${user._id}`}>View Profile</Link></Button>
-          : currentTab === 'followers' ? <Button onClick={handleCancelRequest} className={styles.cancelBtn}>Cancel Request</Button>
-            : <Button>
-              <Dropdown overlay={<RespondDropdown userLoginId={userLoginId} userId={user._id} />}
-                trigger={['click']}>
-                <span>Respond</span>
-              </Dropdown>
-            </Button>)
-        : (
-          // <Button ><Link href={`/profile/${user._id}`}>View Profile</Link></Button>
-          currentTab === 'allFriends' ? <Button ><Link href={`/profile/${user._id}`}>View Profile</Link></Button>
-            : currentTab === 'followers' ? <Button>
-              <Dropdown overlay={<RespondDropdown userLoginId={userLoginId} userId={user._id} />}
-                trigger={['click']}>
-                <span>Respond</span>
-              </Dropdown>
-            </Button>
-              : (ownProfile && <Button onClick={handleCancelRequest} className={styles.cancelBtn}>Cancel Request</Button>)
-        )
-    } */}
     {
       currentTab === 'allFriends' && <Button ><Link href={`/profile/${user._id}`}>View Profile</Link></Button>
     }
     {
       currentTab === 'followers' && (
-        (userLoginId === user._id && !ownProfile) ? <Button onClick={handleCancelRequest} className={styles.cancelBtn}>Cancel Request</Button>
-          : (ownProfile && <Button>
-            <Dropdown overlay={<RespondDropdown userLoginId={userLoginId} user={user} />}
-              trigger={['click']}>
-              <span>Respond</span>
-            </Dropdown>
-          </Button>)
+        (ownProfile && <Button>
+          <Dropdown overlay={<RespondDropdown userLoginId={userLoginId} user={user} />}
+            trigger={['click']}>
+            <span>Respond</span>
+          </Dropdown>
+        </Button>)
       )
     }
-    {
+    {/* {
       currentTab === 'followings' && (
         (userLoginId !== user._id && ownProfile) ? <Button onClick={handleCancelRequest} className={styles.cancelBtn}>Cancel Request</Button>
           : <Button>
@@ -96,7 +73,7 @@ const UserItem = ({ user, currentTab, ownProfile, userLoginId }) => {
             </Dropdown>
           </Button>
       )
-    }
+    } */}
   </div>
 }
 
