@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Layout from '../../../components/layout'
-import { getGroupById, groupSlice } from '../../../store/reducers/group.reducer'
+import { getGroupById, joinGroup } from '../../../store/reducers/group.reducer'
 import { Image, Button, Tooltip, Divider, Row, Col } from 'antd'
 import AboutTab from '../../../components/GroupPage/AboutTab'
 import styles from './groupPage.module.scss'
@@ -17,7 +17,8 @@ export default function GroupPage() {
   const group = useSelector(state => state.groupReducer.group)
   const user = useSelector(state => state.userReducer.user)
   const isAdmin = group.admins && group.admins.map(user => user._id).indexOf(user._id) >= 0
-  const isMember = group.memmbers && group.members.map(user => user._id).indexOf(user.id) >= 0
+  const isMember = group.memmbers && group.members.map(user => user._id).indexOf(user._id) >= 0
+  const isRequestMember = group.request_members && group.request_members.map(user => user._id).indexOf(user._id) >= 0
   const router = useRouter()
   let { groupId } = router.query
 
@@ -38,6 +39,14 @@ export default function GroupPage() {
     if (tab !== currentTab) {
       setCurrentTab(tab)
     }
+  }
+
+  const requestJoinGroup = () => {
+    dispatch(joinGroup({
+      _id: user._id,
+      name: user.name,
+      groupId
+    }))
   }
 
   return (
@@ -73,9 +82,13 @@ export default function GroupPage() {
                     </>}
                   {" "}- {group.members.length} member
                 </div>
-                {!isMember && <Button type="primary">
+                {!isMember && !isRequestMember && <Button type="primary" onClick={requestJoinGroup}>
                   <i className="fas fa-user-plus"></i>
                   Join group
+                </Button>}
+                {isRequestMember && !isMember && <Button>
+                  <i className="fas fa-times"></i>
+                  Cancel Request
                 </Button>}
               </div>
               <Divider style={{ color: 'black', marginBottom: 0 }} />

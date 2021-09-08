@@ -3,7 +3,7 @@ const groupRouter = express.Router()
 const { requireSignin } = require('../controllers/auth.controller')
 const { createGroup, getGroupById, getCoverPhoto,
   getAllGroup, getGroupsManagedByUser, getGroupsJoinedByUser,
-  getGroupsNotJoinedByUser } = require('../controllers/group.controller')
+  getGroupsNotJoinedByUser, requestJoinGroup } = require('../controllers/group.controller')
 
 groupRouter.route('/api/groups')
   .post(requireSignin, createGroup)
@@ -23,5 +23,8 @@ groupRouter.route('/api/groups/:groupId')
 
 groupRouter.route('/api/group/coverphoto/:groupId')
   .get(getCoverPhoto)
+
+groupRouter.route('/api/group/:groupId/join')
+  .post(requireSignin, requestJoinGroup)
 
 module.exports = groupRouter

@@ -57,6 +57,7 @@ const getGroupById = async (req, res) => {
     let group = await Group.findById(groupId)
       .populate('members.user', 'name _id')
       .populate('admins.user', 'name _id')
+      .populate('request_members.user', 'name _id')
     group.coverPhoto = undefined
     let userId = req.auth._id
     // if (group.admins.map(user => user.user).indexOf(userId) < 0) {
@@ -138,6 +139,23 @@ const getGroupsNotJoinedByUser = async (req, res) => {
   }
 }
 
+const requestJoinGroup = async (req, res) => {
+  let { groupId } = req.params
+  let userId = req.auth._id
+  try {
+    let group = await Group.findById(groupId)
+    if (group) {
+      group.request_members.push({ user: userId })
+      await group.save()
+      return res.status(200).json({ message: 'Request success' })
+    }
+
+  } catch (error) {
+    console.log(error)
+    return res.status(400).json({ error })
+  }
+}
+
 const getCoverPhoto = async (req, res) => {
   let { groupId } = req.params
   try {
@@ -155,5 +173,6 @@ const getCoverPhoto = async (req, res) => {
 module.exports = {
   createGroup, getGroupById, getAllGroup,
   getGroupsManagedByUser, getCoverPhoto,
-  getGroupsJoinedByUser, getGroupsNotJoinedByUser
+  getGroupsJoinedByUser, getGroupsNotJoinedByUser,
+  requestJoinGroup
 }
