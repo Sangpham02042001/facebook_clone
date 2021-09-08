@@ -58,8 +58,8 @@ const SocketServer = (socket) => {
 
   //message
   socket.on("user-call", ({from, to, signalData}) => {
-    console.log('call user')
-    socket.to(to).emit('hey', {from, signalData});
+    console.log(to, socket.id)
+    socket.to(to).emit("hey", {from, signalData});
   })
 
   socket.on("accept-call", ({to, signalData}) => {

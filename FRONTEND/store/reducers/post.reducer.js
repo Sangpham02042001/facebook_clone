@@ -8,10 +8,14 @@ export const getPosts = createAsyncThunk('posts/getPosts', async () => {
     return response.data;
 })
 
-export const addPost = createAsyncThunk('posts/addPost', async ({ title, userId, image, video }) => {
+export const addPost = createAsyncThunk('posts/addPost', async ({ title, userId, images, video }) => {
     const formData = new FormData();
-    formData.append("image-post", image);
-    formData.append("video-post", video);
+    console.log(images);
+    for (let key in images) {
+        formData.append(`image-post-${key}`, images[key]);
+    }
+    
+    formData.append("videos-post", video);
     formData.append("_id", nanoid());
     formData.append("article", title);
     formData.append("userId", userId);

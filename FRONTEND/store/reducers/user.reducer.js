@@ -175,7 +175,7 @@ export const userSlice = createSlice({
         state.loading = false
         state.user.activityStatus = 'online'
         socket.auth = { userId: user._id };
-        socket.connect()
+        socket.connect();
       }
     },
     signout: (state) => {

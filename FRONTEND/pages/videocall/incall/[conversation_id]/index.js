@@ -7,6 +7,7 @@ import socketClient from '../../../../socketClient';
 import { useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
 import Head from 'next/head'
+import Layout from '../../../../components/layout';
 
 export default function VideoCall() {
     const userLogin = useSelector(state => state.userReducer.user);
@@ -17,11 +18,11 @@ export default function VideoCall() {
     const [callerId, setCallerId] = useState('');
     const [callAccepted, setCallAccepted] = useState(false);
     const router = useRouter();
-    let { conversationId } = router.query;
+    let { conversation_id } = router.query;
     const userVideo = useRef();
     const partnerVideo = useRef();
 
-    const conversation = conversations.find(c => c._id === conversationId);
+    const conversation = conversations.find(c => c._id === conversation_id);
     const participantId = conversation && conversation.participant._id;
 
     useEffect(() => {
@@ -29,6 +30,7 @@ export default function VideoCall() {
             setCallerSignal(signalData);
             setIsCalling(true);
             setCallerId(from);
+            console.log('heyyy');
         })
 
         navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
@@ -94,7 +96,7 @@ export default function VideoCall() {
             stream: stream,
         });
         peer.on("signal", data => {
-            socketClient.emit("accept-call", { to: callerId, signal: data })
+            socketClient.emit("accept-call", { to: callerId, signalData: data })
         })
 
         peer.on("stream", stream => {
@@ -107,11 +109,8 @@ export default function VideoCall() {
 
 
     return (
-        <>
+        <Layout>
             <Head>
-                <meta charset="UTF-8" />
-                <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
                 <title>Video Call</title>
             </Head>
             <div>
@@ -123,7 +122,7 @@ export default function VideoCall() {
                     isCalling && <Button onClick={acceptCall}>Accept</Button>
                 }
             </div>
-        </>
+        </Layout>
     )
 }
 

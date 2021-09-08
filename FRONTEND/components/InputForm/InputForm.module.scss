@@ -1,6 +1,4 @@
 .input-component {
-  font-family: Segoe UI Historic, Segoe UI, Helvetica, Arial, sans-serif;
-  color: black;
   background-color: #fff;
   width: 100%;
   margin: 0px auto;
@@ -10,6 +8,7 @@
   border-radius: 10px;
   box-shadow: 1px 1px 2px #ced0d2;
   overflow: hidden;
+  min-width: 400px;
   
 }
 

@@ -21,7 +21,7 @@ const HomeComponent = () => {
                 <InputForm />
                 <PostList />
             </Col>
-            <Col offset={3} span={5}>
+            <Col offset={2} span={5}>
                 <FriendStatusList />
             </Col>
             <MessageBoxs />

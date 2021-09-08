@@ -14,26 +14,18 @@ export default function VideoList() {
         dispatch(getPosts());
     }, [dispatch]);
 
-    const videoPosts = posts.map(post => {
-        let video = {
-            _id: post._id,
-            article: post.article,
-            videoId: post.videoId,
-            user: post.user,
-            reactList: post.reactList,
-            comments: post.comments,
-            createdAt: post.createdAt,
-            updatedAt: post.updatedAt
-        }
-
-        return !post.videoId ? null : video
+    let videoPosts = JSON.parse(JSON.stringify(posts));
+    videoPosts = videoPosts.map(post => {
+        post.images = [];
+        return post;
     })
-    console.log(videoPosts);
+
     return (
         <div className={styles["video-list"]}>
-            {videoPosts.map(video => {
-                return video && <PostComponent key={video._id} post={video} user={user} />
-            })
+            {
+                videoPosts.map(post => {
+                    return post.videos.length > 0 && <PostComponent key={post._id} post={post} user={user} />
+                })
             }
         </div>
     );

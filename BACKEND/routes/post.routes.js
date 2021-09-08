@@ -1,31 +1,33 @@
 const express = require('express');
 const { getPosts, addPost, deletePost, reactPost, addCommentPost, deleteComment,
-  getVideo } = require('../controllers/post.controller');
+  getVideo, getImage } = require('../controllers/post.controller');
 
 const postRouter = express.Router();
 
-postRouter.route('/')
+postRouter.route('/posts')
   .get(getPosts)
 
-postRouter.route('/:userId/post')
+postRouter.route('/posts/:userId/post')
   .post(addPost)
 
 
 
-postRouter.route('/:userId/post/:postId')
+postRouter.route('/posts/:userId/post/:postId')
   .delete(deletePost)
 
-postRouter.route('/:userId/interactive/:postId/reacts')
+postRouter.route('/posts/:userId/interactive/:postId/reacts')
   .post(reactPost)
 
 
-postRouter.route('/:userId/interactive/:postId/comments')
+postRouter.route('/posts/:userId/interactive/:postId/comments')
   .post(addCommentPost)
 
-postRouter.route('/:userId/interactive/:postId/comments/:commentId')
+postRouter.route('/posts/:userId/interactive/:postId/comments/:commentId')
   .delete(deleteComment)
 
 postRouter.route('/:userId/videos/:videoId')
   .get(getVideo)
 
+postRouter.route('/:userId/post/:postId/photos/:imageId/')
+  .get(getImage)
 module.exports = postRouter;

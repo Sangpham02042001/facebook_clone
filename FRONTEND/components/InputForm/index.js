@@ -17,25 +17,20 @@ const InputForm = () => {
   const [bt_disable, setBt_disable] = useState(true);
   const user = useSelector(state => state.userReducer.user);
   const [fileListImg, setFileListImg] = useState([]);
-  const [image, setImage] = useState(null);
+  const [images, setImages] = useState([]);
   const [video, setVideo] = useState(null);
   const [fileListVideo, setFileListVideo] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const onChangeImg = ({ fileList }) => {
 
-    for (let file of fileList) {
-      if (file.status == "done") {
-        console.log(JSON.stringify(file))
-        setImage(file.originFileObj);
-        setBt_disable(false);
-      }
-    }
-
     if (!fileList.length) {
-      setImage(null);
       if (!video) {
         setBt_disable(true);
+      }
+    } else {
+      if (fileList[0].status === "done") {
+        setBt_disable(false);
       }
     }
 
@@ -60,7 +55,7 @@ const InputForm = () => {
       setBt_disable(false);
       setPlaceHolder(event.target.value);
     } else {
-      if (!image && !video) {
+      if (!images.length && !video) {
         setBt_disable(true);
       }
       setPlaceHolder(placeholderDefault);
@@ -69,9 +64,12 @@ const InputForm = () => {
 
   const handlePost = (event) => {
     let userId = user._id;
-    event.preventDefault();
-    console.log(video)
-    dispatch(addPost({ title, userId, image, video }));
+    for (let file of fileListImg) {
+      images.push(file.originFileObj);
+    }
+    console.log(images);
+    
+    dispatch(addPost({ title, userId, images, video }));
 
     //text area
     setTitle('');
@@ -79,11 +77,12 @@ const InputForm = () => {
     setPlaceHolder(placeholderDefault);
     //image
     setFileListImg([]);
-    setImage(null);
+    setImages([]);
     //video
     setFileListVideo([]);
     setVideo(null);
     setIsModalVisible(false);
+    event.preventDefault();
   }
 
   const onChangeVideo = ({ fileList }) => {
@@ -97,7 +96,7 @@ const InputForm = () => {
 
     if (!fileList.length) {
       setVideo(null);
-      if (!image) {
+      if (!images.length) {
         setBt_disable(true);
       }
     }
@@ -154,9 +153,8 @@ const InputForm = () => {
               beforeUpload={checkTypeFileUpload}
               accept="image/*,video/*"
             >
-              {fileListImg.length < 1 &&
                 <Button shape="circle" size="large" ghost={true} icon={<FileImageFilled style={{ color: "green" }} icon={faImages} />} />
-              }
+              
             </Upload>
 
           </Col>

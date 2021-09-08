@@ -52,7 +52,7 @@ app.use(express.urlencoded({ extended: true }))
 
 app.use('/', userRoutes);
 app.use('/', authRoutes);
-app.use('/posts/', postRoutes);
+app.use('/', postRoutes);
 app.use('/', conversationRoutes);
 app.use('/', groupRoutes)
 

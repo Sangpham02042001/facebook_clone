@@ -8,6 +8,7 @@ import { DeleteOutlined, EllipsisOutlined, LikeOutlined, ShareAltOutlined, Comme
 import AvatarProfile from '../AvatarProfile';
 import CommentComponent from '../Comment';
 import { baseURL } from '../../utils/axios.util';
+import LazyLoad from 'react-lazyload';
 
 const PostComponent = (props) => {
     const dispatch = useDispatch();
@@ -29,9 +30,9 @@ const PostComponent = (props) => {
 
     }, [])
 
-    const base64URL = props.post.image && "data:" + props.post.image.contentType
-        + ";base64, " + Buffer.from(props.post.image.data.data).toString('base64');
-
+    // const base64URL = props.post.image && "data:" + props.post.image.contentType
+    //     + ";base64, " + Buffer.from(props.post.image.data.data).toString('base64');
+    const base64URL = null;
     const userId = props.user._id;
     const postId = props.post._id;
     const reactType = "LIKE";
@@ -157,6 +158,12 @@ const PostComponent = (props) => {
         </Menu>
     );
 
+    const Loading = () => (
+        <div className="post-loading">
+            <h5>Loading...</h5>
+        </div>
+    )
+
 
     return (
         <div className={styles["post-component"]} >
@@ -167,21 +174,23 @@ const PostComponent = (props) => {
                         src={`${baseURL}/api/user/avatar/${props.user._id}`} />
                 </Col>
 
-                <Link href={`/profile/${props.user._id}`}>
-                    <a>
-                        <Col>
+
+                <Col span={4}>
+                    <Link href={`/profile/${props.user._id}`}>
+                        <a>
                             <div style={{ fontSize: "15px", fontWeight: "600", color: '#050505' }}>{props.user.name}</div>
                             <div style={{ fontSize: "13px", fontWeight: "300", color: '#050505' }}>
                                 {postTimeFormatted(props.post.createdAt)} . <i style={{ fontSize: '12px' }} className="fas fa-globe-asia"></i>
-                                
+
                             </div>
-                        </Col>
+                        </a>
+                    </Link>
+                </Col>
 
-                    </a>
-                </Link>
 
 
-                <Col offset={18}>
+
+                <Col offset={16} span={2}>
                     <Dropdown overlay={menu} placement="bottomRight" trigger={["click"]}>
                         <Button className={styles["btn-dropdown"]}
                             shape="circle"
@@ -195,18 +204,28 @@ const PostComponent = (props) => {
             <Row>
                 <div style={{ fontSize: "30px" }}>{props.post.article}</div>
             </Row>
-            {base64URL &&
-                <Row>
-                    <img src={base64URL} width="100%" height="500px" />
-                </Row>
-            }
-            {props.post.videoId &&
-                <Row>
-                    <video controls width="100%" height="500px">
-                        <source src={`${baseURL}/posts/${props.user._id}/videos/${props.post.videoId}`} />
-                    </video>
-                </Row>
-            }
+            <Row>
+                {
+                    props.post.images.map(img => {
+                        return (
+                        <LazyLoad key={img._id} placeholder={<Loading />}>
+                            <img key={img._id} src={img.url} width="100%" height="500px" />
+                        </LazyLoad>
+                        )
+                    })
+                }
+            </Row>
+            <Row >
+                {
+                    props.post.videos.map(vid => (
+                        <LazyLoad key={vid._id} placeholder={<Loading />}>
+                            <video key={vid._id} controls width="100%" height="500px" style={{ backgroundColor: 'black' }}>
+                                <source src={vid.url} />
+                            </video>
+                        </LazyLoad>
+                    ))
+                }
+            </Row>
 
             <Row>
                 <Col >

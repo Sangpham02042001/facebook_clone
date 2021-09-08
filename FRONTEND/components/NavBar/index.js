@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { signout } from '../../store/reducers/user.reducer'
 import { baseURL } from '../../utils/axios.util'
 import eventManager from '../../utils/eventemiter'
-import { Menu, Dropdown, Avatar, Tooltip } from 'antd'
+import { Menu, Dropdown, Avatar, Tooltip, Row, Col } from 'antd'
 import SearchUserInput from '../SearchUserInput'
 import { newConversation } from '../../store/reducers/conversation.reducer'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -44,27 +44,32 @@ const NavbarDropdownMenu = ({ user, avatarUpdated }) => {
 
 const MessengerDropdown = ({ conversations, openMessage, userLoginId }) => {
   const handleMenuClick = (e) => {
+    if (e.key === 'title') return;
     let idx = conversations.map(cv => cv._id).indexOf(e.key)
     openMessage(conversations[idx].participant)
   }
-  return <Menu style={{ minWidth: '300px', maxHeight: '500px' }}
+  return <Menu style={{ minWidth: '300px', maxHeight: '600px' }}
     onClick={handleMenuClick}>
-    <Menu.ItemGroup>
+    <Menu.Item key='title'>
       <h2>Messenger</h2>
-    </Menu.ItemGroup>
+    </Menu.Item>
     <Menu.Divider />
     {conversations.map((cv, idx) => (
       <Menu.Item key={cv._id} >
-        <div className={styles.messageUserItem}>
-          <Avatar src={`${baseURL}/api/user/avatar/${cv.participant._id}`} size='large' />
-          <div style={{ marginLeft: '10px', display: 'flex', flexDirection: 'column' }}>
-            <p style={{ marginBottom: 0, fontSize: '18px' }}>{cv.participant.name}</p>
-            <span style={{ marginBottom: 0 }}>{cv.messages[cv.messages.length - 1].sender === userLoginId ?
+        <Row className={styles.messageUserItem}>
+          <Col>
+            <Avatar src={`${baseURL}/api/user/avatar/${cv.participant._id}`} size='large' />
+          </Col>
+          <Col offset={1} span={4}>
+            <div style={{ fontSize: '15px' }}>{cv.participant.name}</div>
+            <div style={{ fontSize: '13px' }} >{cv.messages[cv.messages.length - 1].sender === userLoginId ?
               'You: ' : cv.participant.name + ': '}
               {cv.messages[cv.messages.length - 1].content}
-            </span>
-          </div>
-        </div>
+            </div>
+          </Col>
+
+
+        </Row>
       </Menu.Item>
     ))}
   </Menu>
@@ -148,7 +153,7 @@ const NavBar = React.memo(function NavBar(props) {
                 key={avatarUpdated}
                 style={{ marginRight: '5px', marginBottom: '5px' }}
                 src={`${baseURL}/api/user/avatar/${userReducer.user._id}`} />
-              <span style={{color: "black", fontWeight: "500", fontSize: "15px"}}>{userReducer.user.name.split(' ')[0]}</span>
+              <span style={{ color: "black", fontWeight: "500", fontSize: "15px" }}>{userReducer.user.name.split(' ')[0]}</span>
             </a>
           </Link>
         </span>

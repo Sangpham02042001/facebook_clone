@@ -12,10 +12,25 @@ const getPosts = (req, res, next) => {
         .populate('comments.user', 'name _id')
         .sort("-createdAt")
         .then((posts) => {
-            
+            let newPosts = JSON.parse(JSON.stringify(posts));
+            newPosts = newPosts.map(post => {
+                post.images = post.images.map(img => {
+                    return {
+                        _id: img._id,
+                        url: `http://${process.env.HOST}:${process.env.PORT}/${post.user._id}/post/${post._id}/photos/${img._id}`
+                    };
+                });
+                post.videos = post.videos.map(vidId => {
+                    return {
+                        _id: vidId,
+                        url: `http://${process.env.HOST}:${process.env.PORT}/${post.user._id}/videos/${vidId}`
+                    };
+                });
+                return post;
+            })
             res.statusCode = 200;
             res.setHeader('Content-Type', 'application/json');
-            res.json(posts);
+            res.json(newPosts);
 
         }).catch(err => {
             next(err);
@@ -79,39 +94,91 @@ const getVideo = (req, res, next) => {
     });
 }
 
+const getImage = (req, res, next) => {
+    let { userId, postId, imageId } = req.params;
+    Posts.findById(postId)
+        .then(post => {
+            if (!post) {
+                err = new Error('Could not find this post');
+                err.status = 403;
+                return next(err);
+            }
+            let image = post.images.find(img => img._id == imageId);
+            if (!image) {
+                err = new Error('Could not find this image');
+                err.status = 403;
+                return next(err);
+            }
+            res.statusCode = 200;
+            res.end(image.data);
+        })
+        .catch(error => {
+            return next(error);
+        })
+}
+
 const addPost = async (req, res, next) => {
     const form = formidable.IncomingForm()
     form.keepExtensions = true
     form.parse(req, async (err, fields, files) => {
-        let videoId = null, image = {};
+        if (err) {
+            console.log(err);
+            return next(err);
+        }
+        let videoId = null, images = [];
         let { article, userId } = fields;
         mongodb.MongoClient.connect(process.env.MONGO_URI, async function (error, client) {
             if (error) {
                 return next(error);
             }
-            if (files['video-post']) {
+            if (files['videos-post']) {
                 const db = client.db('myFirstDatabase');
                 const bucket = new mongodb.GridFSBucket(db, {
                     bucketName: 'uploads.videos'
                 });
-                const videoUploadStream = bucket.openUploadStream(files['video-post'].name);
+                const videoUploadStream = bucket.openUploadStream(files['videos-post'].name);
                 videoId = videoUploadStream.id
-                const videoReadStream = fs.createReadStream(files['video-post'].path);
+                const videoReadStream = fs.createReadStream(files['videos-post'].path);
                 videoReadStream.pipe(videoUploadStream);
             }
-            if (files['image-post']) {
-                image.data = fs.readFileSync(files['image-post'].path);
-                image.contentType = files['image-post'].type
+            // console.log(files);
+            if (files['image-post-0']) {
+                for (let key in files) {
+                    let image = {};
+                    image.data = fs.readFileSync(files[key].path);
+                    image.contentType = files[key].type;
+                    images.push(image);
+                }
             }
-            if (article || image.data || videoId) {
+            if (article || images.length || videoId) {
                 try {
-                    const post = await Posts.create({ article, user: userId, image, videoId })
+                    const post = await Posts.create({ article, user: userId })
                     Posts.findById(post._id)
                         .populate('user', 'name _id')
-                        .then(post => {
+                        .then(async (post) => {
+                            if (images.length) {
+                                post.images.push(...images);
+                            }
+                            if (videoId) {
+                                post.videos.push(videoId);
+                            }
+                            await post.save();
+                            let newPost = JSON.parse(JSON.stringify(post));
+                            newPost.images = newPost.images.map(img => {
+                                return {
+                                    _id: img._id,
+                                    url: `http://${process.env.HOST}:${process.env.PORT}/${post.user._id}/post/${post._id}/photos/${img._id}`
+                                };
+                            });
+                            newPost.videos = newPost.videos.map(vidId => {
+                                return {
+                                    _id: vidId,
+                                    url: `http://${process.env.HOST}:${process.env.PORT}/${post.user._id}/videos/${vidId}`
+                                };
+                            });
                             res.statusCode = 201;
                             res.setHeader('Content-Type', 'application/json');
-                            res.json(post);
+                            res.json(newPost);
                         })
                 } catch (error) {
                     return next(error);
@@ -184,7 +251,6 @@ const reactPost = async (req, res, next) => {
             .then(post => {
                 res.statusCode = 200;
                 res.setHeader('Content-Type', 'application/json');
-                // console.log(post);
                 res.json(post);
             })
     } catch (error) {
@@ -210,7 +276,6 @@ const addCommentPost = async (req, res, next) => {
             .then(post => {
                 res.statusCode = 200;
                 res.setHeader('Content-Type', 'application/json');
-                // console.log(post);
                 res.json(post);
             })
     } catch (error) {
@@ -254,5 +319,5 @@ const deleteComment = async (req, res, next) => {
 
 module.exports = {
     getPosts, addPost, deletePost, reactPost, addCommentPost,
-    deleteComment, getVideo,
+    deleteComment, getVideo, getImage
 }

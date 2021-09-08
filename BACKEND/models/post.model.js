@@ -29,23 +29,24 @@ const reactSchema = new Schema({
     timestamps: true,
 })
 
+
 const postSchema = new Schema({
     article: {
         type: String,
         require: true
-    },
-    image: {
-        data: Buffer,
-        contentType: String
     },
     user: {
         type: mongoose.Types.ObjectId,
         require: true,
         ref: 'User'
     },
-    videoId: {
+    images: [{
+        data: Buffer,
+        contentType: String,
+    }],
+    videos: [{
         type: mongoose.Types.ObjectId
-    },
+    }],
     reactList: [reactSchema],
     comments: [commentSchema]
 }, {
