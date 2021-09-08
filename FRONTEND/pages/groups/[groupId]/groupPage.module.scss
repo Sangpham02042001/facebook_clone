@@ -1,7 +1,6 @@
 .group-page {
   position: relative;
 }
-
 .menu-btn {
   position: fixed;
   padding: 10px;
@@ -12,24 +11,20 @@
   cursor: pointer;
   background-color: rgb(229, 226, 226);
 }
-
 .menu-btn:hover {
   background-color: rgb(240, 236, 236);
   transition: background-color 0.3s ease;
 }
-
 .group-coverphoto {
   position: relative;
   width: 60%;
   margin: auto;
 }
-
 .group-coverphoto img {
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
   min-height: 350px;
 }
-
 .edit-cover-photo-btn {
   position: absolute;
   right: 20px;
@@ -38,22 +33,24 @@
   font-weight: 500;
   background-color: rgb(229, 226, 226);
 }
-
 .edit-cover-photo-btn:hover {
   color: #000;
   outline: none;
   border-color: transparent;
 }
-
 .group-intro {
   width: 58%;
   margin: auto;
 }
-
 .group-intro-header {
   font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
-
+.group-intro-header button {
+  border-radius: 10px;
+}
 .selection-bar {
   list-style-type: none;
   padding-left: 0;
@@ -61,7 +58,6 @@
   margin-top: 4px;
   margin-bottom: 4px;
 }
-
 .selection-bar > li {
   padding: 15px 20px;
   cursor: pointer;
@@ -69,17 +65,14 @@
   font-size: 16px;
   position: relative;
 }
-
 .selection-bar > li:hover {
   border-radius: 10px;
   background-color: rgb(229, 226, 226);
   transition: background-color 0.3s ease;
 }
-
 .selection-bar > li.current-tab:hover {
   background-color: inherit;
 }
-
 .selection-bar > li.current-tab::after {
   position: absolute;
   content: "";
@@ -89,7 +82,6 @@
   bottom: -4px;
   left: 0;
 }
-
 .group-page-body {
   display: flex;
   flex-direction: column;

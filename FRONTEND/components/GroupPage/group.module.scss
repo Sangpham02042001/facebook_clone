@@ -5,26 +5,43 @@
   box-shadow: 0 0 1px 1px rgb(223, 219, 219);
   margin: 15px 0 10px 0;
 }
-
 .about-item-container {
   min-width: 400px;
   width: 35%;
 }
-
 .about-item-container > h2 {
   margin-bottom: 0;
 }
-
 .about-item-body {
   display: flex;
   align-items: center;
 }
-
 .about-item-body h3 {
   margin-bottom: 0;
 }
-
 .about-item-body > i {
   font-size: 20px;
   margin-right: 10px;
+}
+
+/*********************DISCUSSION******************-**/
+.discussion-page {
+  width: 900px;
+  margin: auto;
+  display: flex;
+}
+.discussion-left-side {
+  width: 60%;
+  margin-right: 20px;
+}
+.private-group-message {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+}
+.private-group-message img {
+  width: 100px;
+  height: 100px;
 }

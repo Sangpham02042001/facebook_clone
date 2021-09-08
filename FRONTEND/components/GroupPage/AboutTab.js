@@ -71,8 +71,8 @@ export default function AboutTab({ members, admins, isPublic, createdAt }) {
         </div>
         <div>
           {admins.map(user => (
-            <Link href={`/profile/${user._id}`}>
-              <Avatar key={user._id} style={{ cursor: 'pointer' }}
+            <Link key={user._id} href={`/profile/${user._id}`}>
+              <Avatar style={{ cursor: 'pointer' }}
                 src={`${baseURL}/api/user/avatar/${user._id}`} />
             </Link>
           ))}

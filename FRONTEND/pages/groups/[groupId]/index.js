@@ -8,6 +8,7 @@ import { Image, Button, Tooltip, Divider, Row, Col } from 'antd'
 import AboutTab from '../../../components/GroupPage/AboutTab'
 import styles from './groupPage.module.scss'
 import { baseURL } from '../../../utils'
+import DiscussionTab from '../../../components/GroupPage/DiscussionTab'
 
 export default function GroupPage() {
   const [showMenu, setShowMenu] = useState(false)
@@ -16,6 +17,7 @@ export default function GroupPage() {
   const group = useSelector(state => state.groupReducer.group)
   const user = useSelector(state => state.userReducer.user)
   const isAdmin = group.admins && group.admins.map(user => user._id).indexOf(user._id) >= 0
+  const isMember = group.memmbers && group.members.map(user => user._id).indexOf(user.id) >= 0
   const router = useRouter()
   let { groupId } = router.query
 
@@ -45,9 +47,9 @@ export default function GroupPage() {
       </Head>
       <Layout>
         {group._id && <div className={styles['group-page']}>
-          <Tooltip title="Show Menu" placement="bottom">
+          {isAdmin && <Tooltip title="Show Menu" placement="bottom">
             <i className={`fas fa-bars ${styles['menu-btn']}`}></i>
-          </Tooltip>
+          </Tooltip>}
           <div className={styles['group-page-header']}>
             <div className={styles['group-coverphoto']}>
               <Image src={`${baseURL}/api/group/coverphoto/${group._id}`}
@@ -61,14 +63,20 @@ export default function GroupPage() {
             <div className={styles['group-intro']}>
               <h1 style={{ marginBottom: '5px' }}>{group.name}</h1>
               <div className={styles['group-intro-header']}>
-                {group.isPublic ? <>
-                  <i className="fas fa-globe-asia"></i>
-                  Public Group</>
-                  : <>
-                    <i className="fas fa-lock"></i>
-                    Private Group
-                  </>}
-                {" "}- {group.members.length} member
+                <div>
+                  {group.isPublic ? <>
+                    <i className="fas fa-globe-asia"></i>
+                    Public Group</>
+                    : <>
+                      <i style={{ marginRight: '10px' }} className="fas fa-lock"></i>
+                      Private Group
+                    </>}
+                  {" "}- {group.members.length} member
+                </div>
+                {!isMember && <Button type="primary">
+                  <i className="fas fa-user-plus"></i>
+                  Join group
+                </Button>}
               </div>
               <Divider style={{ color: 'black', marginBottom: 0 }} />
               <ul className={styles['selection-bar']}>
@@ -80,10 +88,10 @@ export default function GroupPage() {
                   onClick={changeCurrentTab('discussion')}>
                   Discussion
                 </li>
-                <li className={currentTab === 'members' ? styles['current-tab'] : ''}
-                  onClick={changeCurrentTab('members')}>
-
-                  Members</li>
+                {(isMember || isAdmin || group.isPublic) &&
+                  <li className={currentTab === 'members' ? styles['current-tab'] : ''}
+                    onClick={changeCurrentTab('members')}>
+                    Members</li>}
               </ul>
             </div>
           </div>
@@ -92,6 +100,9 @@ export default function GroupPage() {
             {currentTab === 'about' &&
               <AboutTab isPublic={group.isPublic}
                 members={group.members} admins={group.admins} createdAt={group.createdAt} />}
+            {currentTab === 'discussion' &&
+              <DiscussionTab posts={group.post} isMember={isMember} isAdmin={isAdmin}
+                isPublic={group.isPublic} about={group.about} />}
           </Row>
         </div>}
       </Layout>
