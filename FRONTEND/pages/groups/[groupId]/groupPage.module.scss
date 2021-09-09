@@ -15,6 +15,9 @@
   background-color: rgb(240, 236, 236);
   transition: background-color 0.3s ease;
 }
+.group-page-header {
+  min-width: 900px;
+}
 .group-coverphoto {
   position: relative;
   width: 60%;
@@ -88,4 +91,36 @@
   justify-content: center;
   align-items: center;
   background-color: rgba(218, 216, 216, 0.2);
+}
+/** MANGE MENU**/
+.manage-group-menu {
+  top: 0;
+  bottom: 0;
+  position: fixed;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  width: 360px;
+  min-height: 100vh;
+  background-color: #fff;
+}
+.manage-group-menu-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  margin-top: 50px;
+}
+.manage-group-menu-header h2 {
+  font-weight: 800;
+  margin-bottom: 0;
+  font-size: 24px;
+}
+.manage-group-menu-header i {
+  padding: 10px;
+  font-size: 20px;
+  margin-top: 10px;
+  margin-left: 10px;
+  border-radius: 50%;
+  cursor: pointer;
+  background-color: rgb(229, 226, 226);
 }

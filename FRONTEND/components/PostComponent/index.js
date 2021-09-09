@@ -171,14 +171,14 @@ const PostComponent = (props) => {
                 <Col span={2} >
                     <Avatar
                         style={{ marginRight: '5px', marginBottom: '5px' }}
-                        src={`${baseURL}/api/user/avatar/${props.user._id}`} />
+                        src={`${baseURL}/api/user/avatar/${props.post.user._id}`} />
                 </Col>
 
 
                 <Col span={4}>
-                    <Link href={`/profile/${props.user._id}`}>
+                    <Link href={`/profile/${props.post.user._id}`}>
                         <a>
-                            <div style={{ fontSize: "15px", fontWeight: "600", color: '#050505' }}>{props.user.name}</div>
+                            <div style={{ fontSize: "15px", fontWeight: "600", color: '#050505' }}>{props.post.user.name}</div>
                             <div style={{ fontSize: "13px", fontWeight: "300", color: '#050505' }}>
                                 {postTimeFormatted(props.post.createdAt)} . <i style={{ fontSize: '12px' }} className="fas fa-globe-asia"></i>
 
@@ -208,9 +208,9 @@ const PostComponent = (props) => {
                 {
                     props.post.images.map(img => {
                         return (
-                        <LazyLoad key={img._id} placeholder={<Loading />}>
-                            <img key={img._id} src={img.url} width="100%" height="500px" />
-                        </LazyLoad>
+                            <LazyLoad key={img._id} placeholder={<Loading />}>
+                                <img key={img._id} src={img.url} width="100%" height="500px" />
+                            </LazyLoad>
                         )
                     })
                 }

@@ -10,6 +10,10 @@ let postSchema = new Schema({
     type: String,
     require: true
   },
+  groupId: {
+    type: mongoose.Types.ObjectId,
+    ref: 'Group'
+  }
 })
 
 let memberSchema = new Schema({

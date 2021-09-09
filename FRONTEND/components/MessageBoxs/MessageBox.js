@@ -48,7 +48,7 @@ export default function MessageBox({ conversation: {
 
   const handleVideoCall = (event) => {
     event.preventDefault();
-    window.open('http://localhost:3000/videocall/incall/' + _id, '_blank').focus();
+    window.open('http://192.168.1.15:3000/videocall/incall/' + _id, '_blank').focus();
   }
 
   const handleSendMessage = event => {
