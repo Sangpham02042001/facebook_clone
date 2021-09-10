@@ -3,17 +3,21 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Layout from '../../../components/layout'
-import { getGroupById, joinGroup } from '../../../store/reducers/group.reducer'
-import { Image, Button, Tooltip, Divider, Row, Col } from 'antd'
+import { getGroupById, joinGroup, update } from '../../../store/reducers/group.reducer'
+import { Image, Button, Tooltip, Divider, Row, Modal } from 'antd'
 import AboutTab from '../../../components/GroupPage/AboutTab'
 import styles from './groupPage.module.scss'
-import { baseURL } from '../../../utils'
+import { baseURL, showError } from '../../../utils'
+import UploadImage from '../../../components/UploadImage'
 import DiscussionTab from '../../../components/GroupPage/DiscussionTab'
 import ManageGroupMenu from '../../../components/GroupPage/ManageGroupMenu'
 
 export default function GroupPage() {
   const [showMenu, setShowMenu] = useState(false)
+  const [cvPhotoModalVisible, setCvPhotoModalVisible] = useState(false)
+  const [newCoverPhoto, setNewCoverPhoto] = useState(null)
   const [currentTab, setCurrentTab] = useState('discussion')
+  const [reloadCoverPhoto, setReloadCoverPhoto] = useState('')
   const dispatch = useDispatch()
   const group = useSelector(state => state.groupReducer.group)
   const user = useSelector(state => state.userReducer.user)
@@ -50,6 +54,25 @@ export default function GroupPage() {
     }))
   }
 
+  const onUploadCoverPhotoSuccess = (file) => {
+    console.log(file)
+    setNewCoverPhoto(file.originFileObj)
+  }
+
+  const uploadCoverPhoto = () => {
+    if (!newCoverPhoto) {
+      showError('You need to upload an image')
+      return false
+    }
+    dispatch(update({
+      coverPhoto: newCoverPhoto
+    }))
+    setCvPhotoModalVisible(false)
+    setTimeout(() => {
+      setReloadCoverPhoto(Date.now())
+    }, 3000)
+  }
+
   return (
     <>
       <Head>
@@ -72,9 +95,14 @@ export default function GroupPage() {
           <div style={{ marginLeft: showMenu ? '360px' : 0 }}>
             <div className={styles['group-page-header']}>
               <div className={styles['group-coverphoto']}>
-                <Image src={`${baseURL}/api/group/coverphoto/${group._id}`}
+                <Image src={`${baseURL}/api/group/coverphoto/${group._id}?reload=${reloadCoverPhoto}`}
+                  key={reloadCoverPhoto}
                   preview={false} />
-                {isAdmin && <Button className={styles['edit-cover-photo-btn']}>
+                {isAdmin && <Button onClick={e => {
+                  e.preventDefault()
+                  setCvPhotoModalVisible(true)
+                }}
+                  className={styles['edit-cover-photo-btn']}>
                   <i style={{ marginRight: '5px' }}
                     className="fas fa-pencil-alt"></i>
                   Edit
@@ -131,6 +159,19 @@ export default function GroupPage() {
           </div>
         </div>}
       </Layout>
+
+      {
+        cvPhotoModalVisible &&
+        <Modal title="Update your cover image" visible={cvPhotoModalVisible}
+          onCancel={() => {
+            setCvPhotoModalVisible(false)
+            newCoverPhoto && setNewCoverPhoto(null)
+          }}
+          onOk={uploadCoverPhoto}>
+          <UploadImage multiple={false} name="CoverPhoto"
+            onUploadSuccess={onUploadCoverPhotoSuccess} />
+        </Modal>
+      }
     </>
   )
 }

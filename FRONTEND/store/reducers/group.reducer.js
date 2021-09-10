@@ -56,6 +56,35 @@ export const joinGroup = createAsyncThunk('/joinGroup', async (data, { rejectWit
   }
 })
 
+export const update = createAsyncThunk('/updateGroup', async (data, { getState, rejectWithValue }) => {
+  try {
+    let group = getState().groupReducer.group
+    let keys = Object.keys(data)
+    let groupData = new FormData()
+    for (const key of keys) {
+      groupData.append(key, data[key])
+    }
+    let token = JSON.parse(window.localStorage.getItem('user')).token
+    const response = await axios.post(`${baseURL}/api/groups/${group._id}`, groupData, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+    let newGroup = response.data.group
+    newGroup.admins = newGroup.admins.map(admin => admin.user)
+    newGroup.members = newGroup.members.map(user => user.user)
+    newGroup.request_members = newGroup.request_members.map(user => user.user)
+    return {
+      group: newGroup
+    }
+  } catch (error) {
+    let { data } = error.response
+    if (data && data.error) {
+      return rejectWithValue(data)
+    }
+  }
+})
+
 export const groupSlice = createSlice({
   name: 'group',
   initialState,
@@ -82,6 +111,18 @@ export const groupSlice = createSlice({
     [joinGroup.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.payload.error;
+    },
+    [update.pengding]: (state, action) => {
+      state.loading = true;
+    },
+    [update.fulfilled]: (state, action) => {
+      let { group } = action.payload
+      state.group = group
+      state.loading = false;
+    },
+    [update.rejected]: (state, action) => {
+      state.loading = false
+      state.error = action.payload.error
     }
   }
 })

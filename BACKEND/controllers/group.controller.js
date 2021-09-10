@@ -1,6 +1,7 @@
 const Group = require('../models/group.model')
 const formidable = require('formidable')
 const fs = require('fs')
+const extend = require('lodash/extend')
 
 const filterGroupInfo = (group) => {
   group.coverPhoto = undefined
@@ -156,6 +157,45 @@ const requestJoinGroup = async (req, res) => {
   }
 }
 
+const updateByAdmin = async (req, res) => {
+  let { groupId } = req.params
+  let userId = req.auth._id
+  try {
+    let group = await Group.findById(groupId)
+      .populate('members.user', 'name _id')
+      .populate('admins.user', 'name _id')
+      .populate('request_members.user', 'name _id')
+    if (!group) {
+      return res.status(400).json({
+        error: 'group not found'
+      })
+    }
+    let isAuthorized = group.admins.map(user => user.user._id).indexOf(userId) >= 0
+    if (!isAuthorized) {
+      return res.status(400).json({
+        error: "You are not authorized"
+      })
+    }
+    const form = formidable.IncomingForm()
+    form.keepExtensions = true
+    // console.log(form)
+    form.parse(req, async (err, fields, files) => {
+      group = extend(group, fields)
+      console.log(files.coverPhoto)
+      if (files.coverPhoto) {
+        group.coverPhoto.data = fs.readFileSync(files.coverPhoto.path)
+        group.coverPhoto.contentType = files.coverPhoto.type
+      }
+      await group.save()
+      group.coverPhoto = undefined
+      return res.status(200).json({ group })
+    })
+  } catch (error) {
+    console.log(error)
+    return res.status(400).json({ error })
+  }
+}
+
 const getCoverPhoto = async (req, res) => {
   let { groupId } = req.params
   try {
@@ -174,5 +214,5 @@ module.exports = {
   createGroup, getGroupById, getAllGroup,
   getGroupsManagedByUser, getCoverPhoto,
   getGroupsJoinedByUser, getGroupsNotJoinedByUser,
-  requestJoinGroup
+  requestJoinGroup, updateByAdmin
 }
